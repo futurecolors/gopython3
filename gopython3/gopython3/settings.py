@@ -99,7 +99,11 @@ class Dev(Common):
     """
     The in-development settings and the default configuration.
     """
-    pass
+    INSTALLED_APPS = Common.INSTALLED_APPS + ('debug_toolbar',)
+    INTERNAL_IPS = ('127.0.0.1',)
+    MIDDLEWARE_CLASSES = Common.MIDDLEWARE_CLASSES + (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
 
 
 class Prod(Common):
