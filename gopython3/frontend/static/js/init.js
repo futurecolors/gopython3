@@ -125,22 +125,35 @@
         };
     };
 
+    var initLinks = function($, Backbone){
+        $(function(){
+            $(document).on('click', 'a[href]', function(e){
+                e.preventDefault();
+
+                Backbone.history.navigate($(e.target).attr('href'), {trigger: true});
+            });
+        });
+    };
+
     define([
+        'jquery',
         'underscore',
+        'backbone',
         'marionette',
         'jade',
         'app/App'
     ], function (
+        $,
         _,
+        Backbone,
         Marionette,
         jade,
         App
     ) {
-        // Инициализация
         initBootstrap();
         initTemplates(_, Marionette, jade);
+        initLinks($, Backbone);
 
-        // Приложение
         App.start();
     });
 })();

@@ -66,15 +66,16 @@ define('app/controllers/JobController', [
                 });
             },
 
-            job: function(){
+            job: function(id){
                 var that = this;
 
                 this.createDataStorages();
+                this.model.set({
+                    id: id
+                });
                 this.model.fetch();
+
                 this.layout.ready(function(){
-                    this.form.show(new JobFormView({
-                        model: that.model
-                    }));
                     this.status.show(new JobStatusView({
                         collection: that.collection
                     }));
