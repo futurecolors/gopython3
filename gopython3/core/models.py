@@ -1,4 +1,5 @@
 from django.db import models
+from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
@@ -25,8 +26,6 @@ class Job(TimeFrameStampedModel):
             * VCS dependencies are ignored
     """
     STATUS = TASK_STATUS
-
-    specs = models.ManyToManyField('Spec')
     status = StatusField()
 
 
@@ -35,7 +34,7 @@ class Package(TimeStampedModel):
 
         Notes:
             * All version-specific info is in Spec model
-            * Non-pypi info is pulled for latest repo version
+            * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100)
 
@@ -62,20 +61,24 @@ class Package(TimeStampedModel):
     comment_most_voted = models.TextField(blank=True)
 
 
-class Spec(TimeFrameStampedModel):
+class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
     """
     STATUS = TASK_STATUS
-    GOPY3 = Choices(('A', 'Already supports'),
-                    ('B', 'Future version or trunk'),
-                    ('C', 'Fork or PR'))
 
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20)
-    gopy3 = models.CharField(choices=GOPY3, default=GOPY3.A, max_length=20)
+    release_date = models.DateField(blank=True)
+    python_versions = JSONField()
     status = StatusField()
 
     class Meta:
         unique_together = (('package', 'version'),)
         index_together = unique_together
+
+
+class JobSpec(TimeFrameStampedModel):
+    """ A spec in a job """
+    job = models.ForeignKey(Job)
+    spec = models.ForeignKey(Spec)
