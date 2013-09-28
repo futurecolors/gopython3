@@ -7,25 +7,23 @@ from api.wrappers import PYTHON_3_KEYWORDS
 class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     base_url = 'https://api.github.com'
 
-    def get_credentials(self):
-        return {
-            'client_id': settings.GITHUB_CLIENT_ID,
-            'client_secret': settings.GITHUB_CLIENT_SECRET,
-        }
-
     def repo_info(self, owner, repo):
         self.hammock = self.hammock.repos(owner, repo)
         return 'GET', {}
 
     def repo_forks(self, owner, repo):
         self.hammock = self.hammock.repos(owner, repo).forks
-        print(self.hammock)
         return 'GET', {}
 
     def repo_branches(self, owner, repo):
         self.hammock = self.hammock.repos(owner, repo).branches
-        print('branches', self.hammock)
         return 'GET', {}
+
+    def get_credentials(self):
+        return {
+            'client_id': settings.GITHUB_CLIENT_ID,
+            'client_secret': settings.GITHUB_CLIENT_SECRET,
+        }
 
     def get_short_info(self, owner, repo):
         data = self.ask_about_repo_info(owner=owner, repo=repo)
@@ -63,3 +61,37 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
 
     def _has_py3_tracks(self, data):
         return any([keyword.lower() in ''.join(data) for keyword in PYTHON_3_KEYWORDS])
+
+
+class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
+    base_url = 'https://api.github.com'
+    search_page_size = 20
+
+    def popular_repos(self, repo):
+        extra_request_data = {
+            'params': {
+                'q': '%s+in:name+language:python' % repo,
+                'sort': 'stars',
+                'per_page': self.search_page_size
+            }
+        }
+        self.hammock = self.hammock.search.repositories
+        return 'GET', extra_request_data
+
+    def get_most_popular_repo(self, repo):
+        """ Return most popular owner/repo pair for given repo"""
+        repos = self.ask_about_popular_repos(repo=repo)
+        if 'items' in repos:
+            repos_names_and_owners = [(r['name'], r['owner']['login']) for r in repos['items']]
+            repos_with_same_name = list(filter(lambda n: repo.lower() == n[0].lower(), repos_names_and_owners))
+            if repos_with_same_name:
+                return repos_with_same_name[0]
+
+    def get_common_request_kwargs(self):
+        search_headers = {'Accept': 'application/vnd.github.preview'}
+        kwargs = super().get_common_request_kwargs()
+        if 'headers' in kwargs:
+            kwargs['headers'].update(search_headers)
+        else:
+            kwargs['headers'] = search_headers
+        return kwargs

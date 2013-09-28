@@ -58,3 +58,18 @@ class GithubTestCase(APITestCase):
         data = self.api_wrapper.ask_about_repo_info(owner=self.owner, repo=self.repo)
         self.assertEqual(data['html_url'], 'https://github.com/django/django')
         self.assertEqual(data['updated_at'], '2013-09-28T08:25:15Z')
+
+
+class GithubSearchTestCase(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.api_wrapper = github.GithubSearchWrapper()
+
+    def test_gives_most_popular_result_from_repos_with_same_name(self):
+        self.registerApiGetResponse(
+            "https://api.github.com/search/repositories",
+            '{"items": [{"name": "django-cms", "owner": {"login": "divio"}}, {"name": "django", "owner": {"login": "django"}}, {"name": "django", "owner": {"login": "fc"}}]}',
+        )
+
+        owner, _ = self.api_wrapper.get_most_popular_repo('django')
+        self.assertEqual(owner, 'django')

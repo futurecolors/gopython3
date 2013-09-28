@@ -22,8 +22,9 @@ class AbstractJsonApiWrapper(object):
     def make_request(self, call_slug):
         """ Returns all info about something from API"""
         def make_request_with_kwargs(**kwargs):
-            request_method, request_kwargs = getattr(self, call_slug)(**kwargs)
-            request_kwargs.update(self.get_common_request_kwargs())
+            request_method, additional_request_kwargs = getattr(self, call_slug)(**kwargs)
+            request_kwargs = self.get_common_request_kwargs()
+            request_kwargs.update(additional_request_kwargs)
             response = getattr(self.hammock, request_method)(**request_kwargs)
             self._reset_hammock()
             if response.status_code == 200:
