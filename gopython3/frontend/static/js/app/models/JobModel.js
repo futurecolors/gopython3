@@ -11,11 +11,15 @@ define('app/models/JobModel', [
         baseUrl: 'http://python3.apiary.io/api/v1/jobs/',
 
         url: function(){
+            var url;
+
             if (this.get('id')) {
-                return this.baseUrl + this.get('id') + '/';
+                url = this.baseUrl + this.get('id') + '/';
             } else {
-                return this.baseUrl;
+                url = this.baseUrl;
             }
+
+            return url;
         },
 
         initialize: function(){
@@ -30,6 +34,28 @@ define('app/models/JobModel', [
             id = urlParts.length > 2 ? parseInt(urlParts[urlParts.length - 2]) : null;
 
             this.set({id: id});
+        },
+
+        watch: function(){
+            this.save().then(_.bind(this.tryToSave, this));
+        },
+
+        tryToSave: function(){
+            var that = this;
+
+            setTimeout(function(){
+                that.fetch({
+                    success: _.bind(that.onSave, that)
+                });
+            }, 5000);
+        },
+
+        onSave: function(){
+            var packages = this.get('packages');
+            
+            if (_.where(packages, {status: 'completed'}).length != packages.length || packages.length == 0) {
+                this.tryToSave()
+            }
         }
     });
 });

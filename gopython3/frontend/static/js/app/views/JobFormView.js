@@ -30,7 +30,7 @@ define('app/views/JobFormView', [
             });
 
             this.model.set(data);
-            this.model.save();
+            this.model.watch();
         }
     });
 });
