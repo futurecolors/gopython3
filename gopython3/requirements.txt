@@ -1,5 +1,11 @@
 django-configurations==0.6
 dj-database-url==0.2.2
+
+hammock==0.2.4
+requests==2.0.0
+httpretty==0.5.9
+distlib==0.1.2
+
 django-model-utils==1.5.0
 jsonfield==0.9.19
 djangorestframework==2.3.8

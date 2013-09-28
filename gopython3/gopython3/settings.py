@@ -47,6 +47,7 @@ class Common(Configuration):
 
         # go python 3!
         'core',
+        'api'
     )
 
     MIDDLEWARE_CLASSES = (
@@ -86,6 +87,9 @@ class Common(Configuration):
 
     STATIC_URL = '/static/'
 
+    GITHUB_CLIENT_ID = values.Value('dummy')
+    GITHUB_CLIENT_SECRET = values.Value('dummy')
+
 
 class Dev(Common):
     """
@@ -102,6 +106,10 @@ class Prod(Common):
     TEMPLATE_DEBUG = DEBUG
 
     SECRET_KEY = values.SecretValue()
+
+    # API
+    GITHUB_CLIENT_ID = values.SecretValue()
+    GITHUB_CLIENT_SECRET = values.SecretValue()
 
 
 import djcelery
