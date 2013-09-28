@@ -17,8 +17,7 @@ define('app/views/JobFormView', [
 
         serializeData: function(){
             return {
-                job: this.model.toJSON(),
-                isEmpty: this.collection.length == 0
+                job: this.model.toJSON()
             };
         },
 

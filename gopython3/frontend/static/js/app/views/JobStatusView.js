@@ -5,7 +5,13 @@ define('app/views/JobStatusView', [
         template: 'app/templates/job.status.jade',
 
         initialize: function(){
-            this.collection.on('change', this.render, this)
+            this.collection.on('change reset', this.render, this)
+        },
+
+        serializeData: function(){
+            return {
+                progress: this.collection.getProgress()  * 100
+            };
         }
     });
 });

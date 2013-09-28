@@ -1,0 +1,5 @@
+div.progress.progress-striped
+    div.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
+        span.sr-only
+            = progress
+            | % complete

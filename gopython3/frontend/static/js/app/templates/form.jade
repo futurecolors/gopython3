@@ -3,5 +3,5 @@ form.job-form.form.js-form(role="form", method="post")
         textarea.job-form__textarea.form-control(name="requirements")= job.requirements
         span.input-group-btn
             button.job-form__submit.btn.btn-default(type="submit") GO!
-    if isEmpty
+    if !job.requirements
         p.help-block Enter the name of the package or list format requirements.txt

@@ -3,5 +3,9 @@ define('app/collections/PackageCollection', [
 ], function(
     Collection
 ){
-    return Collection.extend({});
+    return Collection.extend({
+        getProgress: function(){
+            return this.where({status: 'compeleted'}).length / this.length;
+        }
+    });
 });

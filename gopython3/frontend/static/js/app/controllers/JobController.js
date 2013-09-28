@@ -57,8 +57,7 @@ define('app/controllers/JobController', [
                 this.createDataStorages(true);
                 this.layout.ready(function(){
                     this.form.show(new JobFormView({
-                        model: that.model,
-                        collection: that.collection
+                        model: that.model
                     }));
                     this.status.close();
                     this.packages.close();
@@ -71,6 +70,9 @@ define('app/controllers/JobController', [
                 this.createDataStorages();
                 this.model.fetch();
                 this.layout.ready(function(){
+                    this.form.show(new JobFormView({
+                        model: that.model
+                    }));
                     this.status.show(new JobStatusView({
                         collection: that.collection
                     }));
