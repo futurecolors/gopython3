@@ -1,5 +1,6 @@
+from distlib.locators import locate
+
 from django.conf import settings
-import requests
 
 from . import abstract_wrappers
 
@@ -44,8 +45,7 @@ class PyPIWrapper(abstract_wrappers.AbstractJsonApiWrapper):
         return py3_versions
 
     def get_correct_name(self, name):
-        response = requests.get('http://pypi.python.org/simple/%s/' % name)
-        return response.url.split('/')[-2]
+        return locate(name).name
 
 
 class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
