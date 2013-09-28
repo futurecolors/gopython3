@@ -123,3 +123,7 @@ class JobSpec(TimeFrameStampedModel):
     """ A spec in a job """
     job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')
+
+    @property
+    def code(self):
+        return self.spec.code

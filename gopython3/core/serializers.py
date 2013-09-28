@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import JobSpec, Job
+from core.models import JobSpec, Job, Spec
 
 
 class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,7 +14,8 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = JobSpec
-        fields = ('id', 'name', 'version', 'status',
+        lookup_field = 'code'
+        fields = ('id', 'url', 'name', 'version', 'status',
                   'created_at', 'updated_at', 'started_at', 'finished_at',)
 
 
@@ -85,3 +86,21 @@ class CIField(serializers.WritableField):
             "url": obj.ci_url,
             "status": obj.ci_status
         }]
+
+
+class PackageSerializer(serializers.ModelSerializer):
+    id = serializers.Field(source='code')
+    name = serializers.Field(source='package.name')
+    created_at = serializers.DateTimeField(source='created')
+    updated_at = serializers.DateTimeField(source='modified')
+    pypi = PyPIField(source='*')
+    repo = RepoField(source='package')
+    issues = IssueField(source='package')
+    forks = ForkField(source='package')
+    ci = CIField(source='package')
+
+    class Meta:
+        model = Spec
+        fields = ('id', 'name', 'version', 'package', 'status',
+                  'created_at', 'updated_at', 'pypi', 'repo',
+                  'issues', 'forks', 'ci')
