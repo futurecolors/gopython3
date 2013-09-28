@@ -17,21 +17,27 @@ GET /jobs/
 < 200
 < Content-Type: application/json
 { "items": [
-    { "url": "/job/1/", 
+    { "id": 1,
+      "url": "/job/1/", 
       "status": "compeleted",
       "created_at": "2013-09-28T02:15:15Z",
+      "updated_at": "2013-09-28T02:15:15Z",
       "started_at": "2013-09-28T03:15:15Z",
       "finished_at": "2013-09-28T04:15:15Z"
     },
-    { "url": "/job/2/", 
+    { "id": 2,
+      "url": "/job/2/", 
       "status": "running",
       "created_at": "2013-09-28T02:18:15Z",
+      "updated_at": "2013-09-28T02:15:15Z",
       "started_at": "2013-09-28T03:18:15Z",
       "finished_at": null
     },
-    { "url": "/job/3/", 
+    { "id": 3,
+      "url": "/job/3/", 
       "status": "pending",
       "created_at": "2013-09-28T02:15:15Z",
+      "updated_at": "2013-09-28T02:15:15Z",
       "started_at": null,
       "finished_at": null
     }    
@@ -58,8 +64,9 @@ GET /jobs/{id}/
   "status": "running",
   "gopy3": null, 
   "created_at": "2013-09-28T02:15:15Z",
+  "updated_at": "2013-09-28T03:15:15Z",   
   "started_at": "2013-09-28T03:15:15Z",
-  "finished_at": false,
+  "finished_at": null,
   "packages": [
     { "url": "/packages/django/1.4.3/",
       "name": "django",
