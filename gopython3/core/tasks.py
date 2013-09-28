@@ -5,7 +5,13 @@ from api.wrappers import pypi
 
 @task
 def process_job(job_pk):
-    """ Process single batch of packages"""
+    """ Process single batch of packages
+
+        For each package spec we execute following tasks:
+            * PyPI query
+            * GitHub query
+            * Travis query
+    """
     job = Job.objects.get(pk=job_pk)
 
     for jobspec in job.job_specs.all():
@@ -34,7 +40,7 @@ def query_pypi(spec_pk):
     spec.python_versions = pkg_data['python3_supported_versions']
     spec.save()
 
-    # Canonical case for the win
+    # Canonical package name case for the win
     if pkg_data['name'] != spec.name:
         package = spec.package
         package.name = pkg_data['name']

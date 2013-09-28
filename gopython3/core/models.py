@@ -44,6 +44,11 @@ class Job(TimeFrameStampedModel):
     """
     STATUS = TASK_STATUS
     status = StatusField()
+    job_specs = models.ManyToManyField(
+        'Spec',
+        through='JobSpec',
+        blank=True, null=True)
+
     objects = JobManager()
 
 
@@ -107,5 +112,5 @@ class Spec(TimeStampedModel):
 
 class JobSpec(TimeFrameStampedModel):
     """ A spec in a job """
-    job = models.ForeignKey(Job, related_name='job_specs')
+    job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')

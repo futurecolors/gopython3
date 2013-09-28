@@ -1,8 +1,17 @@
 from django.db import transaction
 from rest_framework import viewsets, routers, serializers, status, mixins
 from rest_framework.response import Response
-from core.models import Job
+
+from .models import Job, Spec, JobSpec
 from .tasks import process_job
+
+
+class JobListingField(serializers.RelatedField):
+    def to_native(self, value):
+        return {
+            'id': value.id,
+            'version': value.version,
+        }
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
@@ -11,11 +20,12 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
     updated_at = serializers.DateTimeField(source='modified')
     started_at = serializers.DateTimeField(source='start')
     finished_at = serializers.DateTimeField(source='finish')
+    packages = JobListingField(many=True, source='job_specs')
 
     class Meta:
         model = Job
         fields = ('id', 'url', 'status', 'created_at',
-                  'updated_at', 'started_at', 'finished_at')
+                  'updated_at', 'started_at', 'finished_at', 'packages')
 
 
 class JobViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
