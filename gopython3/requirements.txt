@@ -3,3 +3,5 @@ django-configurations==0.6
 dj-database-url==0.2.2
 django-model-utils==1.5.0
 jsonfield==0.9.19
+djangorestframework==2.3.8
+Markdown==2.3.1

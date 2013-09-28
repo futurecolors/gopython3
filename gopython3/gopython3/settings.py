@@ -38,6 +38,10 @@ class Common(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
 
+        # 3rd party
+        'rest_framework',
+
+        # go python 3!
         'core',
     )
 
@@ -58,7 +62,7 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//ref/settings/#databases
     # http://django-configurations.readthedocs.org/en/latest/values/#configurations.values.DatabaseURLValue
 
-    DATABASES = values.DatabaseURLValue('sqlite://%s' % os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3'), environ=True)
+    DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3'), environ=True)
 
     # Internationalization
     # https://docs.djangoproject.com/en//topics/i18n/
