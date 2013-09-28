@@ -32,15 +32,24 @@ define('app/models/PackageModel', [
             this.fetchIfCompleted();
         },
 
+        isCompleted: function(){
+            return this.get('status') == 'completed';
+        },
+
         fetchIfCompleted: function(){
-            if (this.get('status') == 'completed') {
+            if (this.isCompleted()) {
                 this.fetch();
             }
         },
 
         getPython3Support: function(){
-            var info = this.toJSON();
+            var info;
 
+            if (!this.isCompleted()) {
+                return 'UNDEFINED'
+            }
+
+            info = this.toJSON();
             if (info.pypi && info.pypi.current && info.pypi.current.python3) {
                 return 'SUPPORTED';
             }

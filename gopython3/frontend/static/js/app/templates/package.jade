@@ -1,0 +1,34 @@
+article.package.panel.panel-default(class=blockClass)
+    header.panel-heading
+        if python3Support == 'SUPPORTED_IN_NEXT'
+            span.label.label-success.pull-right
+                | Python 3 is supported in version&nbsp;
+                = packageInfo.pypi.latest.version
+        = packageInfo.name
+        | &nbsp;
+        span.text-muted= packageInfo.version
+    div.package__body.panel-body
+        if isCompleted
+            div.row
+                if packageInfo.pypi && packageInfo.pypi.current
+                    div.col-sm-4
+                        a(href=packageInfo.pypi.current.url) pypi
+                if packageInfo.repo
+                    div.col-sm-4
+                        a(href=packageInfo.repo.url)
+                            | Repository (
+                            = moment(packageInfo.repo.last_commit_date).format('DD MMMM YYYY')
+                            | )
+                if packageInfo.ci
+                    div.col-sm-4
+                        a(href=packageInfo.ci.url)
+                            | Continuous integration (
+                            = packageInfo.ci.status
+                            | )
+            for issue in packageInfo.issues
+                a(href=issue.url)
+                    | Issue (
+                    = issue.status
+                    | )
+        else
+            div.package__loader
