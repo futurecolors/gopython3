@@ -15,6 +15,9 @@ class APITestCase(TestCase):
     def registerApiGetResponse(self, url, body, status_code=200, content_type='text/json'):
         HTTPretty.register_uri(HTTPretty.GET, url, body=body, status=status_code, content_type=content_type)
 
+    def registerApiGetRequestWithMultipleResponses(self, url, responses):
+        HTTPretty.register_uri(HTTPretty.GET, url, responses=[HTTPretty.Response(**r) for r in responses])
+
 
 class PyPITestCase(APITestCase):
     def setUp(self):
@@ -58,6 +61,17 @@ class GithubTestCase(APITestCase):
         data = self.api_wrapper.ask_about_repo_info(owner=self.owner, repo=self.repo)
         self.assertEqual(data['html_url'], 'https://github.com/django/django')
         self.assertEqual(data['updated_at'], '2013-09-28T08:25:15Z')
+
+    def test_wrapper_gets_correct_py3_issues(self):
+        self.registerApiGetRequestWithMultipleResponses(
+            url="https://api.github.com/repos/%s/%s/issues" % (self.owner, self.repo),
+            responses=(
+                {'body': '[{"number": "123", "html_url": "gh.com/issue/123", "state": "closed", "title": "UnicodeError", "body": "sometext", "owner": {"login": "dummy"}}]', 'status': 200},
+                {'body': '[{"number": "456", "html_url": "gh.com/issue/456", "state": "open", "title": "Python 3 support", "body": "sometext", "owner": {"login": "py3lover"}}]', 'status': 200}
+            )
+        )
+        py3_issues = self.api_wrapper.get_py3_issues_info(self.owner, self.repo)
+        self.assertListEqual(py3_issues, [{'state': 'open', 'title': 'Python 3 support', 'url': 'gh.com/issue/456'}])
 
 
 class GithubSearchTestCase(APITestCase):

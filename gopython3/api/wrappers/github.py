@@ -19,6 +19,14 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         self.hammock = self.hammock.repos(owner, repo).branches
         return 'GET', {}
 
+    def repo_issues(self, owner, repo, state=None):
+        self.hammock = self.hammock.repos(owner, repo).issues
+        if state:
+            additional_data = {'params': {'state': state}}
+        else:
+            additional_data = {}
+        return 'GET', additional_data
+
     def get_credentials(self):
         return {
             'client_id': settings.GITHUB_CLIENT_ID,
@@ -31,7 +39,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             'url': data['url'],
             'updated_at': data['updated_at'],
             'py3_fork': self.get_py3_fork_info(owner, repo),
-            'py3_issue': self.get_py3_issue_info(owner, repo),
+            'py3_issues': self.get_py3_issues_info(owner, repo),
             'services_info': self.get_services_info(owner, repo)
         }
 
@@ -53,14 +61,24 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             'url': py3_forks[0]['url']
         }
 
-    def get_py3_issue_info(self, owner, repo):
-        return ''
+    def get_py3_issues_info(self, owner, repo):
+        issues = self.ask_about_repo_issues(owner=owner, repo=repo, state='open')
+        issues += self.ask_about_repo_issues(owner=owner, repo=repo, state='closed')
+        issues_data = [{'number': i['number'], 'data': ''.join([i['title'], i['body']])} for i in issues]
+        filtered_issues_numbers = [i['number'] for i in filter(lambda i: self._has_py3_tracks([i['data']]), issues_data)]
+        if filtered_issues_numbers:
+            py3_issues = filter(lambda i: i['number'] in filtered_issues_numbers, issues)
+            return [{
+                'state': i['state'],
+                'title': i['title'],
+                'url': i['html_url']
+            } for i in py3_issues]
 
     def get_services_info(self, owner, repo):
         return ''
 
     def _has_py3_tracks(self, data):
-        return any([keyword.lower() in ''.join(data) for keyword in PYTHON_3_KEYWORDS])
+        return any([keyword.lower() in ''.join(data).lower() for keyword in PYTHON_3_KEYWORDS])
 
 
 class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
