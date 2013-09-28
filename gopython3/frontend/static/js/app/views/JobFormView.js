@@ -9,13 +9,15 @@ define('app/views/JobFormView', [
         template: 'app/templates/form.jade',
 
         initialize: function(){
-            this.model.on('change:url', function(){
-                Backbone.history.navigate(this.get('url').slice(location.href.length), {trigger: true});
+            this.model.on('change:id', function(){
+                Backbone.history.navigate('jobs/' + this.get('id') + '/', {trigger: true});
             });
+            this.collection.on('reset', this.render, this);
         },
 
         serializeData: function(){
             return {
+                job: this.model.toJSON(),
                 isEmpty: this.collection.length == 0
             };
         },

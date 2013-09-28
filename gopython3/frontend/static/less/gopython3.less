@@ -1,3 +1,14 @@
 @import '../bootstrap/less/bootstrap';
 
 
+@job-form-height: 80px;
+
+.job-form {
+    &__textarea {
+        height: @job-form-height;
+        resize: none;
+    }
+    &__submit {
+        height: @job-form-height - 11px;
+    }
+} 

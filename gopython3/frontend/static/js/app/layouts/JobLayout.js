@@ -12,7 +12,9 @@ define('app/layouts/JobLayout', [
 
         regions: {
             greeting: '.js-greeting',
-            form: '.js-form'
+            form: '.js-form',
+            status: '.js-status',
+            packages: '.js-packages'
         },
 
         onRender: function(){

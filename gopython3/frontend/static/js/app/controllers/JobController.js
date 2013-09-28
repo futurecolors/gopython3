@@ -4,6 +4,7 @@ define('app/controllers/JobController', [
     'app/layouts/JobLayout',
     'app/collections/PackageCollection',
     'app/views/JobFormView',
+    'app/views/JobStatusView',
     'app/models/JobModel'
 ], function (
     Backbone,
@@ -11,6 +12,7 @@ define('app/controllers/JobController', [
     JobLayout,
     PackageCollection,
     JobFormView,
+    JobStatusView,
     JobModel
 ) {
     return Marionette.Controller.extend(_.extend(
@@ -24,15 +26,27 @@ define('app/controllers/JobController', [
             onInitialize: function(){
                 this.layout = new JobLayout();
                 this.options.App.body.show(this.layout);
+            },
 
-                this.collection = new PackageCollection();
-                this.model = new JobModel();
+            createDataStorages: function(createNew){
+                if (!this.model || !this.collection || createNew) {
+                    this.collection = new PackageCollection();
+                    this.model = new JobModel();
+                    this.model.on('change:packages', function(){
+                        this.collection.reset(this.model.get('packages'));
+                    }, this)
+                }
             },
 
             onFinalize: function(){
                 this.layout.close();
-                this.collection.remove();
-                this.model.remove();
+
+                if (this.collection) {
+                    this.collection.remove();
+                }
+                if (this.model) {
+                    this.model.remove();
+                }
             }
         },
         // Routs
@@ -40,16 +54,27 @@ define('app/controllers/JobController', [
             index: function(){
                 var that = this;
 
+                this.createDataStorages(true);
                 this.layout.ready(function(){
                     this.form.show(new JobFormView({
                         model: that.model,
                         collection: that.collection
                     }));
+                    this.status.close();
+                    this.packages.close();
                 });
             },
 
             job: function(){
-                this.index();
+                var that = this;
+
+                this.createDataStorages();
+                this.model.fetch();
+                this.layout.ready(function(){
+                    this.status.show(new JobStatusView({
+                        collection: that.collection
+                    }));
+                });
             }
         }
     ));
