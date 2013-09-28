@@ -44,10 +44,7 @@ class Job(TimeFrameStampedModel):
     """
     STATUS = TASK_STATUS
     status = StatusField()
-    job_specs = models.ManyToManyField(
-        'Spec',
-        through='JobSpec',
-        blank=True, null=True)
+    job_specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
 
     objects = JobManager()
 
@@ -101,6 +98,10 @@ class Spec(TimeStampedModel):
     @property
     def name(self):
         return self.package.name
+
+    @property
+    def identifier(self):
+        return '%s/%s' % (self.package.slug, self.version)
 
     def __str__(self):
         return '<Spec: %s==%s>' % (self.name, self.version)

@@ -2,16 +2,24 @@ from django.db import transaction
 from rest_framework import viewsets, routers, serializers, status, mixins
 from rest_framework.response import Response
 
-from .models import Job, Spec, JobSpec
+from .models import Job, JobSpec
 from .tasks import process_job
 
 
-class JobListingField(serializers.RelatedField):
-    def to_native(self, value):
-        return {
-            'id': value.id,
-            'version': value.version,
-        }
+class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.Field(source='spec.identifier')
+    version = serializers.Field(source='spec.version')
+    name = serializers.Field(source='spec.name')
+    status = serializers.Field(source='spec.status')
+    created_at = serializers.DateTimeField(source='created')
+    updated_at = serializers.DateTimeField(source='modified')
+    started_at = serializers.DateTimeField(source='start')
+    finished_at = serializers.DateTimeField(source='finish')
+
+    class Meta:
+        model = JobSpec
+        fields = ('id', 'name', 'version', 'status',
+                  'created_at', 'updated_at', 'started_at', 'finished_at',)
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,12 +28,12 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
     updated_at = serializers.DateTimeField(source='modified')
     started_at = serializers.DateTimeField(source='start')
     finished_at = serializers.DateTimeField(source='finish')
-    packages = JobListingField(many=True, source='job_specs')
+    packages = SpecSetSerializer(source='jobspec_set', many=True)
 
     class Meta:
         model = Job
-        fields = ('id', 'url', 'status', 'created_at',
-                  'updated_at', 'started_at', 'finished_at', 'packages')
+        fields = ('id', 'url', 'packages', 'status',
+                  'created_at', 'updated_at', 'started_at', 'finished_at', )
 
 
 class JobViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
