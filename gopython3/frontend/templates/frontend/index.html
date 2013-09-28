@@ -1,1 +1,52 @@
-Hi!
+{% load static compress %}
+
+
+<!doctype html>
+<html class="no-js">
+<head>
+    <title>Go to python3, nerds!!!</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'less/gopython3.less' %}" type="text/less" />
+    {% endcompress %}
+</head>
+<body>
+    <script type="text/javascript">
+        var require = {
+            paths: {
+                backbone: 'libs/backbone',
+                underscore: 'libs/underscore',
+                jquery: 'libs/jquery',
+                marionette: 'libs/backbone.marionette',
+                'backbone.wreqr': 'libs/backbone.wreqr',
+                'backbone.babysitter': 'libs/backbone.babysitter',
+                'backbone.routefilter': 'libs/backbone.routefilter',
+                text: 'libs/require.text',
+                jade: 'libs/jade',
+                moment: 'libs/moment'
+            },
+            shim: {
+                jquery: {
+                    exports: 'jQuery'
+                },
+                underscore: {
+                    exports: '_'
+                },
+                backbone: {
+                    deps: ['jquery', 'underscore'],
+                    exports: 'Backbone'
+                },
+                marionette: {
+                    deps: ['jquery', 'underscore', 'backbone', 'backbone.routefilter'],
+                    exports: 'Marionette'
+                }
+            },
+            waitSeconds: 60,
+            urlArgs: "bust=" +  (new Date()).getTime()
+        };
+    </script>
+    <script src="{% static 'js/libs/require.js' %}" data-main="{% static 'js/init.js' %}"></script>
+</body>
+</html>

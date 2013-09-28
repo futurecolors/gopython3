@@ -1,0 +1,8 @@
+{
+    "name": "gopython3",
+    "version": "0.0.1",
+    "readme": "",
+    "dependencies": {
+        "less": "1.4.1"
+    }
+}
