@@ -55,6 +55,6 @@ class GithubTestCase(APITestCase):
             "https://api.github.com/repos/%s/%s" % (self.owner, self.repo),
             '{"html_url": "https://github.com/django/django", "updated_at": "2013-09-28T08:25:15Z"}',
         )
-        data = self.api_wrapper.ask_about_repository_info(owner=self.owner, repo=self.repo)
+        data = self.api_wrapper.ask_about_repo_info(owner=self.owner, repo=self.repo)
         self.assertEqual(data['html_url'], 'https://github.com/django/django')
         self.assertEqual(data['updated_at'], '2013-09-28T08:25:15Z')

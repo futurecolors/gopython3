@@ -7,7 +7,7 @@ class AbstractJsonApiWrapper(object):
     api_methods_prefix = 'ask_about'
 
     def __init__(self):
-        self.hammock = Hammock(self.base_url)
+        self._reset_hammock()
 
     def __getattr__(self, item):
         if item.startswith(self.api_methods_prefix):
@@ -25,11 +25,15 @@ class AbstractJsonApiWrapper(object):
             request_method, request_kwargs = getattr(self, call_slug)(**kwargs)
             request_kwargs.update(self.get_common_request_kwargs())
             response = getattr(self.hammock, request_method)(**request_kwargs)
+            self._reset_hammock()
             if response.status_code == 200:
                 return response.json()
             else:
                 return {}
         return make_request_with_kwargs
+
+    def _reset_hammock(self):
+        self.hammock = Hammock(self.base_url)
 
     # def example_api_method(self, some_name):
     #     """ Example of concrete API method.
