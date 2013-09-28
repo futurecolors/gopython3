@@ -1,5 +1,5 @@
 from distlib.locators import locate
-
+from django.utils.dateparse import parse_datetime
 from api import abstract_wrappers
 
 
@@ -17,7 +17,7 @@ class PyPIWrapper(abstract_wrappers.AbstractJsonApiWrapper):
         name = self.get_correct_name(name)
         data = self.ask_about_package_info(name=name, version=version)
         return {
-            'last_release_date': data['urls'][0]['upload_time'],
+            'last_release_date': parse_datetime(data['urls'][0]['upload_time']),
             'python3_supported_versions': list(self.get_py3_supported_versions(data)),
             'url': data['info']['package_url'],
             'name': name,
@@ -32,4 +32,3 @@ class PyPIWrapper(abstract_wrappers.AbstractJsonApiWrapper):
 
     def get_correct_name(self, name):
         return locate(name).name
-

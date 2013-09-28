@@ -1,9 +1,10 @@
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
-from core.util import parse_requirements
+from core.util import parse_requirements, normalize_package_name
 
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
@@ -25,7 +26,8 @@ class JobManager(models.Manager):
         reqs_list = parse_requirements(requirements)
         job = Job.objects.create()
         for package_name, version in reqs_list:
-            package, _ = Package.objects.get_or_create(name=package_name)
+            package, _ = Package.objects.get_or_create(name=package_name,
+                                                       slug=normalize_package_name(package_name))
             spec, _ = Spec.objects.get_or_create(package=package, version=version)
             JobSpec.objects.create(job=job, spec=spec)
         return job
@@ -53,6 +55,7 @@ class Package(TimeStampedModel):
             * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(help_text='Underscore, lowercased')
 
     # Repo data
     repo_url = models.URLField(blank=True)
@@ -77,6 +80,7 @@ class Package(TimeStampedModel):
     comment_most_voted = models.TextField(blank=True)
 
 
+@python_2_unicode_compatible
 class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
@@ -89,6 +93,13 @@ class Spec(TimeStampedModel):
     python_versions = JSONField(blank=True, null=True)
     status = StatusField()
 
+    @property
+    def name(self):
+        return self.package.name
+
+    def __str__(self):
+        return '<Spec: %s==%s>' % (self.name, self.version)
+
     class Meta:
         unique_together = (('package', 'version'),)
         index_together = unique_together
@@ -96,5 +107,5 @@ class Spec(TimeStampedModel):
 
 class JobSpec(TimeFrameStampedModel):
     """ A spec in a job """
-    job = models.ForeignKey(Job)
-    spec = models.ForeignKey(Spec)
+    job = models.ForeignKey(Job, related_name='job_specs')
+    spec = models.ForeignKey(Spec, related_name='job_specs')

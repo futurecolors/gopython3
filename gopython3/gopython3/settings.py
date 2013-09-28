@@ -44,6 +44,7 @@ class Common(Configuration):
         # 3rd party
         'rest_framework',
         'djcelery',
+        'kombu.transport.django',
 
         # go python 3!
         'core',
@@ -87,6 +88,9 @@ class Common(Configuration):
 
     STATIC_URL = '/static/'
 
+    BROKER_URL = values.Value('django://')
+
+    # API
     GITHUB_CLIENT_ID = values.Value('dummy')
     GITHUB_CLIENT_SECRET = values.Value('dummy')
 
@@ -106,6 +110,8 @@ class Prod(Common):
     TEMPLATE_DEBUG = DEBUG
 
     SECRET_KEY = values.SecretValue()
+
+    BROKER_URL = values.SecretValue()
 
     # API
     GITHUB_CLIENT_ID = values.SecretValue()

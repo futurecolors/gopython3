@@ -16,3 +16,7 @@ def parse_requirements(requirements_string):
         else:
             deps.append((requirement.name, None))
     return deps
+
+
+def normalize_package_name(name):
+    return name.lower().replace('-', '_')

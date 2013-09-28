@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
-from core.api import router
+from core.rest import router
 
 
 admin.autodiscover()
