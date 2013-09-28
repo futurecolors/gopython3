@@ -68,7 +68,8 @@ GET /jobs/{id}/
   "started_at": "2013-09-28T03:15:15Z",
   "finished_at": null,
   "packages": [
-    { "url": "/packages/django/1.4.3/",
+    { "id": "django/1.4.3",
+      "url": "http://127.0.0.1:8000/packages/django/1.4.3/",
       "name": "django",
       "version": "1.4.3",
       "status": "compeleted",
@@ -76,7 +77,8 @@ GET /jobs/{id}/
       "updated_at": "2013-09-28T03:22:18Z",
       "finished_at": "2013-09-28T03:22:18Z"
     },
-    { "url": "/packages/django-storages/",
+    { "id": "django-storages",
+      "url": "http://127.0.0.1:8000/packages/django-storages/",
       "name": "django-storages",
       "version": null,
       "status": "running",
@@ -84,8 +86,8 @@ GET /jobs/{id}/
       "updated_at": "2013-09-28T03:22:35Z",
       "finished_at": null
     },
-    {
-      "url": "/packages/django_compressor/1.1.2/",
+    { "id": "django_compressor/1.1.2",
+      "url": "http://127.0.0.1:8000/packages/django_compressor/1.1.2/",
       "name": "django-compressor",
       "version": "1.1.2",
       "status": "pending",
@@ -104,7 +106,8 @@ List view is not avaliable yet.
 GET /packages/{id}/{version}
 < 200
 < Content-Type: application/json
-{ "url": "/packages/django_compressor/1.3/",
+{ "id": "django_compressor/1.3",
+  "url": "http://127.0.0.1:8000/packages/django_compressor/1.3/",
   "name": "django-compressor",
   "version": "1.3",
   "gopy3": "B",
