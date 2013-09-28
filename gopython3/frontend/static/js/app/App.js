@@ -11,6 +11,7 @@ define('app/App', [
 
     // Инициализация
     App.addRegions({
+        body: '.js-body'
     });
     App.on('initialize:after', function(){
         JobModule(App);

@@ -9,6 +9,7 @@ define('app/routers/JobRouter', [
         },
 
         appRoutes: {
+            '': 'index'
         }
     });
 });

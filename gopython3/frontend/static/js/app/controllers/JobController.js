@@ -1,9 +1,11 @@
 define('app/controllers/JobController', [
     'backbone',
-    'marionette'
+    'marionette',
+    'app/layouts/JobLayout'
 ], function (
     Backbone,
-    Marionette
+    Marionette,
+    JobLayout
 ) {
     return Marionette.Controller.extend(_.extend(
         // Initialization
@@ -13,14 +15,18 @@ define('app/controllers/JobController', [
                 this.on('module:finalize', this.onFinalize, this);
             },
 
-            onInitialize: function(){s
+            onInitialize: function(){
+                this.layout = new JobLayout();
+                this.options.App.body.show(this.layout);
             },
 
             onFinalize: function(){
+                this.layout.close();
             }
         },
         // Routs
         {
+            index: function(){}
         }
     ));
 });
