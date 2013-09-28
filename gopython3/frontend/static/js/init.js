@@ -1,4 +1,41 @@
 (function () {
+    require.config({
+        paths: {
+            backbone: 'libs/backbone',
+            underscore: 'libs/underscore',
+            jquery: 'libs/jquery',
+            marionette: 'libs/backbone.marionette',
+            'backbone.wreqr': 'libs/backbone.wreqr',
+            'backbone.babysitter': 'libs/backbone.babysitter',
+            'backbone.routefilter': 'libs/backbone.routefilter',
+            text: 'libs/require.text',
+            jade: 'libs/jade',
+            moment: 'libs/moment',
+            'jquery.form': 'libs/jquery.form'
+        },
+        shim: {
+            jquery: {
+                exports: 'jQuery'
+            },
+            underscore: {
+                exports: '_'
+            },
+            backbone: {
+                deps: ['jquery', 'underscore'],
+                exports: 'Backbone'
+            },
+            marionette: {
+                deps: ['jquery', 'underscore', 'backbone', 'backbone.routefilter'],
+                exports: 'Marionette'
+            },
+            'jquery.form': {
+                deps: ['jquery']
+            }
+        },
+        waitSeconds: 60,
+        urlArgs: "bust=" +  (new Date()).getTime()
+    });
+
     var initBootstrap = function(){
         require(['../bootstrap/js/bootstrap']);
     };

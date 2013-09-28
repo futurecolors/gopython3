@@ -8,11 +8,11 @@ define('app/layouts/JobLayout', [
     return Marionette.Layout.extend({
         template: 'app/templates/layout.jade',
 
-        initialize: function(){
-        },
+        initialize: function(){},
 
         regions: {
-            greeting: '.js-greeting'
+            greeting: '.js-greeting',
+            form: '.js-form'
         },
 
         onRender: function(){

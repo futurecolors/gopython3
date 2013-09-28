@@ -17,7 +17,7 @@ define('app/App', [
         JobModule(App);
     });
     App.on('initialize:after', function(){
-        Backbone.history.start();
+        Backbone.history.start({pushState: true});
     });
 
     // Действие при старте модуля (вызывается из роутинга)

@@ -9,7 +9,9 @@ define('app/routers/JobRouter', [
         },
 
         appRoutes: {
-            '': 'index'
+            '': 'index',
+            'xxx': 'job',
+            'jobs/:id/': 'job'
         }
     });
 });
