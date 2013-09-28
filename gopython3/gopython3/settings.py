@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en//ref/settings/
 """
 import os
 
+from configurations import importer
+importer.install()
+
 from configurations import Configuration, values
 
 
@@ -40,6 +43,7 @@ class Common(Configuration):
 
         # 3rd party
         'rest_framework',
+        'djcelery',
 
         # go python 3!
         'core',
@@ -98,3 +102,7 @@ class Prod(Common):
     TEMPLATE_DEBUG = DEBUG
 
     SECRET_KEY = values.SecretValue()
+
+
+import djcelery
+djcelery.setup_loader()
