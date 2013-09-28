@@ -89,9 +89,10 @@ class Spec(TimeStampedModel):
     """
     STATUS = TASK_STATUS
 
+    code = models.CharField(max_length=100, unique=True)
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20)
-    release_date = models.DateField(blank=True, null=True)
+    release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
     status = StatusField()
 
@@ -99,12 +100,19 @@ class Spec(TimeStampedModel):
     def name(self):
         return self.package.name
 
-    @property
-    def identifier(self):
+    def get_identifier(self):
         return '%s/%s' % (self.package.slug, self.version)
+
+    @property
+    def pypi_url(self):
+        return "https://pypi.python.org/pypi/%s" % self.code
 
     def __str__(self):
         return '<Spec: %s==%s>' % (self.name, self.version)
+
+    def save(self, **kwargs):
+        self.code = self.get_identifier()
+        super(Spec, self).save(**kwargs)
 
     class Meta:
         unique_together = (('package', 'version'),)
