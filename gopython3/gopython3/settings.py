@@ -37,6 +37,8 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+
+        'api',
     )
 
     MIDDLEWARE_CLASSES = (
@@ -75,6 +77,9 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//howto/static-files/
 
     STATIC_URL = '/static/'
+
+    GITHUB_CLIENT_ID = values.SecretValue()
+    GITHUB_CLIENT_SECRET = values.SecretValue()
 
 
 class Dev(Common):
