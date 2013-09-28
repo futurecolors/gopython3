@@ -3,6 +3,7 @@ from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
+from core.util import parse_requirements
 
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
@@ -16,6 +17,20 @@ class TimeFrameStampedModel(TimeStampedModel):
         abstract = True
 
 
+class JobManager(models.Manager):
+
+    def create_from_requirements(self, requirements):
+        """ Create job from requirements.txt contents
+        """
+        reqs_list = parse_requirements(requirements)
+        job = Job.objects.create()
+        for package_name, version in reqs_list:
+            package, _ = Package.objects.get_or_create(name=package_name)
+            spec, _ = Spec.objects.get_or_create(package=package, version=version)
+            JobSpec.objects.create(job=job, spec=spec)
+        return job
+
+
 class Job(TimeFrameStampedModel):
     """ A worker process to check python 3 support of a list of requirements
 
@@ -27,6 +42,7 @@ class Job(TimeFrameStampedModel):
     """
     STATUS = TASK_STATUS
     status = StatusField()
+    objects = JobManager()
 
 
 class Package(TimeStampedModel):
@@ -36,7 +52,7 @@ class Package(TimeStampedModel):
             * All version-specific info is in Spec model
             * Non-PyPI info is pulled for latest repo version
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     # Repo data
     repo_url = models.URLField(blank=True)
@@ -69,8 +85,8 @@ class Spec(TimeStampedModel):
 
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20)
-    release_date = models.DateField(blank=True)
-    python_versions = JSONField()
+    release_date = models.DateField(blank=True, null=True)
+    python_versions = JSONField(blank=True, null=True)
     status = StatusField()
 
     class Meta:
