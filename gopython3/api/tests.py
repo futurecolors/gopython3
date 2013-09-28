@@ -18,6 +18,7 @@ class APITestCase(TestCase):
 
 class PyPITestCase(APITestCase):
     def setUp(self):
+        super().setUp()
         self.package_name = 'Django'
         self.package_version = '1.5.1'
         self.api_wrapper = concrete_wrappers.PyPIWrapper()
@@ -40,3 +41,20 @@ class PyPITestCase(APITestCase):
         )
         data = self.api_wrapper.ask_about_package_info(name=self.package_name, version=self.package_version)
         self.assertEqual(data['info']['version'], self.package_version)
+
+
+class GithubTestCase(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.owner = 'django'
+        self.repo = 'django'
+        self.api_wrapper = concrete_wrappers.GithubWrapper()
+
+    def test_wrapper_parses_data_correct(self):
+        self.registerApiGetResponse(
+            "https://api.github.com/repos/%s/%s" % (self.owner, self.repo),
+            '{"html_url": "https://github.com/django/django", "updated_at": "2013-09-28T08:25:15Z"}',
+        )
+        data = self.api_wrapper.ask_about_repository_info(owner=self.owner, repo=self.repo)
+        self.assertEqual(data['html_url'], 'https://github.com/django/django')
+        self.assertEqual(data['updated_at'], '2013-09-28T08:25:15Z')

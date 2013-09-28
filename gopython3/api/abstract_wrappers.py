@@ -40,3 +40,22 @@ class AbstractJsonApiWrapper(object):
     #     """
     #     self.hammock = self.hammock.blah.blah
     #     return 'GET', {}
+
+
+class AbstractJsonApiWrapperWithAuth(AbstractJsonApiWrapper):
+    """ API wrapper with authorisation support."""
+    def get_credentials(self):
+        """ Auth data in GET params"""
+        return {}
+
+    def header_credentials(self):
+        """ Auth data in request headers"""
+        return {}
+
+    def get_common_request_kwargs(self):
+        kwargs = super(AbstractJsonApiWrapperWithAuth, self).get_common_request_kwargs()
+        kwargs.update({
+            'params': self.get_credentials(),
+            'headers': self.header_credentials(),
+        })
+        return kwargs

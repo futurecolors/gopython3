@@ -78,6 +78,9 @@ class Common(Configuration):
 
     STATIC_URL = '/static/'
 
+    GITHUB_CLIENT_ID = values.SecretValue()
+    GITHUB_CLIENT_SECRET = values.SecretValue()
+
 
 class Dev(Common):
     """
