@@ -27,6 +27,17 @@ define('app/models/PackageModel', [
             }
         },
 
+        initialize: function(){
+            this.on('change:status', this.fetchIfCompleted, this);
+            this.fetchIfCompleted();
+        },
+
+        fetchIfCompleted: function(){
+            if (this.get('status') == 'completed') {
+                this.fetch();
+            }
+        },
+
         getPython3Support: function(){
             var info = this.toJSON();
 

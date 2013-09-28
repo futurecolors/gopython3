@@ -1,11 +1,15 @@
 define('app/collections/PackageCollection', [
-    'app/collections/Collection'
+    'app/collections/Collection',
+    'app/models/PackageModel'
 ], function(
-    Collection
+    Collection,
+    PackageModel
 ){
     return Collection.extend({
+        model: PackageModel,
+
         getProgress: function(){
-            return this.where({status: 'compeleted'}).length / this.length;
+            return this.where({status: 'completed'}).length / this.length;
         },
 
         getSupportStatus: function(){
@@ -13,7 +17,7 @@ define('app/collections/PackageCollection', [
                 result = {};
 
             supportStatuses = _.map(
-                this.where({status: 'compeleted'}),
+                this.where({status: 'completed'}),
                 function(package){
                     return package.getPython3Support()
                 }
