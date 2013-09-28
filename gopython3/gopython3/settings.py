@@ -37,6 +37,8 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+
+        'api',
     )
 
     MIDDLEWARE_CLASSES = (
