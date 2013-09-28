@@ -1,7 +1,7 @@
 from django.test import TestCase
 from httpretty import HTTPretty
 
-from . import concrete_wrappers
+from api.wrappers import github, pypi
 
 
 class APITestCase(TestCase):
@@ -21,7 +21,7 @@ class PyPITestCase(APITestCase):
         super().setUp()
         self.package_name = 'Django'
         self.package_version = '1.5.1'
-        self.api_wrapper = concrete_wrappers.PyPIWrapper()
+        self.api_wrapper = pypi.PyPIWrapper()
 
     def test_wrapper_parses_data_correct(self):
         self.registerApiGetResponse(
@@ -48,7 +48,7 @@ class GithubTestCase(APITestCase):
         super().setUp()
         self.owner = 'django'
         self.repo = 'django'
-        self.api_wrapper = concrete_wrappers.GithubWrapper()
+        self.api_wrapper = github.GithubWrapper()
 
     def test_wrapper_parses_data_correct(self):
         self.registerApiGetResponse(
