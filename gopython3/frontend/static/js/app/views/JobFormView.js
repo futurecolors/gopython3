@@ -12,7 +12,6 @@ define('app/views/JobFormView', [
             this.model.on('change:id', function(){
                 Backbone.history.navigate('jobs/' + this.get('id') + '/', {trigger: true});
             });
-            this.collection.on('reset', this.render, this);
         },
 
         serializeData: function(){

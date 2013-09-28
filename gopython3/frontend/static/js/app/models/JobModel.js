@@ -10,16 +10,16 @@ define('app/models/JobModel', [
 
         baseUrl: 'http://python3.apiary.io/api/v1/jobs/',
 
-        initialize: function(){
-            this.on('change:url', this.setId, this);
-        },
-
         url: function(){
             if (this.get('id')) {
                 return this.baseUrl + this.get('id') + '/';
             } else {
                 return this.baseUrl;
             }
+        },
+
+        initialize: function(){
+            this.on('change:url', this.setId, this);
         },
 
         setId: function(){

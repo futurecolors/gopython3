@@ -10,7 +10,8 @@ define('app/views/JobStatusView', [
 
         serializeData: function(){
             return {
-                progress: this.collection.getProgress()  * 100
+                progress: this.collection.getProgress()  * 100,
+                support: this.collection.getSupportStatus()
             };
         }
     });
