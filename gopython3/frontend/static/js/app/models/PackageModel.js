@@ -15,6 +15,7 @@ define('app/models/PackageModel', [
             repo: {},
             issues: [],
             forks: [],
+            pr: [],
             ci: {},
             comments: {}
         },

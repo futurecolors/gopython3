@@ -1,32 +1,35 @@
 article.package(class= isSupported ? 'package_status_supported' : '')
-    if isCompleted
+    if isSupported
         if python3Support == 'SUPPORTED_IN_NEXT'
             a.package__next(href=packageInfo.pypi.latest.url)= 'Supported in ' + packageInfo.pypi.latest.version
     else
-        if packageInfo.pr
-            a.package__link(href=packageInfo.pr[0].url)
-                i.package__icon.package__icon-pull
-                | Pull request
-        if packageInfo.forks
-            a.package__link(href=packageInfo.forks[0].url)
-                i.package__icon.package__icon-fork
-                | Fork
-        if packageInfo.issues
-            a.package__link(href=packageInfo.issues[0].url)
-                i.package__icon.package__icon-issue
-                | Issue
-        if packageInfo.ci
-            a.package__link(href=packageInfo.ci.url, title= 'Build status is ' + packageInfo.ci.status)
-                i.package__icon.package__icon-travis
-                | Travis CI
-        if packageInfo.repo
-            a.package__link(href=packageInfo.repo.url, title=moment(packageInfo.repo.last_commit_date).format('Last commit date DD MMMM YYYY'))
-                i.package__icon.package__icon-github
-                | GitHub
-        if packageInfo.pypi && packageInfo.pypi.current
-            a.package__link(href=packageInfo.pypi.current.url)
-                i.package__icon.package__icon-pypi
-                | PyPI
+        if isCompleted
+            if packageInfo.pr.length
+                a.package__link(href=packageInfo.pr[0].url)
+                    i.package__icon.package__icon-pull
+                    | Pull request
+            if packageInfo.forks.length
+                a.package__link(href=packageInfo.forks[0].url)
+                    i.package__icon.package__icon-fork
+                    | Fork
+            if packageInfo.issues.length
+                a.package__link(href=packageInfo.issues[0].url)
+                    i.package__icon.package__icon-issue
+                    | Issue
+            if packageInfo.ci
+                a.package__link(href=packageInfo.ci.url, title= 'Build status is ' + packageInfo.ci.status)
+                    i.package__icon.package__icon-travis
+                    | Travis CI
+            if packageInfo.repo
+                a.package__link(href=packageInfo.repo.url, title=moment(packageInfo.repo.last_commit_date).format('Last commit date DD MMMM YYYY'))
+                    i.package__icon.package__icon-github
+                    | GitHub
+            if packageInfo.pypi && packageInfo.pypi.current
+                a.package__link(href=packageInfo.pypi.current.url)
+                    i.package__icon.package__icon-pypi
+                    | PyPI
+        else
+            span.package__loader
     h2.package__name
         = packageInfo.name
         span.package__version= packageInfo.version

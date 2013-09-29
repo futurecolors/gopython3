@@ -16,7 +16,7 @@ define('app/views/PackageView', [
             var python3Support;
 
             python3Support = this.model.getPython3Support();
-
+            
             return {
                 packageInfo: this.model.toJSON(),
                 isCompleted: this.model.isCompleted(),
