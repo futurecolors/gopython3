@@ -2,6 +2,8 @@ article.package(class= isSupported ? 'package_status_supported' : '')
     if isSupported
         if python3Support == 'SUPPORTED_IN_NEXT'
             a.package__next(href=packageInfo.pypi.latest.url)= 'Supported in ' + packageInfo.pypi.latest.version
+        else
+            i.package__ok.glyphicon.glyphicon-ok
     else
         if isCompleted
             if packageInfo.pr.length
