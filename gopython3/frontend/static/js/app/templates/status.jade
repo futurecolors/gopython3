@@ -9,7 +9,7 @@ section.status
                             = progress
                             | % complete
             else
-                div.status__message= message
+                div.status__message!= message
         span.status__counter
             | Supported
             span.status__counter-value

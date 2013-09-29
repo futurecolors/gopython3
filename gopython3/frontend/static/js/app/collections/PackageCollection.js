@@ -34,12 +34,12 @@ define('app/collections/PackageCollection', [
                 message;
 
             counters = this.getSupportStatus();
-            if (counters.SUPPORTED_PROBABLY.length == 0 && counters.UNKNOWN.length == 0) {
-                message = 'Миграция на третий питон возможна :-)'
-            } else if (counters.SUPPORTED.length + counters.SUPPORTED_IN_NEXT.length > counters.SUPPORTED_PROBABLY.length + counters.UNKNOWN.length) {
-                message = 'Стоит попробовать';
+            if (counters.SUPPORTED_PROBABLY == 0 && counters.UNKNOWN == 0) {
+                message = 'Migrate to python 3 is quite possible :-)'
+            } else if (counters.SUPPORTED + counters.SUPPORTED_IN_NEXT > counters.SUPPORTED_PROBABLY + counters.UNKNOWN) {
+                message = 'Worth a try &hellip;';
             } else {
-                message = 'Не стоит и мечтать :-(';
+                message = 'Better luck next time :-(';
             }
 
             return message;
