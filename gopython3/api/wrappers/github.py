@@ -89,8 +89,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
                     'title': i['title'],
                     'url': i['html_url']
                 } for i in py3_issues]
-        else:
-            return []
+        return []
 
     def get_py3_pull_requests(self, owner, repo):
         pulls = self.ask_about_repo_pull_requests(owner=owner, repo=repo, state='open') or []
