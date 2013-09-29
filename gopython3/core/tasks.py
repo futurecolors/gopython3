@@ -49,10 +49,10 @@ def notify_completed_spec(job_spec_pk):
     """ Job has finished, now we need to record the result
     """
     job_spec = JobSpec.objects.get(pk=job_spec_pk)
-    job_spec.do_finish()
     spec = job_spec.spec
     spec.status = 'completed'
     spec.save(update_fields=['status'])
+    job_spec.do_finish()
 
 
 @task
