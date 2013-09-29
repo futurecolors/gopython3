@@ -111,19 +111,6 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     def _has_py3_tracks(self, data):
         return any([keyword.lower() in ''.join(data).lower() for keyword in PYTHON_3_KEYWORDS])
 
-    def parse_github_url(self, url):
-        """ Returns owner/repo dict for github repo url (like https://github.com/futurecolors/djangodash2013)."""
-        parsed_url = urlparse(url)
-        host, path = parsed_url.hostname, parsed_url.path
-        if host == 'github.com':
-            splitted = path.strip('/').split('/')
-            if len(splitted) == 2:
-                return {
-                    'owner': splitted[0],
-                    'repo': splitted[1],
-                }
-        return None
-
 
 class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     base_url = 'https://api.github.com'
@@ -159,3 +146,17 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         else:
             kwargs['headers'] = search_headers
         return kwargs
+
+
+def parse_github_url(url):
+    """ Returns owner/repo dict for github repo url (like https://github.com/futurecolors/djangodash2013)."""
+    parsed_url = urlparse(url)
+    host, path = parsed_url.hostname, parsed_url.path
+    if host == 'github.com':
+        splitted = path.strip('/').split('/')
+        if len(splitted) == 2:
+            return {
+                'owner': splitted[0],
+                'repo_name': splitted[1],
+            }
+    return None
