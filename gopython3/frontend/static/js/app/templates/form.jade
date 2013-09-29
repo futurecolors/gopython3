@@ -1,7 +1,7 @@
 form.job-form.form.js-form(role="form", method="post")
     div.job-form__instruction Paste you requirements.txt below&hellip;
     div.job-form__input.input-group
-        textarea.job-form__textarea.form-control(name="requirements")= job.requirements
+        textarea.job-form__textarea.js-requirements.form-control(name="requirements")= job.requirements
         span.input-group-btn
-            button.job-form__submit.btn.btn-success(type="submit") GO!
+            button.job-form__submit.btn.btn-success.js-submit(type="submit") GO!
     div.job-form__instruction &hellip;and we'll tell how much effort it will take to go python 3 for your project.

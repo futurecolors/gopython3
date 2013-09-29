@@ -3,7 +3,9 @@ define('app/views/JobFormView', [
 ], function(Marionette){
     return Marionette.ItemView.extend({
         events: {
-            'submit .js-form': 'onFormSubmit'
+            'submit .js-form': 'onFormSubmit',
+            'change .js-requirements': 'setRequirementsHeight',
+            'keyup .js-requirements': 'setRequirementsHeight'
         },
 
         template: 'app/templates/form.jade',
@@ -31,6 +33,21 @@ define('app/views/JobFormView', [
 
             this.model.set(data);
             this.model.watch();
+        },
+
+        setRequirementsHeight: function(){
+            var $requirements,
+                incomeRowCount,
+                rowCount,
+                height;
+
+            $requirements = this.$('.js-requirements');
+            incomeRowCount = $requirements.val().split('\n').length;
+            rowCount = incomeRowCount > 4 ? 4 : incomeRowCount;
+            height = 20 * rowCount;
+
+            $requirements.attr('style', 'height: ' + (height + 12) + 'px !important');
+            this.$('.js-submit').height(height - 2);
         }
     });
 });
