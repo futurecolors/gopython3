@@ -1,4 +1,4 @@
-from celery import chain, group
+from celery import chain, group, chord
 from celery.task import task
 from core.models import Job, Spec, Package, JobSpec
 from api.wrappers import pypi, github
@@ -12,14 +12,12 @@ def process_job(job_pk):
             * PyPI query
             * GitHub query
             * Travis query
-
-        TODO: job notify
     """
     job = Job.objects.get(pk=job_pk)
     job.do_start()
 
-    for job_spec in JobSpec.objects.filter(job=job):
-        process_spec.delay(job_spec.pk)
+    return chord(process_spec.s(job_spec.pk)
+                 for job_spec in JobSpec.objects.filter(job=job))(notify_completed_job.si(job_pk))
 
 
 @task
@@ -29,7 +27,7 @@ def process_spec(job_spec_pk):
     job_spec.do_start()
 
     return chain(query_pypi.s(job_spec.spec.pk),
-                 notify_completed_spec.s(job_spec_pk)).delay()
+                 notify_completed_spec.si(job_spec_pk)).delay()
 
 
 @task
@@ -40,7 +38,7 @@ def notify_completed_job(job_pk):
 
 
 @task
-def notify_completed_spec(r, job_spec_pk):
+def notify_completed_spec(job_spec_pk):
     """ Job has finished, now we need to record the result
         FIXME: DRY!
     """
