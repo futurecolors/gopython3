@@ -18,13 +18,16 @@ class PyPIWrapper(abstract_wrappers.AbstractJsonApiWrapper):
     def get_short_info(self, name, version=None):
         name = self.get_correct_name(name)
         data = self.ask_about_package_info(name=name, version=version)
-        return {
-            'last_release_date': parse_datetime(data['urls'][0]['upload_time']),
-            'python3_supported_versions': list(self.get_py3_supported_versions(data)),
-            'url': data['info']['package_url'],
-            'name': name,
-            'version': data['info']['version']
-        }
+        if data:
+            return {
+                'last_release_date': parse_datetime(data['urls'][0]['upload_time']),
+                'python3_supported_versions': list(self.get_py3_supported_versions(data)),
+                'url': data['info']['package_url'],
+                'name': name,
+                'version': data['info']['version']
+            }
+        else:
+            return {}
 
     def get_py3_supported_versions(self, data):
         language_classifiers = data['info']['classifiers']
