@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en//ref/settings/
 """
 import os
 
+from configurations import importer
+importer.install()
+
 from configurations import Configuration, values
 
 
@@ -38,7 +41,14 @@ class Common(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
 
-        'api',
+        # 3rd party
+        'rest_framework',
+        'djcelery',
+        'kombu.transport.django',
+
+        # go python 3!
+        'core',
+        'api'
     )
 
     MIDDLEWARE_CLASSES = (
@@ -58,7 +68,7 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//ref/settings/#databases
     # http://django-configurations.readthedocs.org/en/latest/values/#configurations.values.DatabaseURLValue
 
-    DATABASES = values.DatabaseURLValue('sqlite://%s' % os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3'), environ=True)
+    DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3'), environ=True)
 
     # Internationalization
     # https://docs.djangoproject.com/en//topics/i18n/
@@ -78,15 +88,25 @@ class Common(Configuration):
 
     STATIC_URL = '/static/'
 
-    GITHUB_CLIENT_ID = values.SecretValue()
-    GITHUB_CLIENT_SECRET = values.SecretValue()
+    BROKER_URL = values.Value('django://')
+
+    # API
+    GITHUB_CLIENT_ID = values.Value('dummy')
+    GITHUB_CLIENT_SECRET = values.Value('dummy')
 
 
 class Dev(Common):
     """
     The in-development settings and the default configuration.
     """
-    pass
+
+
+class Debug(Dev):
+    INSTALLED_APPS = Common.INSTALLED_APPS + ('debug_toolbar',)
+    INTERNAL_IPS = ('127.0.0.1',)
+    MIDDLEWARE_CLASSES = Common.MIDDLEWARE_CLASSES + (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
 
 
 class Prod(Common):
@@ -97,3 +117,13 @@ class Prod(Common):
     TEMPLATE_DEBUG = DEBUG
 
     SECRET_KEY = values.SecretValue()
+
+    BROKER_URL = values.SecretValue()
+
+    # API
+    GITHUB_CLIENT_ID = values.SecretValue()
+    GITHUB_CLIENT_SECRET = values.SecretValue()
+
+
+import djcelery
+djcelery.setup_loader()
