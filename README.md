@@ -19,8 +19,8 @@ Steps to get it running locally:
 For production environments:
 
     export DJANGO_CONFIGURATION = Prod
-    export BROKER_URL = foo
+    export DJANGO_BROKER_URL = foo
     export DATABASE_URL = bar
-    export SECRET_KEY = baz
+    export DJANGO_SECRET_KEY = baz
     export DJANGO_GITHUB_CLIENT_ID = xxx
     export DJANGO_GITHUB_CLIENT_SECRET = yyy

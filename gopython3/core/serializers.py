@@ -26,6 +26,7 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
     started_at = serializers.DateTimeField(source='start')
     finished_at = serializers.DateTimeField(source='finish')
     packages = SpecSetSerializer(source='jobspec_set', many=True)
+    status = serializers.Field(source='get_status')
 
     class Meta:
         model = Job

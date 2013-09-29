@@ -62,6 +62,12 @@ class Job(TimeFrameStampedModel):
 
     objects = JobManager()
 
+    def get_status(self):
+        if (self.status == 'completed' and
+            self.job_specs.filter(status__in=['pending', 'running']).count()):
+            return 'running'
+        return self.status
+
 
 class Package(TimeStampedModel):
     """ A python package, defined by its name on PyPI
