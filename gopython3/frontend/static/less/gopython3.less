@@ -5,6 +5,8 @@
  * @section     Page layout
  */
 
+@page-width: 800px;
+
 body {
     max-width: 2000px;
     margin: 0 auto;
@@ -22,7 +24,7 @@ body {
     }
     &__content-wrapper {
         position: relative;
-        width: 600px;
+        width: @page-width;
         margin: 0 auto;
     }
     &__header {
@@ -76,7 +78,7 @@ body {
 
 .job-form {
     min-height: @job-form-height + 20px;
-    margin-bottom: 300px;
+    margin-bottom: 350px;
 
     &__instruction {
         margin: 5px 0;
@@ -114,12 +116,16 @@ body {
 }
 
 
+/**
+ * @section     Package line
+ */
+
 @package-supported-color: #268b26;
 
 .package {
     position: relative;
     padding: 3px 7px;
-    margin:0 10px 7px 0;
+    margin:0 10px 10px 0;
 
     &_status_supported {
         background: white;
@@ -166,5 +172,38 @@ body {
     &__version {
         font-size: 20px;
         opacity: 0.7;
+    }
+    &__link {
+        margin: 2px 0 0 10px;
+        float: right;
+        color: black;
+    }
+    &__icon {
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        margin: -1px 0 0 0;
+        vertical-align: middle;
+        background: url(../images/icons.png) 0 0 no-repeat;
+        background-size: 75px 50px;
+
+        &-github {
+            background-position: 0 0;
+        }
+        &-pypi {
+            background-position: -25px 0;
+        }
+        &-travis {
+            background-position: -50px 0;
+        }
+        &-pull {
+            background-position: 0 -25px;
+        }
+        &-fork {
+            background-position: -25px -25px;
+        }
+        &-issue {
+            background-position: -50px -25px;
+        }
     }
 }
