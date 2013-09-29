@@ -1,5 +1,7 @@
-from distlib.locators import locate
+import requests
+
 from django.utils.dateparse import parse_datetime
+
 from api import abstract_wrappers
 
 
@@ -31,4 +33,5 @@ class PyPIWrapper(abstract_wrappers.AbstractJsonApiWrapper):
         return py3_versions
 
     def get_correct_name(self, name):
-        return locate(name).name
+       response = requests.get('http://pypi.python.org/simple/%s/' % name)
+       return response.url.split('/')[-2]
