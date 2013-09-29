@@ -68,6 +68,8 @@ class Job(TimeFrameStampedModel):
             return 'running'
         return self.status
 
+    def __unicode__(self):
+        return 'Job %s [%s]' % (self.pk, self.status)
 
 class Package(TimeStampedModel):
     """ A python package, defined by its name on PyPI
@@ -104,6 +106,8 @@ class Package(TimeStampedModel):
     comment_count = models.IntegerField(default=0)
     comment_most_voted = models.TextField(blank=True)
 
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, self.slug)
 
 @python_2_unicode_compatible
 class Spec(TimeStampedModel):
@@ -122,6 +126,9 @@ class Spec(TimeStampedModel):
     latest_version = models.CharField(max_length=20, blank=True)
     latest_release_date = models.DateTimeField(blank=True, null=True)
     latest_python_versions = JSONField(blank=True, null=True)
+
+    def __unicode__(self):
+        return '%s==%s' % (self.package.name, self.version)
 
     @property
     def name(self):
@@ -155,6 +162,9 @@ class JobSpec(TimeFrameStampedModel):
     job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')
     status = StatusField()
+
+    def __unicode__(self):
+        return '%s %s' % (self.job, self.spec)
 
     @property
     def code(self):
