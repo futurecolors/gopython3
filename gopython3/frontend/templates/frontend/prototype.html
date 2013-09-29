@@ -1,0 +1,36 @@
+{% load static compress %}
+
+
+<!doctype html>
+<html class="no-js">
+<head>
+    <title>Go Python 3!</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'less/gopython3.less' %}" type="text/less" />
+    {% endcompress %}
+    <link href='http://fonts.googleapis.com/css?family=Averia+Sans+Libre&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <section class="page">
+        <div class="page__wrapper">
+            <header class="page__header">
+                <a class="page__logo" href="/">Go Python 3!</a>
+                <a class="page__madeby" href="http://futurecolors.ru">
+                    Made by <span style="color: #d726ad">Future</span> <span style="color: #55aad7">Colors</span>
+                </a>
+                <div class="page__greeting">
+                    Dear geeks, the time has come to migrate all your projects to Python 3.<br />
+                    We'll help you update your dependencies, and you need to migrate only your own code.
+                </div>
+            </header>
+        </div>
+    </section>
+</body>
+</html>
+
+
+
+Paste you requirements.txt below and we'll tell how much effort it will take to go python 3 for your project.

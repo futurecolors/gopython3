@@ -1,6 +1,63 @@
 @import '../bootstrap/less/bootstrap';
 
 
+/**
+ * @section     Page layout
+ */
+
+body {
+    max-width: 2000px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px fade(black, 50%);
+}
+.page {
+    min-height: 1200px;
+    font-family: 'Averia Sans Libre', cursive;
+    background: url(../images/ground.png) 50% 500px no-repeat;
+}
+.page__wrapper {
+    position: relative;
+    width: 600px;
+    margin: 0 auto;
+}
+.page__header {}
+.page__logo {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    display: block;
+    width: 194px;
+    height: 129px;
+    padding-right: 14px;
+    line-height: 129px;
+    text-align: center;
+    font-size: 22px;
+    color: black;
+    background: url(../images/cloud.png) 0 0 no-repeat;
+
+    &:hover {
+        text-decoration: none;
+        color: black;
+    }
+}
+.page__madeby {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    font-size: 15px;
+    text-decoration: none;
+    color: black;
+
+    &:hover {
+        color: black;
+    }
+}
+.page__greeting {
+    padding: 190px 0 0;
+    font-size: 18px;
+}
+
+
 @job-form-height: 80px;
 
 .job-form {
