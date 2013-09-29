@@ -75,7 +75,6 @@ class ForkField(serializers.WritableField):
     def to_native(self, obj):
         return [{
             "url": obj.fork_url,
-            "status": obj.fork_status
         }]
 
 
@@ -101,6 +100,6 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spec
-        fields = ('id', 'name', 'version', 'package', 'status',
+        fields = ('id', 'name', 'version', 'package',
                   'created_at', 'updated_at', 'pypi', 'repo',
                   'issues', 'forks', 'ci')
