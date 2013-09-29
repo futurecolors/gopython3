@@ -4,10 +4,18 @@ Go Python 3
 Dear geeks, the time has come to migrate all your projects to Python 3.
 We'll help you update your dependencies, and you need to migrate only your own code.
 
+http://gopython3.com/
+---------------------
+
+For those of you REST lovers:
+
+API: http://gopython3.com/api/v1
+Docs: http://docs.python3.apiary.io/
+
 Install
 --------
 
-Steps to get it running locally:
+Steps to get it running locally (commands are not exact):
 
     git clone
     pip install
