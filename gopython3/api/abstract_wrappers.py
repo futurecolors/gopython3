@@ -24,7 +24,11 @@ class AbstractJsonApiWrapper(object):
         def make_request_with_kwargs(**kwargs):
             request_method, additional_request_kwargs = getattr(self, call_slug)(**kwargs)
             request_kwargs = self.get_common_request_kwargs()
-            request_kwargs.update(additional_request_kwargs)
+            for k, v in additional_request_kwargs.items():
+                if k in request_kwargs and type(v) is dict:  # not overriding sub-dicts
+                    request_kwargs[k].update(v)
+                else:
+                    request_kwargs[k] = v
             response = getattr(self.hammock, request_method)(**request_kwargs)
             self._reset_hammock()
             if response.status_code == 200:
@@ -63,4 +67,5 @@ class AbstractJsonApiWrapperWithAuth(AbstractJsonApiWrapper):
             'params': self.get_credentials(),
             'headers': self.header_credentials(),
         })
+        print('auth', kwargs)
         return kwargs
