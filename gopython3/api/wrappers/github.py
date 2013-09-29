@@ -78,7 +78,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         closed_issues = self.ask_about_repo_issues(owner=owner, repo=repo, state='closed') or []
         issues += closed_issues
         if issues:
-            issues_data = [{'number': i['number'], 'data': ''.join([i['title'] or '', i['body'] or ''])} for i in issues]
+            issues_data = [{'number': i['number'], 'data': i['title'] or ''} for i in issues]
             filtered_issues_numbers = [i['number'] for i in filter(lambda i: self._has_py3_tracks([i['data']]), issues_data)]
             if filtered_issues_numbers:
                 py3_issues = filter(lambda i: i['number'] in filtered_issues_numbers, issues)
@@ -93,7 +93,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     def get_py3_pull_requests(self, owner, repo):
         pulls = self.ask_about_repo_pull_requests(owner=owner, repo=repo, state='open') or []
         pulls += self.ask_about_repo_pull_requests(owner=owner, repo=repo, state='closed') or []
-        fields_to_lookup = ('title', 'body')
+        fields_to_lookup = ('title', )
         py3_pulls = []
         for pull in pulls:
             search_data = [pull[field].lower() for field in fields_to_lookup]
