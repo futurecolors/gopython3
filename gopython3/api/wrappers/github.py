@@ -96,6 +96,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
                     'issue_url': pull['html_url'],
                     'title': pull['title'],
                     'body': pull['body'],
+                    'state': pull['state'],
                 })
         return py3_pulls
 
