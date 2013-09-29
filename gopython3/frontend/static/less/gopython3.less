@@ -76,6 +76,7 @@ body {
 
 .job-form {
     min-height: @job-form-height + 20px;
+    margin-bottom: 300px;
 
     &__instruction {
         margin: 5px 0;
@@ -113,12 +114,57 @@ body {
 }
 
 
+@package-supported-color: #268b26;
+
 .package {
-    &__body {
-        min-height: 50px;
+    position: relative;
+    padding: 3px 7px;
+    margin:0 10px 7px 0;
+
+    &_status_supported {
+        background: white;
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 10px;
+            right: -10px;
+            width: 10px;
+            background: white;
+        }
+        &:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            border-top: 10px solid white;
+            border-right: 10px solid transparent;
+        }
     }
-    &__loader {
-        height: 50px;
-        background: url(../images/loader.gif) 50% 50% no-repeat;
+
+    &__ok {
+        float: right;
+        font-size: 22px;
+        color: @package-supported-color;
+    }
+    &__next {
+        float: right;
+        margin-top: 4px;
+        color: @package-supported-color;
+
+        &:hover {
+            color: @package-supported-color;
+        }
+    }
+    &__name {
+        margin: 0;
+        font-family: 'Averia Sans Libre', cursive;
+        font-size: 24px;
+        font-weight: normal;
+    }
+    &__version {
+        font-size: 20px;
+        opacity: 0.7;
     }
 }
