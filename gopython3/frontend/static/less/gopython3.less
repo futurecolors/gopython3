@@ -78,12 +78,11 @@ body {
 
 .job-form {
     min-height: @job-form-height + 20px;
-    margin-bottom: 350px;
+    margin-bottom: 45px;
 
     &__instruction {
         margin: 5px 0;
         font-size: 14px;
-        color: darken(@job-form-border-color, 7%);
     }
     &__input {
         width: 405px;
@@ -92,7 +91,6 @@ body {
         height: @job-form-height !important;
         padding: 5px 10px;
         border-color: @job-form-border-color;
-        color: darken(@job-form-border-color, 7%);
         resize: none;
 
         &:focus {
@@ -112,6 +110,45 @@ body {
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#47a447', endColorstr='#268b26',GradientType=0 );
         border-left: none;
         border-color: @job-form-border-color;
+    }
+}
+
+/**
+ * @section     Job status
+ */
+
+.status {
+    margin-bottom: 300px;
+
+    &__progress-wrapper {
+        height: 30px;
+    }
+    &__progress {
+        margin: 0;
+        box-shadow: none;
+        background-color: fade(white, 50%);
+        border: 1px solid fade(black, 25%);
+    }
+    &__progress-bar {
+        background: fade(black, 25%);
+        box-shadow: none;
+    }
+    
+    &__counter {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 14px;
+    }
+    &__counter-value {
+        display: inline-block;
+        margin-left: 3px;
+        width: 30px;
+    }
+    &__counter-value-wrapper {
+        padding: 0 5px;
+        background: fade(white, 30%);
+        border: 1px solid fade(black, 25%);
+        border-radius: 20px;
     }
 }
 
