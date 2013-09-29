@@ -82,7 +82,7 @@ class GithubSearchTestCase(APITestCase):
     def test_gives_most_popular_result_from_repos_with_same_name(self):
         self.registerApiGetResponse(
             "https://api.github.com/search/repositories",
-            '{"items": [{"name": "django-cms", "owner": {"login": "divio"}}, {"name": "django", "owner": {"login": "django"}}, {"name": "django", "owner": {"login": "fc"}}]}',
+            '{"items": [{"name": "django", "owner": {"login": "django"}}, {"name": "django-cms", "owner": {"login": "divio"}}, {"name": "django", "owner": {"login": "fc"}}]}',
         )
 
         owner, _ = self.api_wrapper.get_most_popular_repo('django')

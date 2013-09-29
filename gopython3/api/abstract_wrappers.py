@@ -1,6 +1,18 @@
 from hammock import Hammock
 
 
+class APINotResponding(ConnectionError):
+    pass
+
+
+class APIRequestError(ConnectionError):
+    pass
+
+
+class RateLimitExceeded(ConnectionError):
+    pass
+
+
 class AbstractJsonApiWrapper(object):
     """ Abstract class for all API wrappers"""
     base_url = None
@@ -17,6 +29,7 @@ class AbstractJsonApiWrapper(object):
     def get_common_request_kwargs(self):
         return {
             'proxies': {},
+            'timeout': 10,  # timeout in seconds
         }
 
     def make_request(self, call_slug):
@@ -33,6 +46,12 @@ class AbstractJsonApiWrapper(object):
             self._reset_hammock()
             if response.status_code == 200:
                 return response.json()
+            elif response.status_code == 500:
+                raise APINotResponding
+            elif response.status_code == 400:
+                raise APIRequestError
+            elif response.status_code == 403:
+                raise RateLimitExceeded
             else:
                 return {}
         return make_request_with_kwargs
