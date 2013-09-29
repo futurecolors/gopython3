@@ -1,6 +1,6 @@
 from celery import chain, group
 from celery.task import task
-from core.models import Job, Spec, Package
+from core.models import Job, Spec, Package, JobSpec
 from api.wrappers import pypi, github
 
 
@@ -12,19 +12,40 @@ def process_job(job_pk):
             * PyPI query
             * GitHub query
             * Travis query
+
+        TODO: job notify
     """
     job = Job.objects.get(pk=job_pk)
-    job.start()
+    job.do_start()
 
-    for jobspec in job.job_specs.all():
-        query_pypi.delay(jobspec.spec.pk)
+    for job_spec in JobSpec.objects.filter(job=job):
+        process_spec.delay(job_spec.pk)
 
 
 @task
-def notify_job_completed(job_pk):
+def process_spec(job_spec_pk):
+    """ Process jobspec"""
+    job_spec = JobSpec.objects.get(pk=job_spec_pk)
+    job_spec.do_start()
+
+    return chain(query_pypi.s(job_spec.spec.pk),
+                 notify_completed_spec.s(job_spec_pk)).delay()
+
+
+@task
+def notify_completed_job(job_pk):
     """ Job has finished, now we need to record the result"""
     job = Job.objects.get(pk=job_pk)
-    job.finish()
+    job.do_finish()
+
+
+@task
+def notify_completed_spec(r, job_spec_pk):
+    """ Job has finished, now we need to record the result
+        FIXME: DRY!
+    """
+    job_spec = JobSpec.objects.get(pk=job_spec_pk)
+    job_spec.do_finish()
 
 
 @task
@@ -118,7 +139,6 @@ def notify_github_completed(r, package_pk):
     package.issue_status = r[2][0].get('state') if r[2] else 'unknown'
 
     package.fork_url = r[3][0].pop(0, {}).get('url', '') if r[3] else ''
-    package.fork_status = r[3][0].get('state') if r[3] else 'unknown'
     package.save()
     return r
 

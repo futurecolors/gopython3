@@ -8,12 +8,21 @@ from model_utils.models import TimeStampedModel
 from core.util import parse_requirements, normalize_package_name
 
 
-TASK_STATUS = Choices('pending', 'running', 'completed')
-
-
 class TimeFrameStampedModel(TimeStampedModel):
     start = models.DateTimeField(null=True, blank=True)
     finish = models.DateTimeField(null=True, blank=True)
+
+    STATUS = Choices('pending', 'running', 'completed')
+
+    def do_start(self):
+        self.status = self.STATUS.running
+        self.start = now()
+        self.save(update_fields=['status', 'start'])
+
+    def do_finish(self):
+        self.status = self.STATUS.completed
+        self.finish = now()
+        self.save(update_fields=['status', 'finish'])
 
     class Meta:
         abstract = True
@@ -43,23 +52,11 @@ class Job(TimeFrameStampedModel):
         Notes:
             * VCS dependencies are ignored
     """
-    STATUS = TASK_STATUS
-
     requirements = models.TextField()
     status = StatusField()
     job_specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
 
     objects = JobManager()
-
-    def start(self):
-        self.status = self.STATUS.runnning
-        self.start = now()
-        self.save(update_fields=['status', 'start'])
-
-    def finish(self):
-        self.status = self.STATUS.completed
-        self.finish = now()
-        self.save(update_fields=['status', 'start'])
 
 
 class Package(TimeStampedModel):
@@ -87,7 +84,6 @@ class Package(TimeStampedModel):
 
     # Forks (one for now)
     fork_url = models.URLField(blank=True)
-    fork_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.open, max_length=20)
 
     # CI
     CI_STATUS = Choices('unknown', 'passed', 'failed', 'errored')
@@ -104,14 +100,11 @@ class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
     """
-    STATUS = TASK_STATUS
-
     code = models.CharField(max_length=100, unique=True)
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20)
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
-    status = StatusField()
 
     @property
     def name(self):
@@ -124,7 +117,7 @@ class Spec(TimeStampedModel):
     def pypi_url(self):
         return "https://pypi.python.org/pypi/%s" % self.code
 
-    def __str__(self):
+    def __repr__(self):
         return '<Spec: %s==%s>' % (self.name, self.version)
 
     def save(self, **kwargs):
@@ -140,6 +133,7 @@ class JobSpec(TimeFrameStampedModel):
     """ A spec in a job """
     job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')
+    status = StatusField()
 
     @property
     def code(self):

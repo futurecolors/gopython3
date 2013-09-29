@@ -6,7 +6,7 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.Field(source='spec.get_identifier')
     version = serializers.Field(source='spec.version')
     name = serializers.Field(source='spec.name')
-    status = serializers.Field(source='spec.status')
+    status = serializers.Field(source='status')
     created_at = serializers.DateTimeField(source='created')
     updated_at = serializers.DateTimeField(source='modified')
     started_at = serializers.DateTimeField(source='start')
