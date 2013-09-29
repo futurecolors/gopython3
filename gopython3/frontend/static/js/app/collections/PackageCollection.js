@@ -35,7 +35,7 @@ define('app/collections/PackageCollection', [
 
             counters = this.getSupportStatus();
             if (counters.SUPPORTED_PROBABLY == 0 && counters.UNKNOWN == 0) {
-                message = 'Migrate to python 3 is quite possible :-)'
+                message = 'Migration to python 3 is quite possible :-)'
             } else if (counters.SUPPORTED + counters.SUPPORTED_IN_NEXT > counters.SUPPORTED_PROBABLY + counters.UNKNOWN) {
                 message = 'Worth a try &hellip;';
             } else {
