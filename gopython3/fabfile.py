@@ -17,5 +17,5 @@ def prod():
         PROJECT_NAME='gopython3',
         PROJECT_DIR='/home/dash/src/dash/gopython3/',
         SRC_DIR='/home/dash/src/dash/gopython3/',
-        ENV_DIR='/home/lava/envs/dash/',
+        ENV_DIR='/home/dash/envs/dash/',
     )
