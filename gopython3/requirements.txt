@@ -16,6 +16,7 @@ pytz==2013d
 billiard==2.7.3.32
 python-dateutil==2.1
 kombu==2.5.14
+anyjson==0.3.3
 six==1.4.1
 
 # Django 1.6b4
