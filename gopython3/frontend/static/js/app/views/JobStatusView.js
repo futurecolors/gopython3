@@ -12,7 +12,8 @@ define('app/views/JobStatusView', [
             return {
                 progress: this.collection.getProgress()  * 100,
                 support: this.collection.getSupportStatus(),
-                hasPackages: this.collection.length > 0
+                hasPackages: this.collection.length > 0,
+                message: this.collection.getMessage()
             };
         }
     });

@@ -1,12 +1,15 @@
 section.status
     if hasPackages
         div.status__progress-wrapper
-            div.status__progress.progress.progress-striped
-                div.status__progress-bar.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
-                    span.status__progress-value= progress + "%"
-                    span.sr-only
-                        = progress
-                        | % complete
+            if progress < 100
+                div.status__progress.progress.progress-striped
+                    div.status__progress-bar.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
+                        span.status__progress-value= progress + "%"
+                        span.sr-only
+                            = progress
+                            | % complete
+            else
+                div.status__message= message
         span.status__counter
             | Supported
             span.status__counter-value
