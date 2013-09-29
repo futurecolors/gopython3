@@ -60,7 +60,7 @@ define('app/models/PackageModel', [
             if (!_.isEmpty(info.forks)) {
                 return 'SUPPORTED_PROBABLY';
             }
-            return 'UNSUPPORTED';
+            return 'UNKNOWN';
         }
     });
 });

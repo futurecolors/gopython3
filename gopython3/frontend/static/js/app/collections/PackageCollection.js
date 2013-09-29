@@ -22,7 +22,7 @@ define('app/collections/PackageCollection', [
                     return package.getPython3Support()
                 }
             );
-            _.each(['SUPPORTED', 'SUPPORTED_IN_NEXT', 'SUPPORTED_PROBABLY', 'UNSUPPORTED'], function(key){
+            _.each(['SUPPORTED', 'SUPPORTED_IN_NEXT', 'SUPPORTED_PROBABLY', 'UNKNOWN'], function(key){
                 result[key] = _.filter(supportStatuses, function(value){return value == key}).length;
             });
 
