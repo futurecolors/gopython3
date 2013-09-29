@@ -71,7 +71,6 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         extra_request_data = {
             'params': {
                 'q': '%s+in:name+language:python' % repo,
-                'sort': 'stars',
                 'per_page': self.search_page_size
             }
         }
@@ -83,9 +82,8 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         repos = self.ask_about_popular_repos(repo=repo)
         if 'items' in repos:
             repos_names_and_owners = [(r['name'], r['owner']['login']) for r in repos['items']]
-            repos_with_same_name = list(filter(lambda n: repo.lower() == n[0].lower(), repos_names_and_owners))
-            if repos_with_same_name:
-                return repos_with_same_name[0]
+            if repos_names_and_owners:
+                return repos_names_and_owners[0]
 
     def get_common_request_kwargs(self):
         search_headers = {'Accept': 'application/vnd.github.preview'}
