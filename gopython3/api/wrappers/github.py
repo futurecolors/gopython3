@@ -74,15 +74,18 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         issues = self.ask_about_repo_issues(owner=owner, repo=repo, state='open') or []
         closed_issues = self.ask_about_repo_issues(owner=owner, repo=repo, state='closed') or []
         issues += closed_issues
-        issues_data = [{'number': i['number'], 'data': ''.join([i['title'], i['body']])} for i in issues]
-        filtered_issues_numbers = [i['number'] for i in filter(lambda i: self._has_py3_tracks([i['data']]), issues_data)]
-        if filtered_issues_numbers:
-            py3_issues = filter(lambda i: i['number'] in filtered_issues_numbers, issues)
-            return [{
-                'state': i['state'],
-                'title': i['title'],
-                'url': i['html_url']
-            } for i in py3_issues]
+        if issues:
+            issues_data = [{'number': i['number'], 'data': ''.join([i['title'] or '', i['body'] or ''])} for i in issues]
+            filtered_issues_numbers = [i['number'] for i in filter(lambda i: self._has_py3_tracks([i['data']]), issues_data)]
+            if filtered_issues_numbers:
+                py3_issues = filter(lambda i: i['number'] in filtered_issues_numbers, issues)
+                return [{
+                    'state': i['state'],
+                    'title': i['title'],
+                    'url': i['html_url']
+                } for i in py3_issues]
+        else:
+            return []
 
     def get_py3_pull_requests(self, owner, repo):
         pulls = self.ask_about_repo_pull_requests(owner=owner, repo=repo)
@@ -107,15 +110,17 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     base_url = 'https://api.github.com'
     search_page_size = 20
 
-    def popular_repos(self, repo=None, search_query=None):
-        if not (repo or search_query):
-            raise AttributeError('Specify repo or search_query')
+    def popular_repos(self, repo=None, extra_params=None):
+        if not (repo or extra_params):
+            raise AttributeError('Specify repo or extra_data')
         extra_request_data = {
             'params': {
-                'q': search_query or '%s+in:name+language:python' % repo,
+                'q': '%s+in:name+language:python' % repo,
                 'per_page': self.search_page_size
             }
         }
+        if extra_params:
+            extra_request_data['params'].update(extra_params)
         self.hammock = self.hammock.search.repositories
         return 'GET', extra_request_data
 
