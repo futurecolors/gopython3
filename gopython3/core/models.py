@@ -24,7 +24,7 @@ class JobManager(models.Manager):
         """ Create job from requirements.txt contents
         """
         reqs_list = parse_requirements(requirements)
-        job = Job.objects.create()
+        job = Job.objects.create(requirements=requirements)
         for package_name, version in reqs_list:
             package, _ = Package.objects.get_or_create(name=package_name,
                                                        slug=normalize_package_name(package_name))
@@ -43,6 +43,8 @@ class Job(TimeFrameStampedModel):
             * VCS dependencies are ignored
     """
     STATUS = TASK_STATUS
+
+    requirements = models.TextField()
     status = StatusField()
     job_specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
 
