@@ -37,8 +37,7 @@
                 deps: ['jquery']
             }
         },
-        waitSeconds: 60,
-        urlArgs: "bust=" +  (new Date()).getTime()
+        waitSeconds: 60
     });
 
     var initBootstrap = function(){
