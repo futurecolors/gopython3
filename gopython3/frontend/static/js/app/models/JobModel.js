@@ -8,7 +8,7 @@ define('app/models/JobModel', [
             packages: []
         },
 
-        baseUrl: 'http://python3.apiary.io/api/v1/jobs/',
+        baseUrl: '/api/v1/jobs/',
 
         url: function(){
             var url;

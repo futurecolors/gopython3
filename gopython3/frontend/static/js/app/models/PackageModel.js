@@ -20,7 +20,7 @@ define('app/models/PackageModel', [
             comments: {}
         },
 
-        baseUrl: 'http://python3.apiary.io/api/v1/packages/',
+        baseUrl: '/api/v1/packages/',
 
         url: function(){
             if (this.get('id')) {
