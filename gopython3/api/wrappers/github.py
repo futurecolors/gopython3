@@ -1,8 +1,8 @@
 from django.conf import settings
+from django.utils.dateparse import parse_datetime
 
 from api import abstract_wrappers
 from api.wrappers import PYTHON_3_KEYWORDS
-from api.wrappers.travis import TravisCI
 
 
 class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
@@ -46,7 +46,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         data = self.ask_about_repo_info(owner=owner, repo=repo)
         return {
             'url': data['html_url'],
-            'updated_at': data['updated_at'],
+            'updated_at': parse_datetime(data['updated_at']),
             'py3_fork': self.get_py3_fork_info(owner, repo),
             'py3_issues': self.get_py3_issues_info(owner, repo),
             'py3_pull_requests': self.get_py3_pull_requests(owner, repo),
