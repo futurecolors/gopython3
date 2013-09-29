@@ -36,6 +36,8 @@ class JobManager(models.Manager):
         reqs_list = parse_requirements(requirements)
         job = Job.objects.create(requirements=requirements)
         for package_name, version in reqs_list:
+            if not version:  # Ignore packages without versions (for now)
+                continue
             package, _ = Package.objects.get_or_create(name=package_name,
                                                        slug=normalize_package_name(package_name))
             spec, _ = Spec.objects.get_or_create(package=package, version=version)
@@ -108,7 +110,7 @@ class Spec(TimeStampedModel):
     code = models.CharField(max_length=100, unique=True)
     status = models.CharField(max_length=10, default='pending')
     package = models.ForeignKey('Package')
-    version = models.CharField(max_length=20)
+    version = models.CharField(max_length=20, blank=True)
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
 

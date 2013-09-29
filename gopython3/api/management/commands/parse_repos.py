@@ -56,9 +56,10 @@ class Command(BaseCommand):
 
     def parse_most_popular(self):
         page_size = 100
+        start_page = 5
         max_pages_amount = 100
         github_search = GithubSearchWrapper()
-        for page_num in range(max_pages_amount):
+        for page_num in range(start_page, max_pages_amount):
             repos_info = github_search.ask_about_popular_repos(extra_params={
                 'per_page': page_size,
                 'page': page_num,
