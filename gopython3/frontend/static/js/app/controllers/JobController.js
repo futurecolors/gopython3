@@ -34,9 +34,7 @@ define('app/controllers/JobController', [
                 if (!this.model || !this.collection || createNew) {
                     this.collection = new PackageCollection();
                     this.model = new JobModel();
-                    this.model.on('change:packages', function(){
-                        this.collection.reset(this.model.get('packages'));
-                    }, this)
+                    this.model.collection = this.collection;
                 }
             },
 

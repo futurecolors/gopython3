@@ -15,6 +15,7 @@ define('app/models/JobModel', [
 
         initialize: function(){
             this.on('change:url', this.setId, this);
+            this.on('change:packages', this.resetCollection, this)
         },
 
         url: function(){
@@ -39,6 +40,10 @@ define('app/models/JobModel', [
             this.set({id: id});
         },
 
+        resetCollection: function(){
+            this.collection.reset(this.get('packages'));
+        },
+
         watch: function(){
             this.save().then(_.bind(this.tryToSave, this));
         },
@@ -56,6 +61,10 @@ define('app/models/JobModel', [
         onSave: function(){
             if (this.get('status') != 'completed' && this.get('packages').length > 0) {
                 this.tryToSave()
+            } else {
+                this.collection.each(function(package){
+                    package.set('status', 'completed');
+                });
             }
         }
     });
