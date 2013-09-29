@@ -73,19 +73,26 @@ def query_pypi(spec_pk):
     # query PyPI
     pypi_api = pypi.PyPIWrapper()
     pkg_data = pypi_api.get_short_info(spec.name, spec.version)
-    #latest_pkg_data = pypi_api.get_short_info(spec.name)
+    latest_pkg_data = pypi_api.get_short_info(spec.name)
 
     spec.release_date = pkg_data['last_release_date']
     spec.python_versions = pkg_data['python3_supported_versions']
+
+    spec.latest_version = latest_pkg_data['version']
+    spec.latest_release_date = latest_pkg_data['last_release_date']
+    spec.latest_python_versions = latest_pkg_data['python3_supported_versions']
     spec.save()
 
     # Canonical package name case for the win
-    if pkg_data['name'] != spec.name and not Package.objects.filter(name=pkg_data['name']).exists():
+    if pkg_data['name'] != spec.name:
         package = spec.package
         package.name = pkg_data['name']
         package.save()
 
-    return pkg_data
+    return {
+        'current': pkg_data,
+        'latest': latest_pkg_data
+    }
 
 
 @task
