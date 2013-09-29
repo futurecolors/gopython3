@@ -28,11 +28,11 @@ def process_spec(job_spec_pk):
     job_spec.do_start()
 
     package, version = job_spec.spec.package, job_spec.spec.version
-    finished_specs = Spec.filter(package=package, version=version, status='finished').exists()
+    finished_specs = Spec.objects.filter(package=package, version=version, status='finished').exists()
     if finished_specs:  # not asking services if already parsed
         return notify_completed_spec.delay(job_spec_pk)
     else:
-        return chain(query_pypi.delay(job_spec.spec.pk),
+        return chain(query_pypi.s(job_spec.spec.pk),
                      query_github.s(job_spec.spec.package.pk),
                      notify_completed_spec.si(job_spec_pk)).delay()
 
@@ -47,10 +47,12 @@ def notify_completed_job(job_pk):
 @task
 def notify_completed_spec(job_spec_pk):
     """ Job has finished, now we need to record the result
-        FIXME: DRY!
     """
     job_spec = JobSpec.objects.get(pk=job_spec_pk)
     job_spec.do_finish()
+    spec = job_spec.spec
+    spec.status = 'completed'
+    spec.save(update_fields=['status'])
 
 
 @task
@@ -163,8 +165,8 @@ def notify_github_completed(r, package_pk):
     package.fork_url = r[3][0].pop(0, {}).get('url', '') if r[3] else ''
 
     # Travis
-    package.ci_url = r[3].get('url') if r[4] else ''
-    package.ci_status = r[3].get('last_build_status') if r[4] else 'unknown'
+    package.ci_url = r[3].get('url', '') if r[4] else ''
+    package.ci_status = r[3].get('last_build_status', 'unknown') if r[4] else 'unknown'
     package.save()
     return r
 

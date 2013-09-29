@@ -110,6 +110,6 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spec
-        fields = ('id', 'name', 'version', 'package',
+        fields = ('id', 'name', 'version', 'package', 'status',
                   'created_at', 'updated_at', 'pypi', 'repo',
                   'issues', 'forks', 'ci')

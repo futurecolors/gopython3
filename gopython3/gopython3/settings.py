@@ -119,7 +119,7 @@ class Dev(Common):
     """
     The in-development settings and the default configuration.
     """
-    pass
+    #CELERY_ALWAYS_EAGER = True
 
 
 class Debug(Dev):

@@ -23,4 +23,3 @@ six==1.4.1
 # Django 1.6b4
 # Should be last, just in case
 https://www.djangoproject.com/download/1.6b4/tarball/
-

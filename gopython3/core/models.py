@@ -8,11 +8,13 @@ from model_utils.models import TimeStampedModel
 from core.util import parse_requirements, normalize_package_name
 
 
+TASK_STATUS = Choices('pending', 'running', 'completed')
+
+
 class TimeFrameStampedModel(TimeStampedModel):
+    STATUS = TASK_STATUS
     start = models.DateTimeField(null=True, blank=True)
     finish = models.DateTimeField(null=True, blank=True)
-
-    STATUS = Choices('pending', 'running', 'completed')
 
     def do_start(self):
         self.status = self.STATUS.running
@@ -102,13 +104,10 @@ class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
     """
-    STATUSES = (
-        ('pending', 'pending'),
-        ('started', 'started'),
-        ('finished', 'finished'),
-    )
+    STATUS = TASK_STATUS
+
     code = models.CharField(max_length=100, unique=True)
-    status = models.CharField(max_length=10, default='pending')
+    status = StatusField()
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20, blank=True)
     release_date = models.DateTimeField(blank=True, null=True)
