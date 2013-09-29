@@ -146,16 +146,6 @@ class Prod(Common):
     GITHUB_CLIENT_ID = values.SecretValue()
     GITHUB_CLIENT_SECRET = values.SecretValue()
 
-    DATABASES = {
-        'default': {
-            'NAME': 'dash',
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'USER': 'dash',
-            'PASSWORD': os.environ.get('DASH_DB_SECRET'),
-            'HOST': 'localhost',
-        }
-    }
-
     COMPRESS_OFFLINE = True
 
     LOGGING = {
