@@ -89,10 +89,7 @@ def query_pypi(spec_pk):
         package.name = pkg_data['name']
         package.save()
 
-    return {
-        'current': pkg_data,
-        'latest': latest_pkg_data
-    }
+    return pkg_data
 
 
 @task
