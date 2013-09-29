@@ -1,5 +1,6 @@
 from celery import chain, group, chord
 from celery.task import task
+from api.wrappers.github import parse_github_url
 from core.models import Job, Spec, Package, JobSpec
 from api.wrappers import pypi, github
 
@@ -27,6 +28,7 @@ def process_spec(job_spec_pk):
     job_spec.do_start()
 
     return chain(query_pypi.s(job_spec.spec.pk),
+                 query_github.s(job_spec.spec.package.pk),
                  notify_completed_spec.si(job_spec_pk)).delay()
 
 
@@ -78,7 +80,7 @@ def query_pypi(spec_pk):
 
 
 @task
-def search_github(package_name):
+def search_github(package_name, url):
     """ Where are my sources, bro?
 
         Sometimes, package name is not the same as github repo name,
@@ -88,6 +90,12 @@ def search_github(package_name):
         >>> github.GithubSearchWrapper().get_most_popular_repo('moscowdjango')
         ('moscowdjango', 'futurecolors')
     """
+    if url:
+        repo_info = parse_github_url(url)
+        if repo_info:
+            # query directly to github account
+            return repo_info['repo_name'], repo_info['owner']
+
     repo_name, owner = github.GithubSearchWrapper().get_most_popular_repo(package_name)
     return repo_name, owner
 
@@ -142,23 +150,18 @@ def notify_github_completed(r, package_pk):
 
 
 @task
-def query_github(package_pk):
+def query_github(results, package_pk):
     """ Get all relevant info form Github"""
     package = Package.objects.get(pk=package_pk)
 
-    # if github url is available
-    if False:
-        # query directly to github account
-        pass
-    else:
-        # GH API queries running in parallel for speedup
-        gh_queries = group(get_short_info.s(),
-                           get_pr.s(),
-                           get_issues.s(),
-                           get_forks.s()
-                          )
+    # GH API queries running in parallel for speedup
+    gh_queries = group(get_short_info.s(),
+                       get_pr.s(),
+                       get_issues.s(),
+                       get_forks.s()
+                      )
 
-        # guessing github url and querying info
-        return chain(search_github.s(package.name),
-                     gh_queries,
-                     notify_github_completed.s(package_pk)).delay()
+    # guessing github url and querying info
+    return chain(search_github.s(package.name, results.get('url')),
+                 gh_queries,
+                 notify_github_completed.s(package_pk)).delay()
