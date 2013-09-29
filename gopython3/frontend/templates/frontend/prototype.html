@@ -1,0 +1,129 @@
+{% load static compress %}
+
+
+<!doctype html>
+<html class="no-js">
+<head>
+    <title>Go Python 3!</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'less/gopython3.less' %}" type="text/less" />
+    {% endcompress %}
+    <link href='http://fonts.googleapis.com/css?family=Averia+Sans+Libre|Varela' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <section class="page">
+        <div class="page__wrapper">
+            <div class="page__content-wrapper">
+                <header class="page__header">
+                    <a class="page__logo" href="/">Go Python 3!</a>
+                    <a class="page__madeby" href="http://futurecolors.ru">
+                        Made by <span style="color: #cf26a5">Future</span> <span style="color: #277baa">Colors</span>
+                    </a>
+                    <div class="page__greeting">
+                        Dear geeks, the time has come to migrate all your projects to Python 3.<br />
+                        We'll help you update your dependencies, and you need to migrate only your own code.
+                    </div>
+                </header>
+                <form class="job-form form js-form" role="form" method="post">
+                    <div class="job-form__instruction">
+                        Paste you requirements.txt below&hellip;
+                    </div>
+                    <div class="job-form__input input-group">
+                        <textarea class="job-form__textarea form-control">django-debug-toolbar-user-panel-fc==1.0</textarea>
+                        <span class="input-group-btn">
+                            <button class="job-form__submit btn btn-success">GO!</button>
+                        </span>
+                    </div>
+                    <div class="job-form__instruction">
+                        &hellip;and we'll tell how much effort it will take to go python 3 for your project.
+                    </div>
+                </form>
+                <section class="status">
+                    <div class="status__progress-wrapper">
+                        <div class="status__progress progress progress-striped">
+                            <div class="status__progress-bar progress-bar" role="progressbar" aria-valuenow=progress aria-valuemin="0" aria-valuemax="100" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <span class="status__counter">
+                        Supported
+                        <span class="status__counter-value"><span class="status__counter-value-wrapper">1</span></span>
+                    </span>
+                    <span class="status__counter">
+                        Supported in next versions
+                        <span class="status__counter-value"><span class="status__counter-value-wrapper">3</span></span>
+                    </span>
+                    <span class="status__counter">
+                        Probably supported
+                        <span class="status__counter-value"><span class="status__counter-value-wrapper">2</span></span>
+                    </span>
+                    <span class="status__counter">
+                        Unsupported
+                        <span class="status__counter-value"><span class="status__counter-value-wrapper">666</span></span>
+                    </span>
+                </section>
+                <article class="package package_status_supported">
+                    <h2 class="package__name">
+                        django-compressor
+                        <i class="package__ok glyphicon glyphicon-ok"></i>
+                        <span class="package__version">1.3</span>
+                    </h2>
+                </article>
+                <article class="package package_status_supported">
+                    <a class="package__next" href="">Supported in 1.4</a>
+                    <h2 class="package__name">
+                        django-compressor
+                        <span class="package__version">1.3</span>
+                    </h2>
+                </article>
+                <article class="package">
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-pull"></i>
+                        Pull request
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-fork"></i>
+                        Fork
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-issue"></i>
+                        Issue
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-travis"></i>
+                        Travis CI
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-github"></i>
+                        GitHub
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-pypi"></i>
+                        PyPI
+                    </a>
+                    <h2 class="package__name">
+                        django-compressor
+                        <span class="package__version">1.3</span>
+                    </h2>
+                </article>
+                <article class="package">
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-github"></i>
+                        GitHub
+                    </a>
+                    <a class="package__link" href="">
+                        <i class="package__icon package__icon-pypi"></i>
+                        PyPI
+                    </a>
+                    <h2 class="package__name">
+                        django-compressor
+                        <span class="package__version">1.3</span>
+                    </h2>
+                </article>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

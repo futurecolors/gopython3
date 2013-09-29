@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^api/v1/packages/(?P<code>.+)/$', PackageView.as_view(), name='jobspec-detail'),
     url(r'^api/v1/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'', include('frontend.urls')),
 )

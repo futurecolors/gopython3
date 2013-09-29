@@ -15,6 +15,9 @@ importer.install()
 from configurations import Configuration, values
 
 
+less_command = 'node node_modules/less/bin/lessc {infile} {outfile}'
+
+
 class Common(Configuration):
 
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -45,10 +48,12 @@ class Common(Configuration):
         'rest_framework',
         'djcelery',
         'kombu.transport.django',
+        'compressor',
 
         # go python 3!
         'core',
-        'api'
+        'api',
+        'frontend'        
     )
 
     MIDDLEWARE_CLASSES = (
@@ -87,6 +92,22 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//howto/static-files/
 
     STATIC_URL = '/static/'
+    
+    STATICFILES_FINDERS = (
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'compressor.finders.CompressorFinder',
+    )
+
+    # django-compressor
+    COMPRESS_ENABLED = True
+    COMPRESS_OFFLINE = True
+    COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
+                            'compressor.filters.cssmin.CSSMinFilter']
+    COMPRESS_PRECOMPILERS = (
+        ('text/less', less_command),
+    )
+    COMPRESS_CSS_HASHING_METHOD = 'content'    
 
     BROKER_URL = values.Value('django://')
 
@@ -99,7 +120,7 @@ class Dev(Common):
     """
     The in-development settings and the default configuration.
     """
-    CELERY_ALWAYS_EAGER = True
+    pass
 
 
 class Debug(Dev):

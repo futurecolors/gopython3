@@ -5,6 +5,7 @@ hammock==0.2.4
 requests==2.0.0
 httpretty==0.5.9
 distlib==0.1.2
+-e git://github.com/jezdez/django_compressor.git@c961dadf6eaba93a9cdadc569c697828e9afe345#egg=django-compressor
 
 django-model-utils==1.5.0
 jsonfield==0.9.19
@@ -22,3 +23,4 @@ six==1.4.1
 # Django 1.6b4
 # Should be last, just in case
 https://www.djangoproject.com/download/1.6b4/tarball/
+
