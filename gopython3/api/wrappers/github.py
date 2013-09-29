@@ -2,6 +2,7 @@ from django.conf import settings
 
 from api import abstract_wrappers
 from api.wrappers import PYTHON_3_KEYWORDS
+from api.wrappers.travis import TravisCI
 
 
 class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
@@ -75,7 +76,11 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             } for i in py3_issues]
 
     def get_services_info(self, owner, repo):
-        return ''
+        info = {}
+        travis_info = TravisCI().get_build_status(owner, repo)
+        if 'error' not in travis_info:
+            info['travis_ci'] = travis_info
+        return info
 
     def _has_py3_tracks(self, data):
         return any([keyword.lower() in ''.join(data).lower() for keyword in PYTHON_3_KEYWORDS])
