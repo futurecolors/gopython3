@@ -1,16 +1,5 @@
 from hammock import Hammock
-
-
-class APINotResponding(ConnectionError):
-    pass
-
-
-class APIRequestError(ConnectionError):
-    pass
-
-
-class RateLimitExceeded(ConnectionError):
-    pass
+from api.exceptions import APINotResponding, APIRequestError, RateLimitExceeded
 
 
 class AbstractJsonApiWrapper(object):
