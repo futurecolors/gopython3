@@ -64,7 +64,9 @@ def query_pypi(spec_pk):
     spec = Spec.objects.get(pk=spec_pk)
 
     # query PyPI
-    pkg_data = pypi.PyPIWrapper().get_short_info(spec.name, spec.version)
+    pypi_api = pypi.PyPIWrapper()
+    pkg_data = pypi_api.get_short_info(spec.name, spec.version)
+    #latest_pkg_data = pypi_api.get_short_info(spec.name)
 
     spec.release_date = pkg_data['last_release_date']
     spec.python_versions = pkg_data['python3_supported_versions']

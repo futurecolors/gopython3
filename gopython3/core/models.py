@@ -106,6 +106,10 @@ class Spec(TimeStampedModel):
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
 
+    latest_version = models.CharField(max_length=20, blank=True)
+    latest_release_date = models.DateTimeField(blank=True, null=True)
+    latest_python_versions = JSONField(blank=True, null=True)
+
     @property
     def name(self):
         return self.package.name
@@ -116,6 +120,10 @@ class Spec(TimeStampedModel):
     @property
     def pypi_url(self):
         return "https://pypi.python.org/pypi/%s" % self.code
+
+    @property
+    def latest_pypi_url(self):
+        return "https://pypi.python.org/pypi/%s/" % self.package.slug
 
     def __repr__(self):
         return '<Spec: %s==%s>' % (self.name, self.version)
