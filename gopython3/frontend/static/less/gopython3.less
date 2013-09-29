@@ -6,17 +6,19 @@
  */
 
 @page-width: 800px;
+@bg-position: 634px;
+@bg-offset: 200px;
 
 body {
     max-width: 2000px;
     margin: 0 auto;
     box-shadow: 0 0 10px fade(black, 50%);
-    background: #d51501 url(../images/colors.jpg) 50% -100px no-repeat;
+    background: #d51501 url(../images/colors.jpg) 50% -@bg-offset no-repeat;
     color: black;
 }
 .page {
     font-family: 'Varela', sans-serif;
-    background: url(../images/ground.png) 50% 534px no-repeat;
+    background: url(../images/ground.png) 50% @bg-position - @bg-offset no-repeat;
 
     &__wrapper {
         min-height: 1400px;
@@ -120,7 +122,7 @@ body {
  */
 
 .status {
-    margin-bottom: 300px;
+    margin-bottom: 120px;
 
     &__progress-wrapper {
         height: 30px;
@@ -151,6 +153,10 @@ body {
         background: fade(white, 30%);
         border: 1px solid fade(black, 25%);
         border-radius: 20px;
+    }
+    &__progress-value {
+        color: black;
+        margin-left: 5px;
     }
 }
 
@@ -247,12 +253,16 @@ body {
         }
     }
     &__loader {
+        position: absolute;
+        top: 4px;
+        left: -36px;
         display: inline-block;
         margin-left: 5px;
         float: right;
         vertical-align: middle;
-        width: 16px;
-        height: 16px;
-        background: url(../images/loader.gif) 0 0 no-repeat;
+        width: 26px;
+        height: 26px;
+        background: white url(../images/package-loader.gif) 50% 50% no-repeat;
+        border-radius: 20px;
     }
 }

@@ -51,9 +51,7 @@ define('app/models/JobModel', [
         },
 
         onSave: function(){
-            var packages = this.get('packages');
-            
-            if (_.where(packages, {status: 'completed'}).length != packages.length || packages.length == 0) {
+            if (this.get('status') != 'completed') {
                 this.tryToSave()
             }
         }

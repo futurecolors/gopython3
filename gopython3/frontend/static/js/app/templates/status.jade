@@ -2,6 +2,7 @@ section.status
     div.status__progress-wrapper
         div.status__progress.progress.progress-striped
             div.status__progress-bar.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
+                span.status__progress-value= progress + "%"
                 span.sr-only
                     = progress
                     | % complete
