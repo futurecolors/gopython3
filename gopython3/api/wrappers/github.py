@@ -47,9 +47,6 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         return {
             'url': data['html_url'],
             'updated_at': parse_datetime(data['updated_at']),
-            'py3_fork': self.get_py3_fork_info(owner, repo),
-            'py3_issues': self.get_py3_issues_info(owner, repo),
-            'py3_pull_requests': self.get_py3_pull_requests(owner, repo),
         }
 
     def get_py3_fork_info(self, owner, repo, check_branches=False):

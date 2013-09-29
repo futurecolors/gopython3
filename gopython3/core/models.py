@@ -66,9 +66,13 @@ class Package(TimeStampedModel):
     repo_last_commit_date = models.DateTimeField(blank=True, null=True)
 
     # Issues (one for now)
-    ISSUE_STATUS = Choices('unknown', 'passed', 'failed')
+    ISSUE_STATUS = Choices('unknown', 'open', 'closed')
     issue_url = models.URLField(blank=True)
     issue_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.unknown, max_length=20)
+
+    # PR
+    pr_url = models.URLField(blank=True)
+    pr_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.unknown, max_length=20)
 
     # Forks (one for now)
     FORK_STATUS = Choices('open', 'closed', 'merged', 'rejected')
@@ -76,8 +80,9 @@ class Package(TimeStampedModel):
     fork_status = models.CharField(choices=FORK_STATUS, default=FORK_STATUS.open, max_length=20)
 
     # CI
+    CI_STATUS = Choices('unknown', 'passed', 'failed', 'errored')
     ci_url = models.URLField(blank=True)
-    ci_status = models.URLField(blank=True)
+    ci_status = models.CharField(choices=CI_STATUS, default=CI_STATUS.unknown, max_length=20)
 
     # Comments
     comment_count = models.IntegerField(default=0)
