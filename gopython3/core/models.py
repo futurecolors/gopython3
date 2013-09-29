@@ -40,8 +40,8 @@ class JobManager(models.Manager):
         for package_name, version in reqs_list:
             if not version:  # Ignore packages without versions (for now)
                 continue
-            package, _ = Package.objects.get_or_create(name=package_name,
-                                                       slug=normalize_package_name(package_name))
+            package, _ = Package.objects.get_or_create(slug=normalize_package_name(package_name),
+                                                       defaults={'name': package_name})
             spec, _ = Spec.objects.get_or_create(package=package, version=version)
             JobSpec.objects.create(job=job, spec=spec)
         return job
@@ -71,7 +71,7 @@ class Package(TimeStampedModel):
             * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(help_text='Underscore, lowercased')
+    slug = models.SlugField(help_text='Underscore, lowercased', unique=True)
 
     # Repo data
     repo_url = models.URLField(blank=True)
