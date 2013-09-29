@@ -1,24 +1,27 @@
 section.status
-    div.status__progress-wrapper
-        div.status__progress.progress.progress-striped
-            div.status__progress-bar.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
-                span.status__progress-value= progress + "%"
-                span.sr-only
-                    = progress
-                    | % complete
-    span.status__counter
-        | Supported
-        span.status__counter-value
-            span.status__counter-value-wrapper= support.SUPPORTED
-    span.status__counter
-        | Supported in next version
-        span.status__counter-value
-            span.status__counter-value-wrapper= support.SUPPORTED_IN_NEXT
-    span.status__counter
-        | Probably supported
-        span.status__counter-value
-            span.status__counter-value-wrapper= support.SUPPORTED_PROBABLY
-    span.status__counter
-        | Unknown
-        span.status__counter-value
-            span.status__counter-value-wrapper= support.UNKNOWN
+    if hasPackages
+        div.status__progress-wrapper
+            div.status__progress.progress.progress-striped
+                div.status__progress-bar.progress-bar.progress-bar-success(role="progressbar", aria-valuenow=progress, aria-valuemin="0", aria-valuemax="100", style="width: " + progress + "%")
+                    span.status__progress-value= progress + "%"
+                    span.sr-only
+                        = progress
+                        | % complete
+        span.status__counter
+            | Supported
+            span.status__counter-value
+                span.status__counter-value-wrapper= support.SUPPORTED
+        span.status__counter
+            | Supported in next version
+            span.status__counter-value
+                span.status__counter-value-wrapper= support.SUPPORTED_IN_NEXT
+        span.status__counter
+            | Probably supported
+            span.status__counter-value
+                span.status__counter-value-wrapper= support.SUPPORTED_PROBABLY
+        span.status__counter
+            | Unknown
+            span.status__counter-value
+                span.status__counter-value-wrapper= support.UNKNOWN
+    else
+        div.status__message Packages not found
