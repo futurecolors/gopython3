@@ -67,5 +67,4 @@ class AbstractJsonApiWrapperWithAuth(AbstractJsonApiWrapper):
             'params': self.get_credentials(),
             'headers': self.header_credentials(),
         })
-        print('auth', kwargs)
         return kwargs

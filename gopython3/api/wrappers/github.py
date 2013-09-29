@@ -32,6 +32,10 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             additional_data = {}
         return 'GET', additional_data
 
+    def rate_limit(self):
+        self.hammock = self.hammock.rate_limit
+        return 'GET', {}
+
     def get_credentials(self):
         return {
             'client_id': settings.GITHUB_CLIENT_ID,
@@ -41,12 +45,11 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     def get_short_info(self, owner, repo):
         data = self.ask_about_repo_info(owner=owner, repo=repo)
         return {
-            'url': data['url'],
+            'url': data['html_url'],
             'updated_at': data['updated_at'],
             'py3_fork': self.get_py3_fork_info(owner, repo),
             'py3_issues': self.get_py3_issues_info(owner, repo),
             'py3_pull_requests': self.get_py3_pull_requests(owner, repo),
-            'services_info': self.get_services_info(owner, repo)
         }
 
     def get_py3_fork_info(self, owner, repo):
@@ -72,7 +75,6 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         closed_issues = self.ask_about_repo_issues(owner=owner, repo=repo, state='closed') or []
         issues += closed_issues
         issues_data = [{'number': i['number'], 'data': ''.join([i['title'], i['body']])} for i in issues]
-        print('d', issues_data)
         filtered_issues_numbers = [i['number'] for i in filter(lambda i: self._has_py3_tracks([i['data']]), issues_data)]
         if filtered_issues_numbers:
             py3_issues = filter(lambda i: i['number'] in filtered_issues_numbers, issues)
@@ -96,13 +98,6 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
                     'body': pull['body'],
                 })
         return py3_pulls
-
-    def get_services_info(self, owner, repo):
-        info = {}
-        travis_info = TravisCI().get_build_status(owner, repo)
-        if 'error' not in travis_info:
-            info['travis_ci'] = travis_info
-        return info
 
     def _has_py3_tracks(self, data):
         return any([keyword.lower() in ''.join(data).lower() for keyword in PYTHON_3_KEYWORDS])
