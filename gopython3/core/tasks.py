@@ -80,7 +80,7 @@ def query_pypi(spec_pk):
     spec.save()
 
     # Canonical package name case for the win
-    if pkg_data['name'] != spec.name and Package.objects.filter(name=pkg_data['name']).exists():
+    if pkg_data['name'] != spec.name and not Package.objects.filter(name=pkg_data['name']).exists():
         package = spec.package
         package.name = pkg_data['name']
         package.save()

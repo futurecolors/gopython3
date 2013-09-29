@@ -68,7 +68,7 @@ class Job(TimeFrameStampedModel):
             return 'running'
         return self.status
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Job %s [%s]' % (self.pk, self.status)
 
 class Package(TimeStampedModel):
@@ -106,7 +106,7 @@ class Package(TimeStampedModel):
     comment_count = models.IntegerField(default=0)
     comment_most_voted = models.TextField(blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.name, self.slug)
 
 @python_2_unicode_compatible
@@ -127,7 +127,7 @@ class Spec(TimeStampedModel):
     latest_release_date = models.DateTimeField(blank=True, null=True)
     latest_python_versions = JSONField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s==%s' % (self.package.name, self.version)
 
     @property
@@ -163,7 +163,7 @@ class JobSpec(TimeFrameStampedModel):
     spec = models.ForeignKey(Spec, related_name='job_specs')
     status = StatusField()
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s %s' % (self.job, self.spec)
 
     @property
