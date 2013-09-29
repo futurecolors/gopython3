@@ -58,11 +58,11 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         }
 
     def get_py3_fork_info(self, owner, repo, check_branches=False):
-        fields_to_lookup = ('full_name', 'description')
+        fields_to_lookup = ('full_name', )
         forks = self.ask_about_repo_forks(owner=owner, repo=repo)
         py3_forks = []
         for fork in forks:
-            search_data = [fork[field].lower() for field in fields_to_lookup]
+            search_data = [fork.get(field, '').lower() for field in fields_to_lookup]
             if self._has_py3_tracks(search_data):
                 py3_forks.append(fork)
             elif check_branches:
