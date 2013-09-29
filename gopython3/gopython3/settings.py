@@ -101,7 +101,6 @@ class Common(Configuration):
 
     # django-compressor
     COMPRESS_ENABLED = True
-    COMPRESS_OFFLINE = True
     COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                             'compressor.filters.cssmin.CSSMinFilter']
     COMPRESS_PRECOMPILERS = (
@@ -155,6 +154,8 @@ class Prod(Common):
             'HOST': 'localhost',
         }
     }
+
+    COMPRESS_OFFLINE = True
 
 
 
