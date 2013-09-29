@@ -1,14 +1,21 @@
 define('app/models/JobModel', [
     'backbone'
 ], function(Backbone){
+    var currentInstance;
+
     return Backbone.Model.extend({
         defaults: {
             url: '',
             status: '',
-            packages: []
+            packages: [],
+            requirements: ''
         },
 
         baseUrl: '/api/v1/jobs/',
+
+        initialize: function(){
+            this.on('change:url', this.setId, this);
+        },
 
         url: function(){
             var url;
@@ -20,10 +27,6 @@ define('app/models/JobModel', [
             }
 
             return url;
-        },
-
-        initialize: function(){
-            this.on('change:url', this.setId, this);
         },
 
         setId: function(){
@@ -41,11 +44,11 @@ define('app/models/JobModel', [
         },
 
         tryToSave: function(){
-            var that = this;
+            currentInstance = this;
 
             setTimeout(function(){
-                that.fetch({
-                    success: _.bind(that.onSave, that)
+                currentInstance.fetch({
+                    success: _.bind(currentInstance.onSave, currentInstance)
                 });
             }, 5000);
         },
