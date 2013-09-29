@@ -11,7 +11,7 @@
     {% compress css %}
     <link rel="stylesheet" href="{% static 'less/gopython3.less' %}" type="text/less" />
     {% endcompress %}
-    <link href='http://fonts.googleapis.com/css?family=Averia+Sans+Libre&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Averia+Sans+Libre|Varela' rel='stylesheet' type='text/css'>
 </head>
 <body>
     <section class="page">
@@ -26,11 +26,21 @@
                     We'll help you update your dependencies, and you need to migrate only your own code.
                 </div>
             </header>
+            <form class="job-form form js-form" role="form" method="post">
+                <div class="job-form__instruction">
+                    Paste you requirements.txt below&hellip;
+                </div>
+                <div class="job-form__input input-group">
+                    <textarea class="job-form__textarea form-control">django-debug-toolbar-user-panel-fc==1.0</textarea>
+                    <span class="input-group-btn">
+                        <button class="job-form__submit btn btn-success">GO!</button>
+                    </span>
+                </div>
+                <div class="job-form__instruction">
+                    &hellip;and we'll tell how much effort it will take to go python 3 for your project.
+                </div>
+            </form>
         </div>
     </section>
 </body>
 </html>
-
-
-
-Paste you requirements.txt below and we'll tell how much effort it will take to go python 3 for your project.

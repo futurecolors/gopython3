@@ -12,65 +12,100 @@ body {
 }
 .page {
     min-height: 1200px;
-    font-family: 'Averia Sans Libre', cursive;
+    font-family: 'Varela', sans-serif;
     background: url(../images/ground.png) 50% 500px no-repeat;
-}
-.page__wrapper {
-    position: relative;
-    width: 600px;
-    margin: 0 auto;
-}
-.page__header {}
-.page__logo {
-    position: absolute;
-    top: 30px;
-    left: 0;
-    display: block;
-    width: 194px;
-    height: 129px;
-    padding-right: 14px;
-    line-height: 129px;
-    text-align: center;
-    font-size: 22px;
-    color: black;
-    background: url(../images/cloud.png) 0 0 no-repeat;
 
-    &:hover {
+    &__wrapper {
+        position: relative;
+        width: 600px;
+        margin: 0 auto;
+    }
+    &__header {
+        margin-bottom: 40px;
+        font-family: 'Averia Sans Libre', cursive;
+    }
+    &__logo {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        display: block;
+        width: 194px;
+        height: 129px;
+        padding-right: 14px;
+        line-height: 129px;
+        text-align: center;
+        font-size: 22px;
+        color: black;
+        background: url(../images/cloud.png) 0 0 no-repeat;
+
+        &:hover {
+            text-decoration: none;
+            color: black;
+        }
+    }
+    &__madeby {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        font-size: 15px;
         text-decoration: none;
         color: black;
+
+        &:hover {
+            color: black;
+        }
+    }
+    &__greeting {
+        padding: 170px 0 0;
+        font-size: 19px;
     }
 }
-.page__madeby {
-    position: absolute;
-    top: 20px;
-    right: 0;
-    font-size: 15px;
-    text-decoration: none;
-    color: black;
-
-    &:hover {
-        color: black;
-    }
-}
-.page__greeting {
-    padding: 190px 0 0;
-    font-size: 18px;
-}
 
 
-@job-form-height: 80px;
+/**
+ * @section     Job form
+ */
+
+@job-form-height: 32px;
+@job-form-border-color: #217921;
 
 .job-form {
     min-height: @job-form-height + 20px;
 
+    &__instruction {
+        margin: 5px 0;
+        font-size: 14px;
+        color: darken(@job-form-border-color, 5%);
+    }
+    &__input {
+        width: 405px;
+    }
     &__textarea {
-        height: @job-form-height;
+        height: @job-form-height !important;
+        padding: 5px 10px;
+        border-color: @job-form-border-color;
+        color: darken(@job-form-border-color, 5%);
         resize: none;
+
+        &:focus {
+            box-shadow: 0 0 5px fade(@job-form-border-color, 50%);
+            border-color: @job-form-border-color;
+        }
     }
     &__submit {
-        height: @job-form-height - 11px;
+        height: @job-form-height;
+        background: #47a447;
+        background: -moz-linear-gradient(top,  #47a447 0%, #268b26 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#47a447), color-stop(100%,#268b26));
+        background: -webkit-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: -o-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: -ms-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: linear-gradient(to bottom,  #47a447 0%,#268b26 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#47a447', endColorstr='#268b26',GradientType=0 );
+        border-left: none;
+        border-color: @job-form-border-color;
     }
-} 
+}
 
 
 .package {
