@@ -70,6 +70,15 @@ class IssueField(serializers.WritableField):
         }]
 
 
+class PullRequestField(serializers.WritableField):
+
+    def to_native(self, obj):
+        return [{
+            "url": obj.pr_url,
+            "status": obj.pr_status
+        }]
+
+
 class ForkField(serializers.WritableField):
 
     def to_native(self, obj):
@@ -97,6 +106,7 @@ class PackageSerializer(serializers.ModelSerializer):
     issues = IssueField(source='package')
     forks = ForkField(source='package')
     ci = CIField(source='package')
+    pr = PullRequestField(source='package')
 
     class Meta:
         model = Spec
