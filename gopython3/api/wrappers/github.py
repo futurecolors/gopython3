@@ -52,7 +52,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             'py3_pull_requests': self.get_py3_pull_requests(owner, repo),
         }
 
-    def get_py3_fork_info(self, owner, repo):
+    def get_py3_fork_info(self, owner, repo, check_branches=False):
         fields_to_lookup = ('full_name', 'description')
         forks = self.ask_about_repo_forks(owner=owner, repo=repo)
         py3_forks = []
@@ -60,7 +60,7 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             search_data = [fork[field].lower() for field in fields_to_lookup]
             if self._has_py3_tracks(search_data):
                 py3_forks.append(fork)
-            else:
+            elif check_branches:
                 branches_info = self.ask_about_repo_branches(owner=fork['owner']['login'], repo=fork['name'])
                 if self._has_py3_tracks([b['name'] for b in branches_info]):
                     py3_forks.append(fork)
@@ -107,10 +107,12 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
     base_url = 'https://api.github.com'
     search_page_size = 20
 
-    def popular_repos(self, repo):
+    def popular_repos(self, repo=None, search_query=None):
+        if not (repo or search_query):
+            raise AttributeError('Specify repo or search_query')
         extra_request_data = {
             'params': {
-                'q': '%s+in:name+language:python' % repo,
+                'q': search_query or '%s+in:name+language:python' % repo,
                 'per_page': self.search_page_size
             }
         }
