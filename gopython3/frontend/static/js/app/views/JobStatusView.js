@@ -2,7 +2,7 @@ define('app/views/JobStatusView', [
     'marionette'
 ], function(Marionette){
     return Marionette.ItemView.extend({
-        template: 'app/templates/job.status.jade',
+        template: 'app/templates/status.jade',
 
         initialize: function(){
             this.collection.on('change reset', this.render, this)

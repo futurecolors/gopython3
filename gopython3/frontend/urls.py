@@ -9,6 +9,5 @@ class FrontendRedirectView(RedirectView):
 
 urlpatterns = patterns('',
     url(r'^$', TemplateView.as_view(template_name='frontend/index.html')),
-    url(r'^prototype/$', TemplateView.as_view(template_name='frontend/prototype.html')),
     url(r'$', FrontendRedirectView.as_view()),
 )

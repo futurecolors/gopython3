@@ -1,34 +1,32 @@
-article.package.panel.panel-default(class=blockClass)
-    header.panel-heading
+article.package(class= isSupported ? 'package_status_supported' : '')
+    if isCompleted
         if python3Support == 'SUPPORTED_IN_NEXT'
-            span.label.label-success.pull-right
-                | Python 3 is supported in version&nbsp;
-                = packageInfo.pypi.latest.version
+            a.package__next(href=packageInfo.pypi.latest.url)= 'Supported in ' + packageInfo.pypi.latest.version
+    else
+        if packageInfo.pr
+            a.package__link(href=packageInfo.pr[0].url)
+                i.package__icon.package__icon-pull
+                | Pull request
+        if packageInfo.forks
+            a.package__link(href=packageInfo.forks[0].url)
+                i.package__icon.package__icon-fork
+                | Fork
+        if packageInfo.issues
+            a.package__link(href=packageInfo.issues[0].url)
+                i.package__icon.package__icon-issue
+                | Issue
+        if packageInfo.ci
+            a.package__link(href=packageInfo.ci.url, title= 'Build status is ' + packageInfo.ci.status)
+                i.package__icon.package__icon-travis
+                | Travis CI
+        if packageInfo.repo
+            a.package__link(href=packageInfo.repo.url, title=moment(packageInfo.repo.last_commit_date).format('Last commit date DD MMMM YYYY'))
+                i.package__icon.package__icon-github
+                | GitHub
+        if packageInfo.pypi && packageInfo.pypi.current
+            a.package__link(href=packageInfo.pypi.current.url)
+                i.package__icon.package__icon-pypi
+                | PyPI
+    h2.package__name
         = packageInfo.name
-        | &nbsp;
-        span.text-muted= packageInfo.version
-    div.package__body.panel-body
-        if isCompleted
-            div.row
-                if packageInfo.pypi && packageInfo.pypi.current
-                    div.col-sm-4
-                        a(href=packageInfo.pypi.current.url) pypi
-                if packageInfo.repo
-                    div.col-sm-4
-                        a(href=packageInfo.repo.url)
-                            | Repository (
-                            = moment(packageInfo.repo.last_commit_date).format('DD MMMM YYYY')
-                            | )
-                if packageInfo.ci
-                    div.col-sm-4
-                        a(href=packageInfo.ci.url)
-                            | Continuous integration (
-                            = packageInfo.ci.status
-                            | )
-            for issue in packageInfo.issues
-                a(href=issue.url)
-                    | Issue (
-                    = issue.status
-                    | )
-        else
-            div.package__loader
+        span.package__version= packageInfo.version

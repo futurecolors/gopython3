@@ -13,17 +13,16 @@ define('app/views/PackageView', [
         },
 
         serializeData: function(){
+            var python3Support;
+
+            python3Support = this.model.getPython3Support();
+
             return {
                 packageInfo: this.model.toJSON(),
                 isCompleted: this.model.isCompleted(),
-                python3Support: this.model.getPython3Support(),
+                python3Support: python3Support,
                 moment: moment,
-                blockClass: {
-                    SUPPORTED: 'panel-success',
-                    SUPPORTED_IN_NEXT: 'panel-success',
-                    SUPPORTED_PROBABLY: 'panel-warning',
-                    UNSUPPORTED: 'panel-danger'
-                }[this.model.getPython3Support()]
+                isSupported: python3Support == 'SUPPORTED' || python3Support == 'SUPPORTED_IN_NEXT'
             };
         }
     });
