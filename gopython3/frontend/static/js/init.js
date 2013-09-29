@@ -1,5 +1,6 @@
 (function () {
     require.config({
+        baseUrl: '/static/js/',
         paths: {
             backbone: 'libs/backbone',
             underscore: 'libs/underscore',
@@ -135,7 +136,7 @@
         });
     };
 
-    define([
+    require([
         'jquery',
         'underscore',
         'backbone',

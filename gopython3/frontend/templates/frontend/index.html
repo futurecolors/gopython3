@@ -14,6 +14,10 @@
 </head>
 <body>
     <div class="js-body"></div>
-    <script src="{% static 'js/libs/require.js' %}" data-main="{% static 'js/init.js' %}"></script>
+
+    {% compress js %}
+    <script src="{% static 'js/libs/require.js' %}"></script>
+    <script src="{% static 'js/init.js' %}"></script>
+    {% endcompress %}
 </body>
 </html>
