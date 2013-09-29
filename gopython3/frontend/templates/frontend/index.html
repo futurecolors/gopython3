@@ -35,6 +35,22 @@
 
     {% compress js %}
     <script src="{% static 'js/libs/require.js' %}"></script>
+
+    <script src="{% static 'js/app/App.js' %}"></script>
+    <script src="{% static 'js/app/collections/Collection.js' %}"></script>
+    <script src="{% static 'js/app/collections/PackageCollection.js' %}"></script>
+    <script src="{% static 'js/app/controllers/JobController.js' %}"></script>
+    <script src="{% static 'js/app/layouts/JobLayout.js' %}"></script>
+    <script src="{% static 'js/app/models/JobModel.js' %}"></script>
+    <script src="{% static 'js/app/models/PackageModel.js' %}"></script>
+    <script src="{% static 'js/app/modules/JobModule.js' %}"></script>
+    <script src="{% static 'js/app/routers/JobRouter.js' %}"></script>
+    <script src="{% static 'js/app/views/GreetingView.js' %}"></script>
+    <script src="{% static 'js/app/views/JobFormView.js' %}"></script>
+    <script src="{% static 'js/app/views/JobStatusView.js' %}"></script>
+    <script src="{% static 'js/app/views/PackageListView.js' %}"></script>
+    <script src="{% static 'js/app/views/PackageView.js' %}"></script>
+
     <script src="{% static 'js/init.js' %}"></script>
     {% endcompress %}
 </body>

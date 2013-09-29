@@ -1,6 +1,8 @@
 define('app/views/JobFormView', [
     'marionette'
-], function(Marionette){
+], function(
+    Marionette
+){
     return Marionette.ItemView.extend({
         events: {
             'submit .js-form': 'onFormSubmit',
@@ -31,6 +33,10 @@ define('app/views/JobFormView', [
                 data[param.name] = param.value;
             });
 
+            if (this.model.id) {
+                this.model.id = null;
+            }
+            delete this.model.attributes.id;
             this.model.set(data);
             this.model.watch();
         },
