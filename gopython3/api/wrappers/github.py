@@ -22,9 +22,13 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
         self.hammock = self.hammock.repos(owner, repo).branches
         return 'GET', {}
 
-    def repo_pull_requests(self, owner, repo):
+    def repo_pull_requests(self, owner, repo, state=None):
         self.hammock = self.hammock.repos(owner, repo).pulls
-        return 'GET', {}
+        if state:
+            additional_data = {'params': {'state': state}}
+        else:
+            additional_data = {}
+        return 'GET', additional_data
 
     def repo_issues(self, owner, repo, state=None):
         self.hammock = self.hammock.repos(owner, repo).issues
@@ -87,7 +91,8 @@ class GithubWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
             return []
 
     def get_py3_pull_requests(self, owner, repo):
-        pulls = self.ask_about_repo_pull_requests(owner=owner, repo=repo)
+        pulls = self.ask_about_repo_pull_requests(owner=owner, repo=repo, state='open') or []
+        pulls += self.ask_about_repo_pull_requests(owner=owner, repo=repo, state='closed') or []
         fields_to_lookup = ('title', 'body')
         py3_pulls = []
         for pull in pulls:
