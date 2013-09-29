@@ -9,13 +9,18 @@ body {
     max-width: 2000px;
     margin: 0 auto;
     box-shadow: 0 0 10px fade(black, 50%);
+    background: #d51501 url(../images/colors.jpg) 50% -100px no-repeat;
 }
 .page {
-    min-height: 1200px;
     font-family: 'Varela', sans-serif;
-    background: url(../images/ground.png) 50% 500px no-repeat;
+    background: url(../images/ground.png) 50% 534px no-repeat;
 
     &__wrapper {
+        min-height: 1200px;
+        background: url(../images/paper.png) 0 0 repeat;
+        background: url(../images/paper.png) 0 0 repeat;
+    }
+    &__content-wrapper {
         position: relative;
         width: 600px;
         margin: 0 auto;
@@ -75,7 +80,7 @@ body {
     &__instruction {
         margin: 5px 0;
         font-size: 14px;
-        color: darken(@job-form-border-color, 5%);
+        color: darken(@job-form-border-color, 7%);
     }
     &__input {
         width: 405px;
@@ -84,7 +89,7 @@ body {
         height: @job-form-height !important;
         padding: 5px 10px;
         border-color: @job-form-border-color;
-        color: darken(@job-form-border-color, 5%);
+        color: darken(@job-form-border-color, 7%);
         resize: none;
 
         &:focus {
