@@ -1,0 +1,258 @@
+@import '../bootstrap/less/bootstrap';
+
+
+/**
+ * @section     Page layout
+ */
+
+@page-width: 800px;
+
+body {
+    max-width: 2000px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px fade(black, 50%);
+    background: #d51501 url(../images/colors.jpg) 50% -100px no-repeat;
+    color: black;
+}
+.page {
+    font-family: 'Varela', sans-serif;
+    background: url(../images/ground.png) 50% 534px no-repeat;
+
+    &__wrapper {
+        min-height: 1400px;
+        background: url(../images/paper.png) 0 0 repeat;
+        background: url(../images/paper.png) 0 0 repeat;
+    }
+    &__content-wrapper {
+        position: relative;
+        width: @page-width;
+        margin: 0 auto;
+    }
+    &__header {
+        margin-bottom: 40px;
+        font-family: 'Averia Sans Libre', cursive;
+    }
+    &__logo {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        display: block;
+        width: 194px;
+        height: 129px;
+        padding-right: 14px;
+        line-height: 129px;
+        text-align: center;
+        font-size: 22px;
+        color: black;
+        background: url(../images/cloud.png) 0 0 no-repeat;
+
+        &:hover,
+        &:active {
+            text-decoration: none;
+            color: black;
+        }
+    }
+    &__madeby {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        font-size: 15px;
+        text-decoration: none;
+        color: black;
+
+        &:hover {
+            color: black;
+        }
+    }
+    &__greeting {
+        padding: 170px 0 0;
+        font-size: 19px;
+    }
+}
+
+
+/**
+ * @section     Job form
+ */
+
+@job-form-height: 32px;
+@job-form-border-color: #217921;
+
+.job-form {
+    min-height: @job-form-height + 20px;
+    margin-bottom: 45px;
+
+    &__instruction {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+    &__input {
+        width: 405px;
+    }
+    &__textarea {
+        height: @job-form-height !important;
+        padding: 5px 10px;
+        border-color: @job-form-border-color;
+        resize: none;
+
+        &:focus {
+            box-shadow: 0 0 5px fade(@job-form-border-color, 50%);
+            border-color: @job-form-border-color;
+        }
+    }
+    &__submit {
+        height: @job-form-height;
+        background: #47a447;
+        background: -moz-linear-gradient(top,  #47a447 0%, #268b26 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#47a447), color-stop(100%,#268b26));
+        background: -webkit-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: -o-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: -ms-linear-gradient(top,  #47a447 0%,#268b26 100%);
+        background: linear-gradient(to bottom,  #47a447 0%,#268b26 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#47a447', endColorstr='#268b26',GradientType=0 );
+        border-left: none;
+        border-color: @job-form-border-color;
+    }
+}
+
+/**
+ * @section     Job status
+ */
+
+.status {
+    margin-bottom: 300px;
+
+    &__progress-wrapper {
+        height: 30px;
+    }
+    &__progress {
+        margin: 0;
+        box-shadow: none;
+        background-color: fade(white, 50%);
+        border: 1px solid fade(black, 25%);
+    }
+    &__progress-bar {
+        background: fade(black, 25%);
+        box-shadow: none;
+    }
+    
+    &__counter {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 14px;
+    }
+    &__counter-value {
+        display: inline-block;
+        margin-left: 3px;
+        width: 30px;
+    }
+    &__counter-value-wrapper {
+        padding: 0 5px;
+        background: fade(white, 30%);
+        border: 1px solid fade(black, 25%);
+        border-radius: 20px;
+    }
+}
+
+
+/**
+ * @section     Package line
+ */
+
+@package-supported-color: #268b26;
+
+.package {
+    position: relative;
+    padding: 3px 7px;
+    margin:0 10px 10px 0;
+
+    &_status_supported {
+        background: white;
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 10px;
+            right: -10px;
+            width: 10px;
+            background: white;
+        }
+        &:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            border-top: 10px solid white;
+            border-right: 10px solid transparent;
+        }
+    }
+
+    &__ok {
+        float: right;
+        font-size: 22px;
+        color: @package-supported-color;
+    }
+    &__next {
+        float: right;
+        margin-top: 4px;
+        color: @package-supported-color;
+
+        &:hover {
+            color: @package-supported-color;
+        }
+    }
+    &__name {
+        margin: 0;
+        font-family: 'Averia Sans Libre', cursive;
+        font-size: 24px;
+        font-weight: normal;
+    }
+    &__version {
+        margin-left: 6px;
+        font-size: 20px;
+        opacity: 0.7;
+    }
+    &__link {
+        margin: 2px 0 0 10px;
+        float: right;
+        color: black;
+    }
+    &__icon {
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        margin: -1px 0 0 0;
+        vertical-align: middle;
+        background: url(../images/icons.png) 0 0 no-repeat;
+        background-size: 75px 50px;
+
+        &-github {
+            background-position: 0 0;
+        }
+        &-pypi {
+            background-position: -25px 0;
+        }
+        &-travis {
+            background-position: -50px 0;
+        }
+        &-pull {
+            background-position: 0 -25px;
+        }
+        &-fork {
+            background-position: -25px -25px;
+        }
+        &-issue {
+            background-position: -50px -25px;
+        }
+    }
+    &__loader {
+        display: inline-block;
+        margin-left: 5px;
+        float: right;
+        vertical-align: middle;
+        width: 16px;
+        height: 16px;
+        background: url(../images/loader.gif) 0 0 no-repeat;
+    }
+}

@@ -12,6 +12,9 @@ import os
 from configurations import Configuration, values
 
 
+less_command = 'node node_modules/less/bin/lessc {infile} {outfile}'
+
+
 class Common(Configuration):
 
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -39,6 +42,8 @@ class Common(Configuration):
         'django.contrib.staticfiles',
 
         'api',
+        'compressor',
+        'frontend'
     )
 
     MIDDLEWARE_CLASSES = (
@@ -80,13 +85,32 @@ class Common(Configuration):
 
     GITHUB_CLIENT_ID = values.SecretValue()
     GITHUB_CLIENT_SECRET = values.SecretValue()
+    STATICFILES_FINDERS = (
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'compressor.finders.CompressorFinder',
+    )
+
+    # django-compressor
+    COMPRESS_ENABLED = True
+    COMPRESS_OFFLINE = True
+    COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
+                            'compressor.filters.cssmin.CSSMinFilter']
+    COMPRESS_PRECOMPILERS = (
+        ('text/less', less_command),
+    )
+    COMPRESS_CSS_HASHING_METHOD = 'content'
 
 
 class Dev(Common):
     """
     The in-development settings and the default configuration.
     """
-    pass
+    # django-compressor
+    COMPRESS_ENABLED = False
+    COMPRESS_PRECOMPILERS = (
+        ('text/less', less_command + ' --rootpath=../'),
+    )
 
 
 class Prod(Common):
