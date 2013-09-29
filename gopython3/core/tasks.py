@@ -1,6 +1,7 @@
+from celery import chain
 from celery.task import task
 from core.models import Job, Spec
-from api.wrappers import pypi
+from api.wrappers import pypi, github
 
 
 @task
@@ -47,3 +48,44 @@ def query_pypi(spec_pk):
         package.save()
 
     return pkg_data
+
+
+@task
+def search_github(package_name):
+    """ Where are my sources, bro?
+
+        Sometimes, package name is not the same as github repo name,
+        but that should not be a problem, since Github search API
+        is smart enough.
+
+        >>> github.GithubSearchWrapper().get_most_popular_repo('moscowdjango')
+        ('moscowdjango', 'futurecolors')
+    """
+    repo_name, owner = github.GithubSearchWrapper().get_most_popular_repo(package_name)
+    return repo_name, owner
+
+
+@task
+def get_github_info(repo_tuple):
+    """ What's with my sources, bro?
+
+        >>> github.GithubWrapper().get_short_info('futurecolors', 'moscowdjango')
+        {'py3_fork': {},
+        'py3_issue': '',
+        'updated_at': '2013-08-20T08:05:03Z',
+        'url': 'https://api.github.com/repos/futurecolors/moscowdjango'}
+    """
+    repo_name, owner = repo_tuple
+    return github.GithubWrapper().get_short_info(owner, repo_name)
+
+
+@task
+def query_github(package_name):
+    """ Get all relevant info form Github"""
+    # if github url is available
+    if False:
+        # query directly to github account
+        pass
+    else:
+        # guessing github url and querying info
+        return chain(search_github.s('Django'), get_github_info.s())()

@@ -89,7 +89,7 @@ class GithubSearchWrapper(abstract_wrappers.AbstractJsonApiWrapperWithAuth):
 
     def get_common_request_kwargs(self):
         search_headers = {'Accept': 'application/vnd.github.preview'}
-        kwargs = super().get_common_request_kwargs()
+        kwargs = super(GithubSearchWrapper, self).get_common_request_kwargs()
         if 'headers' in kwargs:
             kwargs['headers'].update(search_headers)
         else:
