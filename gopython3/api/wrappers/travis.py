@@ -1,9 +1,11 @@
 from api.abstract_wrappers import AbstractJsonApiWrapper
 
+
 TRAVIS_CI_STATUS_MAP = {
     0: 'passed',
     1: 'failed'
 }
+
 
 class TravisCI(AbstractJsonApiWrapper):
     base_url = 'https://api.travis-ci.org/'
@@ -16,7 +18,7 @@ class TravisCI(AbstractJsonApiWrapper):
         data = self.ask_about_repo_build_info(owner=owner, repo=repo)
         if data:
             return {
-                'full_name': data['slug'],
+                'url': 'https://travis-ci.org/%s' % data['slug'],
                 'last_build_status': TRAVIS_CI_STATUS_MAP.get(data['last_build_status'], 'failed'),
                 'last_build_finished_at': data['last_build_finished_at'],
             }

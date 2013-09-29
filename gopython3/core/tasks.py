@@ -2,7 +2,7 @@ from celery import chain, group, chord
 from celery.task import task
 from api.wrappers.github import parse_github_url
 from core.models import Job, Spec, Package, JobSpec
-from api.wrappers import pypi, github
+from api.wrappers import pypi, github, travis
 
 
 @task
@@ -131,6 +131,15 @@ def get_pr(repo_tuple):
 
 
 @task
+def get_build_status(repo_tuple):
+    """ How are my tests going? """
+    repo_name, owner = repo_tuple
+    travis_data = travis.TravisCI().get_build_status(owner, repo_name)
+
+    return travis_data
+
+
+@task
 def notify_github_completed(r, package_pk):
     """ Update github package info in database"""
     package = Package.objects.get(pk=package_pk)
@@ -145,6 +154,10 @@ def notify_github_completed(r, package_pk):
     package.issue_status = r[2][0].get('state') if r[2] else 'unknown'
 
     package.fork_url = r[3][0].pop(0, {}).get('url', '') if r[3] else ''
+
+    # Travis
+    package.ci_url = r[3].get('url') if r[4] else ''
+    package.ci_status = r[3].get('last_build_status') if r[4] else 'unknown'
     package.save()
     return r
 
@@ -158,8 +171,8 @@ def query_github(results, package_pk):
     gh_queries = group(get_short_info.s(),
                        get_pr.s(),
                        get_issues.s(),
-                       get_forks.s()
-                      )
+                       get_forks.s(),
+                       get_build_status.s())
 
     # guessing github url and querying info
     return chain(search_github.s(package.name, results.get('url')),
