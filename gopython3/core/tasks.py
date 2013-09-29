@@ -14,9 +14,17 @@ def process_job(job_pk):
             * Travis query
     """
     job = Job.objects.get(pk=job_pk)
+    job.start()
 
     for jobspec in job.job_specs.all():
         query_pypi.delay(jobspec.spec.pk)
+
+
+@task
+def notify_job_completed(job_pk):
+    """ Job has finished, now we need to record the result"""
+    job = Job.objects.get(pk=job_pk)
+    job.finish()
 
 
 @task
@@ -103,14 +111,14 @@ def notify_github_completed(r, package_pk):
     package.repo_url = r[0].get('url')
 
     # For now we'll take the first one available
-    package.pr_url = r[1].pop(0).get('issue_url', '') if r[1] else ''
-    #package.pr_status = r[1].get('issue_url')
+    package.pr_url = r[1][0].get('url', '') if r[1] else ''
+    package.pr_status = r[1][0].get('state') if r[1] else 'unknown'
 
-    package.issue_url = r[2].pop(0).get('issue_url', '') if r[2] else ''
-    #package.issue_status = r[2].get('issue_url')
+    package.issue_url = r[2][0].get('url', '') if r[2] else ''
+    package.issue_status = r[2][0].get('state') if r[2] else 'unknown'
 
-    package.fork_url = r[3].pop(0, {}).get('issue_url', '') if r[3] else ''
-    #package.fork_status = r[3].get('issue_url')
+    package.fork_url = r[3][0].pop(0, {}).get('url', '') if r[3] else ''
+    package.fork_status = r[3][0].get('state') if r[3] else 'unknown'
     package.save()
     return r
 

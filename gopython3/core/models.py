@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.timezone import now
 from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
@@ -50,6 +51,16 @@ class Job(TimeFrameStampedModel):
 
     objects = JobManager()
 
+    def start(self):
+        self.status = self.STATUS.runnning
+        self.start = now()
+        self.save(update_fields=['status', 'start'])
+
+    def finish(self):
+        self.status = self.STATUS.completed
+        self.finish = now()
+        self.save(update_fields=['status', 'start'])
+
 
 class Package(TimeStampedModel):
     """ A python package, defined by its name on PyPI
@@ -75,9 +86,8 @@ class Package(TimeStampedModel):
     pr_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.unknown, max_length=20)
 
     # Forks (one for now)
-    FORK_STATUS = Choices('open', 'closed', 'merged', 'rejected')
     fork_url = models.URLField(blank=True)
-    fork_status = models.CharField(choices=FORK_STATUS, default=FORK_STATUS.open, max_length=20)
+    fork_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.open, max_length=20)
 
     # CI
     CI_STATUS = Choices('unknown', 'passed', 'failed', 'errored')
