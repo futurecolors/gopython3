@@ -27,9 +27,14 @@ def process_spec(job_spec_pk):
     job_spec = JobSpec.objects.get(pk=job_spec_pk)
     job_spec.do_start()
 
-    return chain(query_pypi.s(job_spec.spec.pk),
-                 query_github.s(job_spec.spec.package.pk),
-                 notify_completed_spec.si(job_spec_pk)).delay()
+    package, version = job_spec.spec.package, job_spec.spec.version
+    finished_specs = Spec.filter(package=package, version=version, status='finished').exists()
+    if finished_specs:  # not asking services if already parsed
+        return notify_completed_spec.delay(job_spec_pk)
+    else:
+        return chain(query_pypi.delay(job_spec.spec.pk),
+                     query_github.s(job_spec.spec.package.pk),
+                     notify_completed_spec.si(job_spec_pk)).delay()
 
 
 @task

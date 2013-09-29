@@ -100,7 +100,13 @@ class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
     """
+    STATUSES = (
+        ('pending', 'pending'),
+        ('started', 'started'),
+        ('finished', 'finished'),
+    )
     code = models.CharField(max_length=100, unique=True)
+    status = models.CharField(max_length=10, default='pending')
     package = models.ForeignKey('Package')
     version = models.CharField(max_length=20)
     release_date = models.DateTimeField(blank=True, null=True)
