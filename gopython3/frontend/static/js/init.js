@@ -12,7 +12,8 @@
             text: 'libs/require.text',
             jade: 'libs/jade',
             moment: 'libs/moment',
-            'jquery.form': 'libs/jquery.form'
+            'jquery.form': 'libs/jquery.form',
+            'jquery.cookie': 'libs/jquery.cookie'
         },
         shim: {
             jquery: {
@@ -30,6 +31,9 @@
                 exports: 'Marionette'
             },
             'jquery.form': {
+                deps: ['jquery']
+            },
+            'jquery.cookie': {
                 deps: ['jquery']
             }
         },
@@ -136,8 +140,23 @@
         });
     };
 
+    var initCsrf = function(){
+        $(function(){
+            $(document).ajaxSend(function(event, xhr, settings) {
+                function safeMethod(method) {
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+
+                if (!safeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+                }
+            });
+        });
+    };
+
     require([
         'jquery',
+        'jquery.cookie',
         'underscore',
         'backbone',
         'marionette',
@@ -145,6 +164,7 @@
         'app/App'
     ], function (
         $,
+        jqueryCookie,
         _,
         Backbone,
         Marionette,
@@ -154,6 +174,7 @@
         initBootstrap();
         initTemplates(_, Marionette, jade);
         initLinks($, Backbone);
+        initCsrf();
 
         App.start();
     });

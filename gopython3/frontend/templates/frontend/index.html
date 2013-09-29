@@ -31,6 +31,7 @@
             </div>
         </div>
     </section>
+    {% csrf_token %}
 
     {% compress js %}
     <script src="{% static 'js/libs/require.js' %}"></script>
