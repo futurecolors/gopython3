@@ -136,6 +136,7 @@ class Prod(Common):
     """
     DEBUG = False
     TEMPLATE_DEBUG = DEBUG
+    ALLOWED_HOSTS = values.ListValue(default=['dash.fcolors.ru', 'gopython3.com', 'gopy3.com'])
 
     SECRET_KEY = values.SecretValue()
 
@@ -157,7 +158,36 @@ class Prod(Common):
 
     COMPRESS_OFFLINE = True
 
-
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'root': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+        },
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple'
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['console'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+        }
+    }
 
 import djcelery
 djcelery.setup_loader()
