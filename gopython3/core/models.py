@@ -71,6 +71,7 @@ class Job(TimeFrameStampedModel):
     def __str__(self):
         return 'Job %s [%s]' % (self.pk, self.status)
 
+
 class Package(TimeStampedModel):
     """ A python package, defined by its name on PyPI
 
@@ -108,6 +109,7 @@ class Package(TimeStampedModel):
 
     def __str__(self):
         return '%s (%s)' % (self.name, self.slug)
+
 
 @python_2_unicode_compatible
 class Spec(TimeStampedModel):
