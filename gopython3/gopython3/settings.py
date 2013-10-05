@@ -47,6 +47,7 @@ class Common(Configuration):
         'djcelery',
         'kombu.transport.django',
         'compressor',
+        'south',
 
         # go python 3!
         'core',
