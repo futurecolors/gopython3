@@ -1,0 +1,6 @@
+[run]
+source =
+    api
+    core
+    frontend
+    gopython3
