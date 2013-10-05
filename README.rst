@@ -13,18 +13,19 @@ API: http://gopython3.com/api/v1
 Docs: http://docs.python3.apiary.io/
 
 Install
---------
+-------
 
-Steps to get it running locally (commands are not exact):
+Steps to get it running locally (virtualenv is implied and ommited):
 
-    git clone
-    pip install
+    git clone git@github.com:futurecolors/djangodash2013.git
+    cd djangodash2013/gopython3
+    pip install -r requirements.txt
     manage.py syncdb
-    npm install
+    npm install # less templates
     manage.py runserver
     manage.py celeryd
 
-For production environments:
+For production environments following variables are required:
 
     export DJANGO_CONFIGURATION = Prod
     export DJANGO_BROKER_URL = foo
