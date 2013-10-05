@@ -2,7 +2,7 @@ language: python
 python:
   3.3
 install:
-  pip install -r gopython3/requirements.txt
+  pip install -r gopython3/requirements-dev.txt
 script:
   cd gopython3 && coverage run manage.py test && coverage report -m
 after_success:

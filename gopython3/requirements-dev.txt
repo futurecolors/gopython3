@@ -1,2 +1,3 @@
 -r requirements.txt
 -e git+https://github.com/elvard/django-debug-toolbar#egg=django-debug-toolbar
+coveralls==0.3
