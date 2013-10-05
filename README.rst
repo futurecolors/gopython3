@@ -28,6 +28,9 @@ Steps to get it running locally (virtualenv is implied and ommited):
     manage.py runserver
     manage.py celeryd
 
+Production
+~~~~~~~~~~
+
 For production environments following variables are required:
 
     export DJANGO_CONFIGURATION = Prod
