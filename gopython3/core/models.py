@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 from jsonfield import JSONField
 from model_utils import Choices
@@ -111,7 +110,6 @@ class Package(TimeStampedModel):
         return '%s (%s)' % (self.name, self.slug)
 
 
-@python_2_unicode_compatible
 class Spec(TimeStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
