@@ -2,8 +2,8 @@ language: python
 python:
   3.3
 install:
-  python setup.py develop
+  pip install -r gopython3/requirements.txt
 script:
   cd gopython3 && coverage run manage.py test && coverage report -m
-after_script:
+after_success:
   coveralls --verbose
