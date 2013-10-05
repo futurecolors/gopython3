@@ -15,13 +15,11 @@ importer.install()
 from configurations import Configuration, values
 
 
-less_command = 'node node_modules/less/bin/lessc {infile} {outfile}'
-
-
 class Common(Configuration):
 
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-    BASE_DIR = values.PathValue(os.path.dirname(os.path.dirname(__file__)))
+    PARENT_DIR = os.path.dirname(os.path.dirname(__file__))
+    BASE_DIR = values.PathValue(PARENT_DIR)
 
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en//howto/deployment/checklist/
@@ -73,7 +71,7 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//ref/settings/#databases
     # http://django-configurations.readthedocs.org/en/latest/values/#configurations.values.DatabaseURLValue
 
-    DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3'), environ=True)
+    DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(PARENT_DIR, 'db.sqlite3'), environ=True)
 
     # Internationalization
     # https://docs.djangoproject.com/en//topics/i18n/
@@ -92,7 +90,7 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en//howto/static-files/
 
     STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
+    STATIC_ROOT = os.path.join(PARENT_DIR, 'static')
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -103,10 +101,15 @@ class Common(Configuration):
     COMPRESS_ENABLED = True
     COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                             'compressor.filters.cssmin.CSSMinFilter']
-    COMPRESS_PRECOMPILERS = (
-        ('text/less', less_command),
-    )
-    COMPRESS_CSS_HASHING_METHOD = 'content'    
+
+    def COMPRESS_PRECOMPILERS(self):
+        LESS_COMMAND = 'node node_modules/less/bin/lessc {infile} {outfile}'
+        if getattr(self, 'COMPRESS_OFFLINE', None):
+            LESS_COMMAND += ' --rootpath=../'
+        return (
+            ('text/less', LESS_COMMAND),
+        )
+    COMPRESS_CSS_HASHING_METHOD = 'content'
 
     BROKER_URL = values.Value('django://')
 
@@ -120,6 +123,7 @@ class Dev(Common):
     The in-development settings and the default configuration.
     """
     #CELERY_ALWAYS_EAGER = True
+    #COMPRESS_OFFLINE = True
 
 
 class Debug(Dev):
