@@ -1,7 +1,23 @@
 # coding: utf-8
+from itertools import chain
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from hammock import Hammock
+
+
+def is_py3_topic(*args):
+    PYTHON_3_KEYWORDS = (
+        'Python 3',
+        'python3',
+        'py 3',
+        'py3',
+        'py 3k'
+        'py3k'
+        'python 3000',
+        'python3000',
+    )
+    target_string = ''.join(args).lower()
+    return any([keyword.lower() in target_string for keyword in PYTHON_3_KEYWORDS])
 
 
 class HammockAPI(object):
@@ -34,9 +50,9 @@ class Github(HammockAPI):
     def get_most_popular_repo(self, package_name, language='python'):
         """ Most popular owner/repo fullname for given package name
             Returns None if no matches found.
-        """
 
-        # http://developer.github.com/v3/search/#repository-search-example
+            JSON: http://developer.github.com/v3/search/#repository-search-example
+        """
         repos = self.api.search.repositories.GET(params={
             'q': '%s+in:name+language:%s' % (package_name, language),
             'per_page': 10,
@@ -48,9 +64,24 @@ class Github(HammockAPI):
                 return repo['full_name']
 
     def get_repo(self, full_name):
-        data = self.api.repos(full_name).GET().json()
+        """ Repo info
+
+            JSON http://developer.github.com/v3/repos/#get
+        """
+        repo = self.api.repos(full_name).GET().json()
         return {
-            'html_url': data['html_url'],
-            'updated_at': parse_datetime(data['updated_at']),
+            'html_url': repo['html_url'],
+            'updated_at': parse_datetime(repo['updated_at']),
         }
 
+    def get_py3_issues(self, full_name):
+        """ Issues with py3 keywords in title
+            Returns None if no matches found.
+
+            JSON http://developer.github.com/v3/issues/#list-issues-for-a-repository
+        """
+        # TODO: maybe parse more than 2 pages
+        open_issues = self.api.repos(full_name).issues.GET().json()
+        closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'}).json()
+        return [{'state': issue['state'], 'title': issue['title'], 'html_url': issue['html_url']}
+                for issue in chain(open_issues, closed_issues) if is_py3_topic(issue['title'])]
