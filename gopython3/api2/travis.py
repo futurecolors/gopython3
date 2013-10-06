@@ -5,12 +5,6 @@ from .base import HammockAPI
 class Travis(HammockAPI):
     base_url = 'https://api.travis-ci.org'
 
-    def params(self):
-        return {
-            'client_id': 'x',
-            'client_secret': 'y',
-        }
-
     def headers(self):
         return {
             'Accept': 'application/vnd.travis-ci.2+json, */*; q=0.01'

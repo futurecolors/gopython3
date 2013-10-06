@@ -3,6 +3,7 @@ import datetime
 import pytz
 from django.test import TestCase
 from httpretty import HTTPretty
+from api2.pypi import PyPI
 from .travis import Travis
 from .github import Github
 
@@ -66,11 +67,41 @@ class TestTravisApi(APITestCase):
     def test_get_build_status(self):
         HTTPretty.register_uri(HTTPretty.GET,
             'https://api.travis-ci.org/repos/coagulant/cleanweb',
-            '{"repo":{"slug": "coagulant/cleanweb", "last_build_state": "passed"}}',
-            status=200
+            '{"repo":{"slug": "coagulant/cleanweb", "last_build_state": "passed"}}'
         )
         self.assertEqual(Travis().get_build_status('coagulant/cleanweb'), {
             'html_url': 'https://travis-ci.org/coagulant/cleanweb',
             'last_build_state': 'passed',
         })
 
+
+class TestPypiApi(APITestCase):
+
+    def test_get_info(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'http://pypi.python.org/simple/django/', status=302,
+            Location='http://pypi.python.org/simple/Django/'
+        )
+        HTTPretty.register_uri(HTTPretty.GET,
+           'http://pypi.python.org/simple/Django/',
+           body="it works!")
+
+        json_string = """{"info":{
+        "classifiers": [
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.6",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.2",
+            "Programming Language :: Python :: 3.3"]
+        }, "urls": [{"upload_time": "2013-09-15T06:30:37"}]}"""
+        HTTPretty.register_uri(HTTPretty.GET,
+            "http://pypi.python.org/pypi/Django/json", json_string
+        )
+
+        self.assertEqual(PyPI().get_info('django'), {
+            'py3_versions': ['3', '3.2', '3.3'],
+            'name': 'Django',
+            'last_release_date': datetime.datetime(2013, 9, 15, 6, 30, 37, tzinfo=pytz.utc),
+        })
