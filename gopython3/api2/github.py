@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.conf import settings
+from django.utils.dateparse import parse_datetime
 from hammock import Hammock
 
 
@@ -45,4 +46,11 @@ class Github(HammockAPI):
             # TODO: maybe more intelligent name guess?
             if repo['name'].lower() == package_name:
                 return repo['full_name']
+
+    def get_repo(self, full_name):
+        data = self.api.repos(full_name).GET().json()
+        return {
+            'html_url': data['html_url'],
+            'updated_at': parse_datetime(data['updated_at']),
+        }
 
