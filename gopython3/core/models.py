@@ -9,6 +9,14 @@ from core.util import parse_requirements, normalize_package_name
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
 
+from django.conf import settings
+
+if settings.DEBUG:
+    import warnings
+    warnings.filterwarnings(
+            'error', r"DateTimeField received a naive datetime",
+            RuntimeWarning, r'django\.db\.models\.fields')
+
 
 class TimeFrameStampedModel(TimeStampedModel):
     STATUS = TASK_STATUS

@@ -1,8 +1,11 @@
 from celery import chain, group, chord
 from celery.task import task
-from api.wrappers.github import parse_github_url
-from core.models import Job, Spec, Package, JobSpec
+from celery.utils.log import get_task_logger
 from api.wrappers import pypi, github, travis
+from core.models import Job, Spec, Package, JobSpec
+
+
+logger = get_task_logger(__name__)
 
 
 @task
@@ -92,7 +95,7 @@ def query_pypi(spec_pk):
     return pkg_data
 
 
-@task
+@task(rate_limit='20/m')
 def search_github(package_name, url):
     """ Where are my sources, bro?
 
@@ -104,7 +107,7 @@ def search_github(package_name, url):
         ('moscowdjango', 'futurecolors')
     """
     if url:
-        repo_info = parse_github_url(url)
+        repo_info = github.parse_github_url(url)
         if repo_info:
             # query directly to github account
             return repo_info['repo_name'], repo_info['owner']
