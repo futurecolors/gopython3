@@ -2,18 +2,18 @@
     require.config({
         baseUrl: '/static/js/',
         paths: {
-            backbone: 'libs/backbone',
-            underscore: 'libs/underscore',
-            jquery: 'libs/jquery',
-            marionette: 'libs/backbone.marionette',
-            'backbone.wreqr': 'libs/backbone.wreqr',
-            'backbone.babysitter': 'libs/backbone.babysitter',
-            'backbone.routefilter': 'libs/backbone.routefilter',
-            text: 'libs/require.text',
-            jade: 'libs/jade',
-            moment: 'libs/moment',
-            'jquery.form': 'libs/jquery.form',
-            'jquery.cookie': 'libs/jquery.cookie'
+            backbone: 'vendor/backbone',
+            underscore: 'vendor/underscore',
+            jquery: 'vendor/jquery',
+            marionette: 'vendor/backbone.marionette',
+            'backbone.wreqr': 'vendor/backbone.wreqr',
+            'backbone.babysitter': 'vendor/backbone.babysitter',
+            'backbone.routefilter': 'vendor/backbone.routefilter',
+            text: 'vendor/require.text',
+            jade: 'vendor/jade',
+            moment: 'vendor/moment',
+            'jquery.form': 'vendor/jquery.form',
+            'jquery.cookie': 'vendor/jquery.cookie'
         },
         shim: {
             jquery: {
