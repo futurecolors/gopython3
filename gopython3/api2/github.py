@@ -85,3 +85,23 @@ class Github(HammockAPI):
         closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'}).json()
         return [{'state': issue['state'], 'title': issue['title'], 'html_url': issue['html_url']}
                 for issue in chain(open_issues, closed_issues) if is_py3_topic(issue['title'])]
+
+    def get_py3_forks(self, full_name, check_branches=False):
+        """ Forks with py3 keywords in name
+            Returns None if no matches found.
+
+            Optional branches arg will search branch names for python 3 name
+            (query per fork, so takes plenty of time)
+
+            JSON http://developer.github.com/v3/repos/forks/#list-forks
+                 http://developer.github.com/v3/repos/#list-branches
+        """
+        def get_branch_names(fork):
+            if not check_branches:
+                return ['']
+            branches_info = self.api.repos(fork['full_name']).branches.GET().json()
+            return [branch['name'] for branch in branches_info]
+
+        forks = self.api.repos(full_name).forks.GET().json()
+        return [{'html_url': fork['html_url'], 'name': fork['name']}
+                for fork in forks if is_py3_topic(fork['name'], *get_branch_names(fork))]

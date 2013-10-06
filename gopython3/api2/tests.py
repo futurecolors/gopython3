@@ -47,3 +47,14 @@ class TestGithubApi(APITestCase):
             'title': 'Python 3 support',
             'html_url': 'https://github.com/embedly/embedly-python/pull/13'
         }])
+
+    def test_get_py3_forks(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.github.com/repos/nick/progressbar/forks',
+            '[{"html_url": "https://github.com/coagulant/progressbar-python3", "name": "progressbar-python3"},'
+             '{"html_url": "https://github.com/mick/progressbar", "name": "progressbar"}]',
+        )
+        self.assertEqual(Github().get_py3_forks('nick/progressbar'), [{
+            'name': 'progressbar-python3',
+            'html_url': 'https://github.com/coagulant/progressbar-python3'
+        }])
