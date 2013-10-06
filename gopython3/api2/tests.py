@@ -3,6 +3,7 @@ import datetime
 import pytz
 from django.test import TestCase
 from httpretty import HTTPretty
+from .travis import Travis
 from .github import Github
 
 
@@ -58,3 +59,18 @@ class TestGithubApi(APITestCase):
             'name': 'progressbar-python3',
             'html_url': 'https://github.com/coagulant/progressbar-python3'
         }])
+
+
+class TestTravisApi(APITestCase):
+
+    def test_get_build_status(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.travis-ci.org/repos/coagulant/cleanweb',
+            '{"repo":{"slug": "coagulant/cleanweb", "last_build_state": "passed"}}',
+            status=200
+        )
+        self.assertEqual(Travis().get_build_status('coagulant/cleanweb'), {
+            'html_url': 'https://travis-ci.org/coagulant/cleanweb',
+            'last_build_state': 'passed',
+        })
+
