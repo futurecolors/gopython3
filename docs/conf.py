@@ -41,7 +41,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'x'
+master_doc = 'index'
 
 # General information about the project.
 project = 'gopython3'
@@ -197,7 +197,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('x', 'gopython3.tex', 'gopython3 Documentation',
+  ('index', 'gopython3.tex', 'gopython3 Documentation',
    'Future Colors', 'manual'),
 ]
 
@@ -227,7 +227,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('x', 'gopython3', 'gopython3 Documentation',
+    ('index', 'gopython3', 'gopython3 Documentation',
      ['Future Colors'], 1)
 ]
 
@@ -241,7 +241,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('x', 'gopython3', 'gopython3 Documentation',
+  ('index', 'gopython3', 'gopython3 Documentation',
    'Future Colors', 'gopython3', 'One line description of project.',
    'Miscellaneous'),
 ]
