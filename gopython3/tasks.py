@@ -4,7 +4,12 @@ from invoke import task, run
 
 @task
 def test():
-    run('python manage.py test --with-specplugin', pty=True)
+    run('python manage.py test --with-specplugin -a"!functional"', pty=True)
+
+
+@task
+def functional():
+    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture', pty=True)
 
 
 @task

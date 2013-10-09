@@ -2,6 +2,7 @@
 from itertools import chain
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
+import requests
 from .base import HammockAPI, is_py3_topic
 
 
@@ -48,19 +49,21 @@ class Github(HammockAPI):
 
     def get_py3_issues(self, full_name):
         """ Issues with py3 keywords in title
-            Returns None if no matches found.
 
             JSON http://developer.github.com/v3/issues/#list-issues-for-a-repository
         """
         # TODO: maybe parse more than 2 pages
-        open_issues = self.api.repos(full_name).issues.GET().json()
-        closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'}).json()
+        open_issues = self.api.repos(full_name).issues.GET()
+        closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'})
+        if open_issues.status_code == requests.codes.gone:
+            # Issue tracker is disabled for this repo
+            return []
+        map(print, chain(open_issues, closed_issues))
         return [{'state': issue['state'], 'title': issue['title'], 'html_url': issue['html_url']}
-                for issue in chain(open_issues, closed_issues) if is_py3_topic(issue['title'])]
+                for issue in chain(open_issues.json(), closed_issues.json()) if is_py3_topic(issue['title'])]
 
     def get_py3_forks(self, full_name, check_branches=False):
         """ Forks with py3 keywords in name
-            Returns None if no matches found.
 
             Optional branches arg will search branch names for python 3 name
             (query per fork, so takes plenty of time)
