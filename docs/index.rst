@@ -14,6 +14,7 @@ API
 For those of you REST lovers:
 
 API: http://gopython3.com/api/v1/
+
 API Docs: http://docs.python3.apiary.io/
 
 Install
@@ -32,7 +33,7 @@ Steps to get it running locally (virtualenv is implied and ommited)::
 Production
 ~~~~~~~~~~
 
-For production environments following variables are required:
+For production environments following variables are required::
 
     export DJANGO_CONFIGURATION = Prod
     export DJANGO_BROKER_URL = foo

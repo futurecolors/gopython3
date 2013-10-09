@@ -53,6 +53,7 @@ class Common(Configuration):
         # go python 3!
         'core',
         'api',
+        'api2',
         'frontend'        
     )
 

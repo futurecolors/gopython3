@@ -4,8 +4,8 @@ import pytz
 from django.test import TestCase
 from httpretty import HTTPretty
 from api2.pypi import PyPI
-from .travis import Travis
-from .github import Github
+from api2.travis import Travis
+from api2.github import Github
 
 
 class APITestCase(TestCase):
@@ -59,6 +59,20 @@ class TestGithubApi(APITestCase):
         self.assertEqual(Github().get_py3_forks('nick/progressbar'), [{
             'name': 'progressbar-python3',
             'html_url': 'https://github.com/coagulant/progressbar-python3'
+        }])
+
+    def test_get_py3_forks_branches(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.github.com/repos/embedly/embedly-python/forks',
+            '[{"html_url": "https://github.com/coagulant/embedly-python", "name": "embedly-python", "full_name": "coagulant/embedly-python"}]',
+        )
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.github.com/repos/coagulant/embedly-python/branches',
+            '[{"name": "master"}, {"name": "py3k"}]',
+        )
+        self.assertEqual(Github().get_py3_forks('embedly/embedly-python', True), [{
+            'name': 'embedly-python',
+            'html_url': 'https://github.com/coagulant/embedly-python'
         }])
 
 

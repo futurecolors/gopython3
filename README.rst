@@ -10,5 +10,5 @@ We'll help you update your dependencies, and you need to migrate only your own c
 http://gopython3.com/
 ---------------------
 
-Docs: http://gopython.rtfd.org/
+Docs: http://gopython3.readthedocs.org/en/dev/
 
