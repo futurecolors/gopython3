@@ -4,7 +4,8 @@ from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
-from core.util import parse_requirements, normalize_package_name
+import requirements
+from core.util import normalize_package_name
 
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
@@ -39,16 +40,18 @@ class TimeFrameStampedModel(TimeStampedModel):
 
 class JobManager(models.Manager):
 
-    def create_from_requirements(self, requirements):
+    def create_from_requirements(self, requirements_txt_content):
         """ Create job from requirements.txt contents
         """
-        reqs_list = parse_requirements(requirements)
-        job = Job.objects.create(requirements=requirements)
-        for package_name, version in reqs_list:
-            if not version:  # Ignore packages without versions (for now)
+        reqs_list = requirements.parse(requirements_txt_content)
+        job = Job.objects.create(requirements=requirements_txt_content)
+        for package in reqs_list:
+            if not package.specs:  # Ignore packages without versions (for now)
                 continue
-            package, _ = Package.objects.get_or_create(slug=normalize_package_name(package_name),
-                                                       defaults={'name': package_name})
+            if len(package.specs) > 0 or package.specs[0][0] != '==':  # Ignore unfrozen dependencies (for now)
+                continue
+            package, _ = Package.objects.get_or_create(slug=normalize_package_name(package.name),
+                                                       defaults={'name': package.name})
             spec, _ = Spec.objects.get_or_create(package=package, version=version)
             JobSpec.objects.create(job=job, spec=spec)
         return job
