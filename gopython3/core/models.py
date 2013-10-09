@@ -4,8 +4,8 @@ from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
-import requirements
 from core.util import normalize_package_name
+import requirements
 
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
@@ -48,8 +48,9 @@ class JobManager(models.Manager):
         for package in reqs_list:
             if not package.specs:  # Ignore packages without versions (for now)
                 continue
-            if len(package.specs) > 0 or package.specs[0][0] != '==':  # Ignore unfrozen dependencies (for now)
+            if len(package.specs) > 1 or package.specs[0][0] != '==':  # Ignore unfrozen dependencies (for now)
                 continue
+            version = package.specs[0][1]
             package, _ = Package.objects.get_or_create(slug=normalize_package_name(package.name),
                                                        defaults={'name': package.name})
             spec, _ = Spec.objects.get_or_create(package=package, version=version)
