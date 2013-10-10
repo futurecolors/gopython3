@@ -1,5 +1,6 @@
 import warnings
 from django.test import TestCase
+from core.factories import SpecFactory
 from .models import Job, Package, Spec, JobSpec
 
 
@@ -30,3 +31,12 @@ class JobTest(TestCase):
         self.assertQuerysetEqual(JobSpec.objects.all(),
                                  ['Job 1 [pending] nose==1.3', 'Job 1 [pending] Django-Geoip==0.3'],
                                  transform=str, ordered=False)
+
+    def test_does_not_create_duplicate_specs(self):
+        spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
+        job = Job.objects.create_from_requirements('lettuce==0.2.19')
+
+        assert Spec.objects.count() == 1
+        assert Package.objects.count() == 1
+        assert job.job_specs.all().first().version == spec.version
+        assert job.job_specs.all().first().package.name == spec.package.name
