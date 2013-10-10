@@ -5,16 +5,18 @@ from nose.plugins.attrib import attr
 from api2.github import Github
 
 
+@attr('functional')
 class GithubRealTest(TestCase):
+
+    def setUp(self):
+        self.gh = Github()
 
     @attr('functional')
     def test_github_api_with_real_repos(self):
-        github_api = Github()
-
         repos = cache.get('top_popular_repos')
         if not repos:
             # Get 100 most popular repos
-            repos = github_api.api.search.repositories.GET(params={
+            repos = self.gh.api.search.repositories.GET(params={
                 'q': 'language:python',
                 'per_page': 100,
                 'sort': 'stars',
@@ -25,6 +27,6 @@ class GithubRealTest(TestCase):
             full_name = repo['full_name']
             print(i,
                   full_name,
-                  github_api.get_py3_forks(full_name),
-                  github_api.get_py3_issues(full_name) or github_api.get_py3_pulls(full_name)
+                  'forks: %s' % len(self.gh.get_py3_forks(full_name)),
+                  'issues: %s' % len(self.gh.get_py3_issues(full_name) or self.gh.get_py3_pulls(full_name))
             )

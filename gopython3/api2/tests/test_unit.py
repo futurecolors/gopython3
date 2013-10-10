@@ -37,14 +37,14 @@ class TestGithubApi(APITestCase):
             "updated_at": datetime.datetime(2013, 1, 26, 19, 14, 43, tzinfo=pytz.utc)
         })
 
-    def test_get_py3_issues(self):
+    def test_crawl_py3_issues(self):
         HTTPretty.register_uri(HTTPretty.GET,
             'https://api.github.com/repos/embedly/embedly-python/issues',
             responses=[HTTPretty.Response('[{"state": "open", "title": "WTF?", "html_url": "https://github.com/embedly/embedly-python/issues/1"},'
                                           '{"state": "closed", "title": "Python 3 support", "html_url": "https://github.com/embedly/embedly-python/pull/13"}]'),
                        HTTPretty.Response('[{"state": "open", "title": "Broken", "html_url": "https://github.com/embedly/embedly-python/issues/2"}]')]
         )
-        self.assertEqual(Github().get_py3_issues('embedly/embedly-python'), [{
+        self.assertEqual(Github().get_py3_issues('embedly/embedly-python', search=False), [{
             'state': 'closed',
             'title': 'Python 3 support',
             'html_url': 'https://github.com/embedly/embedly-python/pull/13'

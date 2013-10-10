@@ -51,7 +51,30 @@ class Github(HammockAPI):
             'updated_at': parse_datetime(repo['updated_at']),
         }
 
-    def get_py3_issues(self, full_name):
+    def get_py3_issues(self, full_name, search=True):
+        """ Issues with python 3 in title
+            Can be obtained via legacy but working query
+            and by manually querying all issue pages (multiple queries)
+        """
+        if search:
+            return self._search_py3_issues(full_name)
+        else:
+            # pending deprecation?
+            return self._crawl_py3_issues(full_name)
+
+    def _search_py3_issues(self, full_name):
+        """ Search for issues with python+3 in title
+
+            Note: returns pulls as well, legacy method
+
+            JSON http://developer.github.com/v3/issues/#list-issues-for-a-repository
+        """
+        open_issues = self.api.legacy.issues.search(full_name).open('python+3').GET().json()
+        closed_issues = self.api.legacy.issues.search(full_name).closed('python+3').GET().json()
+        return [{'state': issue['state'], 'title': issue['title'], 'html_url': issue['html_url']}
+                for issue in chain(open_issues['issues'], closed_issues['issues'])]
+
+    def _crawl_py3_issues(self, full_name):
         """ Issues with py3 keywords in title
 
             JSON http://developer.github.com/v3/issues/#list-issues-for-a-repository
@@ -87,6 +110,7 @@ class Github(HammockAPI):
 
             TODO: support undocumented network_meta json
                   https://github.com/flavioamieiro/nose-ipdb/network_meta
+                  Currently it's almost useless, people rarely rename their forks.
 
             JSON http://developer.github.com/v3/repos/forks/#list-forks
                  http://developer.github.com/v3/repos/#list-branches

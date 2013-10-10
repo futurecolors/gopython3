@@ -122,6 +122,42 @@ class Common(Configuration):
     GITHUB_CLIENT_ID = values.Value('dummy')
     GITHUB_CLIENT_SECRET = values.Value('dummy')
 
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
+            },
+            'colored': {
+                '()': 'colorlog.ColoredFormatter',
+                'format': "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s"
+            }
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple'
+            },
+            'color_console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'colored'
+            }
+        },
+        'loggers': {
+            'api2': {
+                'handlers': ['color_console'],
+                'level': 'ERROR',
+                'propagate': False,
+            }
+        }
+    }
+
 
 class Dev(Common):
     """
@@ -157,36 +193,6 @@ class Prod(Common):
 
     COMPRESS_OFFLINE = True
 
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'root': {
-            'level': 'WARNING',
-            'handlers': ['console'],
-        },
-        'formatters': {
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-            },
-            'simple': {
-                'format': '%(levelname)s %(message)s'
-            },
-        },
-        'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple'
-            },
-        },
-        'loggers': {
-            'django.request': {
-                'handlers': ['console'],
-                'level': 'ERROR',
-                'propagate': False,
-            },
-        }
-    }
 
 import djcelery
 djcelery.setup_loader()

@@ -1,11 +1,21 @@
 # coding: utf-8
 import logging
+import datetime
 from hammock import Hammock
+import re
 import requests
 from .exceptions import RateLimitExceeded
 
 
 logger = logging.getLogger(__name__)
+
+
+def keep_secrets(url):
+    return re.sub('(?P<name>client_secret|client_id)=[a-f0-9]+', '\g<1>=*', url)
+
+
+def format_date(timestamp):
+    return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
 
 class MyHammock(Hammock):
@@ -16,8 +26,11 @@ class MyHammock(Hammock):
             TODO: make this abstract method for all derived APIs to override
         """
         response = super()._request(method, *args, **kwargs)
-        logger.debug('Response: %s' % response.status_code)
-        logger.debug('JSON: %s' % response.json())
+        logger.info(keep_secrets(response.request.url))
+        logger.debug('%s/%s Reset: %s' % (response.headers.get('X-RateLimit-Remaining'),
+                                          response.headers.get('X-RateLimit-Limit'),
+                                          format_date(response.headers.get('X-RateLimit-Reset', 0))
+        ))
         if response.status_code == requests.codes.forbidden:
             # Looks like we have hit the rate limit, fail fast
             # E.g. http://developer.github.com/v3/#rate-limiting
@@ -32,7 +45,13 @@ class HammockAPI(object):
     base_url = None
 
     def __init__(self, *args, **kwargs):
-        self.api = MyHammock(self.base_url, params=self.params(), headers=self.headers(),)
+        self.api = MyHammock(self.base_url, params=self.params(), headers=self.headers(), )
+
+    def params(self):
+        return {}
+
+    def headers(self):
+        return {}
 
 
 def is_py3_topic(*args):
