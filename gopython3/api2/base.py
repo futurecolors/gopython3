@@ -17,7 +17,7 @@ class HammockAPI(object):
 
 def is_py3_topic(*args):
     PYTHON_3_KEYWORDS = (
-        'Python 3',
+        'python 3',
         'python3',
         'py 3',
         'py3',

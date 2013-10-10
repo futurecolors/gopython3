@@ -54,13 +54,26 @@ class Github(HammockAPI):
         """
         # TODO: maybe parse more than 2 pages
         open_issues = self.api.repos(full_name).issues.GET()
-        closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'})
         if open_issues.status_code == requests.codes.gone:
             # Issue tracker is disabled for this repo
             return []
-        map(print, chain(open_issues, closed_issues))
+        closed_issues = self.api.repos(full_name).issues.GET(params={'state': 'closed'})
         return [{'state': issue['state'], 'title': issue['title'], 'html_url': issue['html_url']}
                 for issue in chain(open_issues.json(), closed_issues.json()) if is_py3_topic(issue['title'])]
+
+    def get_py3_pulls(self, full_name):
+        """ Pull requests with py3 keywords in name
+
+            Pull requests are also issues if issue tracker is not disabled,
+            in most cases fetching get_py3_issues is enough to cover both issues and PRs.
+
+            JSON http://developer.github.com/v3/pulls/#list-pull-requests
+        """
+        open_prs = self.api.repos(full_name).pulls.GET()
+        closed_prs = self.api.repos(full_name).pulls.GET(params={'state': 'closed'})
+
+        return [{'state': pull['state'], 'title': pull['title'], 'html_url': pull['html_url']}
+                for pull in chain(open_prs.json(), closed_prs.json()) if is_py3_topic(pull['title'])]
 
     def get_py3_forks(self, full_name, check_branches=False):
         """ Forks with py3 keywords in name

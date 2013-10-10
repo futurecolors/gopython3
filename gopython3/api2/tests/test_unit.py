@@ -49,6 +49,21 @@ class TestGithubApi(APITestCase):
             'title': 'Python 3 support',
             'html_url': 'https://github.com/embedly/embedly-python/pull/13'
         }])
+        self.assertEqual(HTTPretty.last_request.querystring['state'][0], 'closed')
+
+    def test_get_py3_pull_requests(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.github.com/repos/django/django/pulls',
+            responses=[HTTPretty.Response('[{"html_url": "https://github.com/django/django/pull/1", "title": "testing python requests 3", "state": "open"},'
+                                          ' {"html_url": "https://github.com/django/django/pull/2", "title": "please support Python 3", "state": "closed"}]'),
+                       HTTPretty.Response('[{"state": "open", "title": "Broken", "html_url": "https://github.com/django/django/pull/3"}]')]
+        )
+        self.assertEqual(Github().get_py3_pulls('django/django'), [{
+            'state': 'closed',
+            'title': 'please support Python 3',
+            'html_url': 'https://github.com/django/django/pull/2'
+        }])
+        self.assertEqual(HTTPretty.last_request.querystring['state'][0], 'closed')
 
     def test_get_py3_forks(self):
         HTTPretty.register_uri(HTTPretty.GET,
