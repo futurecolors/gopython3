@@ -41,3 +41,17 @@ For production environments following variables are required::
     export DJANGO_SECRET_KEY = baz
     export DJANGO_GITHUB_CLIENT_ID = xxx
     export DJANGO_GITHUB_CLIENT_SECRET = yyy
+
+
+Tests
+-----
+::
+
+    pip install invoke
+    invoke test # unittests
+    invoke functional # functional tests
+
+Note, that functional tests might fail if you hit rate limit.
+
+
+

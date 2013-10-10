@@ -81,6 +81,9 @@ class Github(HammockAPI):
             Optional branches arg will search branch names for python 3 name
             (query per fork, so takes plenty of time)
 
+            TODO: support undocumented network_meta json
+                  https://github.com/flavioamieiro/nose-ipdb/network_meta
+
             JSON http://developer.github.com/v3/repos/forks/#list-forks
                  http://developer.github.com/v3/repos/#list-branches
         """
