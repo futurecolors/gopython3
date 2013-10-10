@@ -8,40 +8,20 @@ we strive to provide maximum info about libraries status of python 3 support.
 .. toctree::
    :maxdepth: 2
 
-API
-----
+How it works
+------------
+User submits his ``requirements.txt`` to learn, how many packages have python 3 support.
+We create a ``Job``, separated into package ``Specs``, one for each row of the file.
+For each spec we are pulling these actions:
 
-For those of you REST lovers:
-
-API: http://gopython3.com/api/v1/
-
-API Docs: http://docs.python3.apiary.io/
-
-Install
--------
-
-Steps to get it running locally (virtualenv is implied and ommited)::
-
-    git clone git@github.com:futurecolors/djangodash2013.git
-    cd djangodash2013/gopython3
-    pip install -r requirements.txt
-    manage.py syncdb
-    npm install # less templates
-    manage.py runserver
-    manage.py celeryd
-
-Production
-~~~~~~~~~~
-
-For production environments following variables are required::
-
-    export DJANGO_CONFIGURATION = Prod
-    export DJANGO_BROKER_URL = foo
-    export DATABASE_URL = bar
-    export DJANGO_SECRET_KEY = baz
-    export DJANGO_GITHUB_CLIENT_ID = xxx
-    export DJANGO_GITHUB_CLIENT_SECRET = yyy
-
+    * resolve package dependency if spec is not frozen
+    * check cache, if we have already processed the Spec in the past
+    * ask PyPI for package metadata, if python 3 support is found in classifiers, we're done
+    * guess where the repo is, first, from PyPI metadata.
+    * if we don't know where the repo is, search github for this package.
+    * query for open issues or pull requests
+    * query for forks (currently, `ineffective`)
+    * query Travis for tests (or, maybe, python versions under test)
 
 Tests
 -----
