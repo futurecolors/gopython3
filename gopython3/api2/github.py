@@ -66,6 +66,7 @@ class Github(HammockAPI):
         """ Search for issues with python+3 in title
 
             Note: returns pulls as well, legacy method
+            TODO: undocumented search exists curl -ni "https://api.github.com/search/issues?q=chrome+repo:twbs/bootstrap"
 
             JSON http://developer.github.com/v3/issues/#list-issues-for-a-repository
         """

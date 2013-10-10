@@ -25,6 +25,7 @@ class PyPI(HammockAPI):
     def get_correct_name(self, name):
         """ Naturally PyPI redirects us into correct URL
             E.g. https://pypi.python.org/simple/DJANGO/ -> https://pypi.python.org/simple/Django/
+            That's generally faster than XMLRPC: https://wiki.python.org/moin/PyPIXmlRpc method
         """
         response = requests.get('http://pypi.python.org/simple/%s/' % name)
         return response.url.split('/')[-2]
