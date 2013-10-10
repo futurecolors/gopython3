@@ -1,9 +1,13 @@
 # coding: utf-8
 from itertools import chain
+import logging
+import requests
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
-import requests
 from .base import HammockAPI, is_py3_topic
+
+
+logger = logging.getLogger(__name__)
 
 
 class Github(HammockAPI):
