@@ -1,11 +1,13 @@
+from autoslug import AutoSlugField
 from django.db import models
 from django.utils.timezone import now
 from jsonfield import JSONField
 from model_utils import Choices
 from model_utils.fields import StatusField
 from model_utils.models import TimeStampedModel
-from core.util import normalize_package_name
 import requirements
+
+from .tasks import process_requirement
 
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
@@ -43,18 +45,12 @@ class JobManager(models.Manager):
     def create_from_requirements(self, requirements_txt_content):
         """ Create job from requirements.txt contents
         """
-        reqs_list = requirements.parse(requirements_txt_content)
         job = Job.objects.create(requirements=requirements_txt_content)
-        for package in reqs_list:
-            if not package.specs:  # Ignore packages without versions (for now)
-                continue
-            if len(package.specs) > 1 or package.specs[0][0] != '==':  # Ignore unfrozen dependencies (for now)
-                continue
-            version = package.specs[0][1]
-            package, _ = Package.objects.get_or_create(slug=normalize_package_name(package.name),
-                                                       defaults={'name': package.name})
-            spec, _ = Spec.objects.get_or_create(package=package, version=version)
-            JobSpec.objects.create(job=job, spec=spec)
+        reqs_list = requirements.parse(job.requirements)
+
+        for req in reqs_list:
+            process_requirement.delay(req, job.pk)
+
         return job
 
 
@@ -69,7 +65,7 @@ class Job(TimeFrameStampedModel):
     """
     requirements = models.TextField()
     status = StatusField()
-    job_specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
+    specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
 
     objects = JobManager()
 
@@ -91,7 +87,8 @@ class Package(TimeStampedModel):
             * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(help_text='Underscore, lowercased', unique=True)
+    slug = AutoSlugField(populate_from='name', unique=True, slugify=lambda name: name.lower().replace('-', '_'),
+                         help_text='Underscore, lowercased')
 
     # Repo data
     repo_url = models.URLField(blank=True)
