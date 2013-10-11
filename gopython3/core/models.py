@@ -162,11 +162,20 @@ class Spec(TimeStampedModel):
         index_together = unique_together
 
 
+class JobSpecManager(models.Manager):
+
+    def create_from_distribution(self, distribution, job_id):
+        package, _ = Package.objects.get_or_create(name=distribution.name)
+        spec, _ = Spec.objects.get_or_create(package=package, version=distribution.version)
+        return JobSpec.objects.create(job_id=job_id, spec=spec)
+
+
 class JobSpec(TimeFrameStampedModel):
     """ A spec in a job """
     job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')
     status = StatusField()
+    objects = JobSpecManager()
 
     def __str__(self):
         return '%s %s' % (self.job, self.spec)

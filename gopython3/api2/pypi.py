@@ -1,8 +1,8 @@
 # coding: utf-8
+from distlib.locators import locate
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
 import pytz
-import requests
 from .base import HammockAPI
 
 
@@ -19,6 +19,22 @@ class PyPI(HammockAPI):
             'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),
         }
+
+    @classmethod
+    def get_distribution(cls, requirement):
+        """ Resolve requirement
+
+            Receives a named tuple of parsed requirement:
+            >>> req.name, req.specs, req.extras
+            ('Django', [('>=', '1.5'), ('<', '1.6')], [])
+        """
+        distlib_line = requirement.name
+        if requirement.specs:
+            # E.g.: Django (>= 1.0, < 2.0, != 1.3
+            distlib_line += ' (%s)' % (', '.join('%s %s' % cond for cond in requirement.specs))
+
+        # Returned object has canonical name (flask -> Flask)
+        return locate(distlib_line)
 
     @classmethod
     def get_py3_versions(cls, classifiers):

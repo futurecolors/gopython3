@@ -21,7 +21,7 @@ def fake_distributions(*distributions):
 @override_settings(CELERY_ALWAYS_EAGER=True)
 class JobTest(TestCase):
 
-    @patch('core.tasks.locate', side_effect=fake_distributions(
+    @patch('api2.pypi.locate', side_effect=fake_distributions(
            'Django==1.4.8', 'django-geoip==0.3', 'coverage==3.7', 'coveralls==0.3'))
     def test_can_be_created_from_requirements_txt(self, locate_mock):
         reqs_txt = """
@@ -51,7 +51,7 @@ class JobTest(TestCase):
               'Job 1 [pending] coverage==3.7', 'Job 1 [pending] coveralls==0.3'],
              transform=str, ordered=False)
 
-    @patch('core.tasks.locate', side_effect=fake_distributions('lettuce==0.2.19'))
+    @patch('api2.pypi.locate', side_effect=fake_distributions('lettuce==0.2.19'))
     def test_does_not_create_duplicate_specs(self, locate_mock):
         spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
         job = Job.objects.create_from_requirements('lettuce==0.2.19')

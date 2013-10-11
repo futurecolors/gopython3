@@ -1,5 +1,4 @@
 from celery.task import task
-from distlib.locators import locate
 from api2.pypi import PyPI
 
 
@@ -11,34 +10,24 @@ def process_requirement(req, job_id):
         >>> req.name, req.specs, req.extras
         ('Django', [('>=', '1.5'), ('<', '1.6')], [])
     """
-    from .models import Package, Spec, JobSpec
+    from .models import JobSpec
 
-    # E.g.: Django (>= 1.0, < 2.0, != 1.3
-    distlib_line = req.name
-    if req.specs:
-        distlib_line += ' (%s)' % (', '.join('%s %s' % cond for cond in req.specs))
-        skip_locate_latest = False
-    else:
-        skip_locate_latest = True
+    distribution = PyPI.get_distribution(req)
+    job_spec = JobSpec.objects.create_from_distribution(distribution, job_id)
 
-    # Returned object has canonical name (flask -> Flask)
-    distribution = locate(distlib_line)
+    # XXX: Separate tests
+    query_pypi.delay(job_spec.spec.pk)
+    if not req.specs:
+        # If version is not fixed, we already got latest package
+        (create_latest_spec.s(req.name, job_spec.spec.package.pk) | query_pypi.s())
 
-    # Create models
-    package, _ = Package.objects.get_or_create(name=distribution.name)
-    spec, _ = Spec.objects.get_or_create(package=package, version=distribution.version)
-    JobSpec.objects.create(job_id=job_id, spec=spec)
-
-    query_pypi.delay(spec.pk)
-    if not skip_locate_latest:
-        (create_latest_spec.s(req.name, package.pk) | query_pypi.s())
 
 @task
 def create_latest_spec(package_name, package_id):
     """ Locate latest version available on PyPI """
     from .models import Spec
 
-    distribution = locate(package_name)
+    distribution = PyPI.get_distribution(package_name)
     latest_spec, _ = Spec.objects.get_or_create(package_id=package_id, version=distribution.version)
     return latest_spec.pk
 
