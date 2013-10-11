@@ -14,21 +14,11 @@ class PyPI(HammockAPI):
 
             JSON: https://pypi.python.org/pypi/requests/json
         """
-        name = self.get_correct_name(name)
         package = self.api(name).json.GET().json()
         return {
             'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),
-            'name': name
         }
-
-    def get_correct_name(self, name):
-        """ Naturally PyPI redirects us into correct URL
-            E.g. https://pypi.python.org/simple/DJANGO/ -> https://pypi.python.org/simple/Django/
-            That's generally faster than XMLRPC: https://wiki.python.org/moin/PyPIXmlRpc method
-        """
-        response = requests.get('http://pypi.python.org/simple/%s/' % name)
-        return response.url.split('/')[-2]
 
     @classmethod
     def get_py3_versions(cls, classifiers):

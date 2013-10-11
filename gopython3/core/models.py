@@ -132,10 +132,6 @@ class Spec(TimeStampedModel):
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
 
-    latest_version = models.CharField(max_length=20, blank=True)
-    latest_release_date = models.DateTimeField(blank=True, null=True)
-    latest_python_versions = JSONField(blank=True, null=True)
-
     def __str__(self):
         return '%s==%s' % (self.package.name, self.version)
 

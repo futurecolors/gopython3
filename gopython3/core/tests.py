@@ -46,7 +46,6 @@ class JobTest(TestCase):
         self.assertQuerysetEqual(Spec.objects.all(),
              ['Django==1.4.8', 'django-geoip==0.3', 'coverage==3.7', 'coveralls==0.3'],
              transform=str, ordered=False)
-        self.assertEqual(JobSpec.objects.count(), 4)
         self.assertQuerysetEqual(JobSpec.objects.all(),
              ['Job 1 [pending] Django==1.4.8', 'Job 1 [pending] django-geoip==0.3',
               'Job 1 [pending] coverage==3.7', 'Job 1 [pending] coveralls==0.3'],

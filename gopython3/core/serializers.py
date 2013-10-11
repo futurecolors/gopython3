@@ -46,9 +46,9 @@ class PyPIField(serializers.WritableField):
             },
             "latest": {
                 "url": obj.latest_pypi_url,
-                "version": obj.latest_version,
-                "python3": obj.latest_python_versions,
-                "release_date": obj.latest_release_date
+                #"version": obj.latest_version,
+                #"python3": obj.latest_python_versions,
+                #"release_date": obj.latest_release_date
             }
         }
 

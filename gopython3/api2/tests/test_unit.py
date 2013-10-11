@@ -108,10 +108,6 @@ class TestPypiApi(APITestCase):
 
     def test_get_info(self):
         HTTPretty.register_uri(HTTPretty.GET,
-            'http://pypi.python.org/simple/django/', status=302,
-            Location='http://pypi.python.org/simple/Django/'
-        )
-        HTTPretty.register_uri(HTTPretty.GET,
            'http://pypi.python.org/simple/Django/',
            body="it works!")
 
@@ -129,8 +125,7 @@ class TestPypiApi(APITestCase):
             "http://pypi.python.org/pypi/Django/json", json_string
         )
 
-        self.assertEqual(PyPI().get_info('django'), {
+        self.assertEqual(PyPI().get_info('Django'), {
             'py3_versions': ['3', '3.2', '3.3'],
-            'name': 'Django',
             'last_release_date': datetime.datetime(2013, 9, 15, 6, 30, 37, tzinfo=pytz.utc),
         })

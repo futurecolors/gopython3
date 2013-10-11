@@ -16,8 +16,7 @@ class JobAdmin(admin.ModelAdmin):
 
 
 class SpeckAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'release_date', 'python_versions', 'latest_version',
-                    'latest_release_date', 'latest_python_versions',
+    list_display = ['__str__', 'release_date', 'python_versions',
                     'created', 'modified', 'status']
     list_filter = ['status']
 
