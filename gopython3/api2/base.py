@@ -1,7 +1,9 @@
 # coding: utf-8
 import logging
 import datetime
+from django.utils import timezone
 from hammock import Hammock
+import pytz
 import re
 import requests
 from .exceptions import RateLimitExceeded
@@ -15,7 +17,10 @@ def keep_secrets(url):
 
 
 def format_date(timestamp):
-    return datetime.datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+    naive_datetime = datetime.datetime.fromtimestamp(int(timestamp))
+    aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
+    local_datetime = timezone.localtime(aware_datetime, pytz.timezone('Europe/Moscow'))
+    return local_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class MyHammock(Hammock):
@@ -26,11 +31,13 @@ class MyHammock(Hammock):
             TODO: make this abstract method for all derived APIs to override
         """
         response = super()._request(method, *args, **kwargs)
-        logger.info(keep_secrets(response.request.url))
-        logger.debug('%s/%s Reset: %s' % (response.headers.get('X-RateLimit-Remaining'),
-                                          response.headers.get('X-RateLimit-Limit'),
-                                          format_date(response.headers.get('X-RateLimit-Reset', 0))
-        ))
+        logger.debug('--> %s' % keep_secrets(response.request.url))
+        if response.headers.get('X-RateLimit-Limit'):
+            # TODO: only for GH
+            logger.debug('--> %s/%s Reset: %s' % (response.headers.get('X-RateLimit-Remaining'),
+                                              response.headers.get('X-RateLimit-Limit'),
+                                              format_date(response.headers.get('X-RateLimit-Reset', 0))
+            ))
         if response.status_code == requests.codes.forbidden:
             # Looks like we have hit the rate limit, fail fast
             # E.g. http://developer.github.com/v3/#rate-limiting

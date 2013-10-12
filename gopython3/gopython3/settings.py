@@ -22,7 +22,7 @@ class Common(Configuration):
     BASE_DIR = values.PathValue(PARENT_DIR)
 
     # Quick-start development settings - unsuitable for production
-    # See https://docs.djangoproject.com/en//howto/deployment/checklist/
+    # See https://docs.djangoproject.com/en/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = '8t5=#r0m*^9b3!fab+b3($*ky@@v#c8)g10ey&krrt3uwd1*+d'
@@ -70,13 +70,13 @@ class Common(Configuration):
     WSGI_APPLICATION = 'gopython3.wsgi.application'
 
     # Database
-    # https://docs.djangoproject.com/en//ref/settings/#databases
+    # https://docs.djangoproject.com/en/ref/settings/#databases
     # http://django-configurations.readthedocs.org/en/latest/values/#configurations.values.DatabaseURLValue
 
     DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(PARENT_DIR, 'db.sqlite3'), environ=True)
 
     # Internationalization
-    # https://docs.djangoproject.com/en//topics/i18n/
+    # https://docs.djangoproject.com/en/topics/i18n/
 
     LANGUAGE_CODE = 'en-us'
 
@@ -150,6 +150,11 @@ class Common(Configuration):
         },
         'loggers': {
             'api2': {
+                'handlers': ['color_console'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'core': {
                 'handlers': ['color_console'],
                 'level': 'ERROR',
                 'propagate': False,

@@ -22,6 +22,7 @@ class PyPI(HammockAPI):
         return {
             'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),
+            'url': package['info'].get('home_page', ''),
             'name': package['info']['name']
         }
 

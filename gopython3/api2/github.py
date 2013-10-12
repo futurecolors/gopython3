@@ -56,9 +56,10 @@ class Github(HammockAPI):
         }).json()
 
         for repo in repos.get('items', []):
-            # TODO: maybe more intelligent name guess?
-            if repo['name'].lower() == package_name:
+            # TODO: more intelligent name guess? underscore/dashes
+            if repo['name'].lower() == package_name.lower():
                 return repo['full_name']
+        logger.warn('We haven\'t found any repos for %s' % package_name)
 
     def get_repo(self, full_name):
         """ Repo info

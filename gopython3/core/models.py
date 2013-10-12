@@ -99,7 +99,7 @@ class Package(TimeStampedModel):
     issue_url = models.URLField(blank=True)
     issue_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.unknown, max_length=20)
 
-    # PR
+    # PR (one for now)
     pr_url = models.URLField(blank=True)
     pr_status = models.CharField(choices=ISSUE_STATUS, default=ISSUE_STATUS.unknown, max_length=20)
 
