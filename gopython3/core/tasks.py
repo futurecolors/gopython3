@@ -1,6 +1,5 @@
 from celery.task import task
-from api2.github import Github
-from api2.pypi import PyPI
+from api2 import Github, PyPI, TravisCI
 
 
 @task
@@ -69,3 +68,29 @@ def search_github(package_name, url=False):
     full_name = Github().get_most_popular_repo(package_name)
     return full_name
 
+
+@task
+def get_repo_info(full_name):
+    """ What's with my sources, bro? """
+    return Github().get_repo(full_name)
+
+
+@task
+def get_forks(full_name):
+    return Github().get_py3_forks(full_name)
+
+
+@task
+def get_issues(full_name):
+    return Github().get_py3_issues(full_name)
+
+
+@task
+def get_pulls(full_name):
+    return Github().get_py3_pulls(full_name)
+
+
+@task
+def get_build_status(full_name):
+    """ How are my tests going? """
+    return TravisCI().get_build_status(full_name)

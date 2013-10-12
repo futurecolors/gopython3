@@ -2,7 +2,7 @@
 from .base import HammockAPI
 
 
-class Travis(HammockAPI):
+class TravisCI(HammockAPI):
     base_url = 'https://api.travis-ci.org'
 
     def headers(self):
