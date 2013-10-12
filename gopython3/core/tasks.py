@@ -1,3 +1,4 @@
+from celery import group
 from celery.task import task
 from api2 import Github, PyPI, TravisCI
 
@@ -6,19 +7,33 @@ from api2 import Github, PyPI, TravisCI
 def process_requirement(req, job_id):
     """ Process requirement
 
-        Receives a named tuple of parsed requirement:
-        >>> req.name, req.specs, req.extras
-        ('Django', [('>=', '1.5'), ('<', '1.6')], [])
+        For each package spec we query following services:
+            * PyPI
+            * GitHub
+            * Travis
     """
     from .models import JobSpec
 
+    # Freezing the requirement
     distribution = PyPI.get_distribution(req)
     job_spec = JobSpec.objects.create_from_distribution(distribution, job_id)
 
-    query_pypi.delay(job_spec.spec.pk)
-    if not req.specs:
+    # TODO: if spec is already parsed, halt
+
+    pypi = query_pypi.s(job_spec.spec.pk)
+    if req.specs:
         # If version is not fixed, we already got latest package
-        (process_latest_spec.s(req.name, job_spec.spec.package.pk) | query_pypi.s())
+        process_latest_spec.s(req.name, job_spec.spec.package.pk) | query_pypi.s()
+
+    # Github and Travis tasks can be processed in parallel
+    # But they need pypi info (to avoid GH search if possible)
+    github_travis = group(get_repo_info.s(),
+                          get_issues.s() | get_pulls.s(),
+                          get_build_status.s())
+
+    notify = notify_completed_spec.si(job_spec)
+
+    return (pypi | github_travis | notify).delay()
 
 
 @task
@@ -86,7 +101,10 @@ def get_issues(full_name):
 
 
 @task
-def get_pulls(full_name):
+def get_pulls(issues, full_name):
+    # Do not ask for pull-requests, if we got issues
+    if issues:
+        return issues
     return Github().get_py3_pulls(full_name)
 
 
@@ -94,3 +112,12 @@ def get_pulls(full_name):
 def get_build_status(full_name):
     """ How are my tests going? """
     return TravisCI().get_build_status(full_name)
+
+
+@task
+def notify_completed_spec(spec_id):
+    """ Spec processing has finished, now we need to record the result
+    """
+    from .models import Spec
+    spec = Spec.objects.get(pk=spec_id)
+    spec.do_finish()

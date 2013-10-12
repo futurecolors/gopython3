@@ -119,7 +119,7 @@ class Package(TimeStampedModel):
         return '%s (%s)' % (self.name, self.slug)
 
 
-class Spec(TimeStampedModel):
+class Spec(TimeFrameStampedModel):
     """ A python package with pinned version.
         Contains all metadata, relevant to python 3 current or future support.
     """
@@ -170,11 +170,10 @@ class JobSpecManager(models.Manager):
         return JobSpec.objects.create(job_id=job_id, spec=spec)
 
 
-class JobSpec(TimeFrameStampedModel):
+class JobSpec(TimeStampedModel):
     """ A spec in a job """
     job = models.ForeignKey(Job)
     spec = models.ForeignKey(Spec, related_name='job_specs')
-    status = StatusField()
     objects = JobSpecManager()
 
     def __str__(self):
