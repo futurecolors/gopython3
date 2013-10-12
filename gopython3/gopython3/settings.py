@@ -52,7 +52,7 @@ class Common(Configuration):
 
         # go python 3!
         'core',
-        'api2',
+        'api',
         'frontend'        
     )
 
@@ -149,7 +149,7 @@ class Common(Configuration):
             }
         },
         'loggers': {
-            'api2': {
+            'api': {
                 'handlers': ['color_console'],
                 'level': 'ERROR',
                 'propagate': False,

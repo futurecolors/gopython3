@@ -2,7 +2,7 @@
 from django.core.cache import cache
 from django.test import TestCase
 from nose.plugins.attrib import attr
-from api2.github import Github
+from api.github import Github
 
 
 @attr('functional')

@@ -3,9 +3,9 @@ import datetime
 import pytz
 from django.test import TestCase
 from httpretty import HTTPretty
-from api2.pypi import PyPI
-from api2.travis import TravisCI
-from api2.github import Github
+from api.pypi import PyPI
+from api.travis import TravisCI
+from api.github import Github
 
 
 class APITestCase(TestCase):

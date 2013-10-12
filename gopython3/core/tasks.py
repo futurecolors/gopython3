@@ -1,7 +1,7 @@
 import logging
 from celery import group
 from celery.task import task
-from api2 import Github, PyPI, TravisCI
+from api import Github, PyPI, TravisCI
 
 
 logger = logging.getLogger(__name__)

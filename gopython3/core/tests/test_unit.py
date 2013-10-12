@@ -73,7 +73,7 @@ class JobSepcTest(TestCase):
 
 class PypiTaskTest(TestCase):
 
-    @patch('api2.PyPI.get_info')
+    @patch('api.PyPI.get_info')
     def test_updates_spec(self, get_info_mock):
         last_release_date = timezone.now()
         py3_versions = ['3', '3.2', '3.3']
