@@ -15,7 +15,6 @@ def process_requirement(req, job_id):
     distribution = PyPI.get_distribution(req)
     job_spec = JobSpec.objects.create_from_distribution(distribution, job_id)
 
-    # XXX: Separate tests
     query_pypi.delay(job_spec.spec.pk)
     if not req.specs:
         # If version is not fixed, we already got latest package
