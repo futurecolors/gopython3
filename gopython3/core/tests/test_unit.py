@@ -1,3 +1,4 @@
+# coding: utf-8
 from unittest.mock import patch
 from django.utils import timezone
 
@@ -5,9 +6,9 @@ import warnings
 from collections import namedtuple
 from django.test import TestCase
 
-from core.factories import SpecFactory, JobFactory
-from core.tasks import query_pypi
-from .models import Job, Package, Spec, JobSpec
+from ..factories import SpecFactory, JobFactory
+from ..models import Job, Package, Spec, JobSpec
+from ..tasks import query_pypi
 
 
 def fake_distributions(*distributions):

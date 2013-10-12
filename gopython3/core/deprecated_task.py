@@ -1,7 +1,6 @@
 from celery import chain, group, chord
 from celery.task import task
 from celery.utils.log import get_task_logger
-from api.wrappers import pypi, github, travis
 from core.models import Job, Spec, Package, JobSpec
 
 

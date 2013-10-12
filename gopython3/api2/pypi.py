@@ -13,8 +13,10 @@ class PyPI(HammockAPI):
         """ Get package info
 
             JSON: https://pypi.python.org/pypi/requests/json
+                  https://pypi.python.org/pypi/requests/2.0.0/json
         """
-        package = self.api(name).json.GET().json()
+        path = '%s/%s' % (name, version) if version else name
+        package = self.api(path).json.GET().json()
         return {
             'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),

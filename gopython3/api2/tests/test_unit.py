@@ -91,7 +91,7 @@ class TestGithubApi(APITestCase):
         }])
 
 
-class TestTravisCIApi(APITestCase):
+class TestTravisApi(APITestCase):
 
     def test_get_build_status(self):
         HTTPretty.register_uri(HTTPretty.GET,
@@ -106,11 +106,7 @@ class TestTravisCIApi(APITestCase):
 
 class TestPypiApi(APITestCase):
 
-    def test_get_info(self):
-        HTTPretty.register_uri(HTTPretty.GET,
-           'http://pypi.python.org/simple/Django/',
-           body="it works!")
-
+    def test_get_info_without_version(self):
         json_string = """{"info":{
         "classifiers": [
             "Programming Language :: Python",
@@ -128,4 +124,22 @@ class TestPypiApi(APITestCase):
         self.assertEqual(PyPI().get_info('Django'), {
             'py3_versions': ['3', '3.2', '3.3'],
             'last_release_date': datetime.datetime(2013, 9, 15, 6, 30, 37, tzinfo=pytz.utc),
+        })
+
+    def test_get_info_with_version(self):
+        json_string = """{"info":{
+        "classifiers": [
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2.4",
+            "Programming Language :: Python :: 2.5",
+            "Programming Language :: Python :: 2.6",
+            "Programming Language :: Python :: 2.7"]
+        }, "urls": [{"upload_time": "2013-02-19T20:32:04"}]}"""
+        HTTPretty.register_uri(HTTPretty.GET,
+            "http://pypi.python.org/pypi/Django/1.3.6/json", json_string
+        )
+
+        self.assertEqual(PyPI().get_info(name='Django', version='1.3.6'), {
+            'py3_versions': [],
+            'last_release_date': datetime.datetime(2013, 2, 19, 20, 32, 4, tzinfo=pytz.utc),
         })
