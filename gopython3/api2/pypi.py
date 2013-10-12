@@ -17,9 +17,12 @@ class PyPI(HammockAPI):
         """
         path = '%s/%s' % (name, version) if version else name
         package = self.api(path).json.GET().json()
+        # FIXME: no upload time?
+        # FIXME: no classifiers?
         return {
             'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),
+            'name': package['info']['name']
         }
 
     @classmethod

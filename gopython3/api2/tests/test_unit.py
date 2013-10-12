@@ -108,6 +108,7 @@ class TestPypiApi(APITestCase):
 
     def test_get_info_without_version(self):
         json_string = """{"info":{
+        "name": "Django",
         "classifiers": [
             "Programming Language :: Python",
             "Programming Language :: Python :: 2",
@@ -124,10 +125,12 @@ class TestPypiApi(APITestCase):
         self.assertEqual(PyPI().get_info('Django'), {
             'py3_versions': ['3', '3.2', '3.3'],
             'last_release_date': datetime.datetime(2013, 9, 15, 6, 30, 37, tzinfo=pytz.utc),
+            'name': 'Django'
         })
 
     def test_get_info_with_version(self):
         json_string = """{"info":{
+        "name": "Django",
         "classifiers": [
             "Programming Language :: Python",
             "Programming Language :: Python :: 2.4",
@@ -142,4 +145,5 @@ class TestPypiApi(APITestCase):
         self.assertEqual(PyPI().get_info(name='Django', version='1.3.6'), {
             'py3_versions': [],
             'last_release_date': datetime.datetime(2013, 2, 19, 20, 32, 4, tzinfo=pytz.utc),
+            'name': 'Django'
         })
