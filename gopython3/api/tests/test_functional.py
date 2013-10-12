@@ -1,8 +1,12 @@
 # coding: utf-8
+import logging
 from django.core.cache import cache
 from django.test import TestCase
 from nose.plugins.attrib import attr
 from api.github import Github
+
+
+logger = logging.getLogger('api')
 
 
 @attr('functional')
@@ -10,6 +14,10 @@ class GithubRealTest(TestCase):
 
     def setUp(self):
         self.gh = Github()
+        logger.setLevel(logging.DEBUG)
+
+    def tearDown(self):
+        logger.setLevel(logging.ERROR)
 
     @attr('functional')
     def test_github_api_with_real_repos(self):

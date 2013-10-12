@@ -9,12 +9,12 @@ def test():
 
 
 @task
-def functional():
-    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture', pty=True)
+def functional(arg=''):
+    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture %s' % arg, pty=True)
 
 
 @task
 def cover(package=''):
     """ Django-nose does not report properly"""
-    run('coverage run --source=%s manage.py test' % package, pty=True)
+    run('coverage run --source=%s manage.py test --with-doctest -a"!functional"' % package, pty=True)
     run('coverage report -m', pty=True)
