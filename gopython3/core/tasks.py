@@ -18,12 +18,15 @@ def process_requirement(req, job_id):
     query_pypi.delay(job_spec.spec.pk)
     if not req.specs:
         # If version is not fixed, we already got latest package
-        (create_latest_spec.s(req.name, job_spec.spec.package.pk) | query_pypi.s())
+        (process_latest_spec.s(req.name, job_spec.spec.package.pk) | query_pypi.s())
 
 
 @task
-def create_latest_spec(package_name, package_id):
-    """ Locate latest version available on PyPI """
+def process_latest_spec(package_name, package_id):
+    """ Process package latest version available on PyPI
+
+        Obtaining only metadata from PyPI, because other tasks will query latest repo version anyway.
+    """
     from .models import Spec
 
     distribution = PyPI.get_distribution(package_name)

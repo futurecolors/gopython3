@@ -1,10 +1,12 @@
 from unittest.mock import patch
+from django.utils import timezone
 
 import warnings
 from collections import namedtuple
 from django.test import TestCase
 
 from core.factories import SpecFactory, JobFactory
+from core.tasks import query_pypi
 from .models import Job, Package, Spec, JobSpec
 
 
@@ -66,3 +68,21 @@ class JobSepcTest(TestCase):
         assert Package.objects.count() == 1
         assert job.specs.all().first().version == spec.version
         assert job.specs.all().first().package.name == spec.package.name
+
+
+class PypiTaskTest(TestCase):
+
+    @patch('api2.pypi.PyPI.get_info')
+    def test_updates_spec(self, get_info_mock):
+        last_release_date = timezone.now()
+        py3_versions = ['3', '3.2', '3.3']
+        get_info_mock.return_value = {
+            'last_release_date': last_release_date,
+            'py3_versions': py3_versions,
+        }
+
+        spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
+        self.assertEqual(query_pypi(spec.pk), get_info_mock.return_value)
+        spec = Spec.objects.get(pk=spec.pk)
+        assert spec.release_date == last_release_date
+        assert spec.python_versions == py3_versions
