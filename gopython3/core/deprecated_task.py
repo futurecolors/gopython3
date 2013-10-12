@@ -64,7 +64,7 @@ def query_pypi(spec_pk):
 
         Sample result of PyPIWrapper:
 
-        >>> pypi.PyPIWrapper().get_short_info('django', None)
+        pypi.PyPIWrapper().get_short_info('django', None)
         {'last_release_date': datetime.datetime(2013, 9, 15, 6, 30, 37),
          'name': 'Django',
          'python3_supported_versions': ['3', '3.2', '3.3'],
@@ -103,7 +103,7 @@ def search_github(package_name, url):
         but that should not be a problem, since Github search API
         is smart enough.
 
-        >>> github.GithubSearchWrapper().get_most_popular_repo('moscowdjango')
+        github.GithubSearchWrapper().get_most_popular_repo('moscowdjango')
         ('moscowdjango', 'futurecolors')
     """
     if url:
@@ -120,7 +120,7 @@ def search_github(package_name, url):
 def get_short_info(repo_tuple):
     """ What's with my sources, bro?
 
-        >>> github.GithubWrapper().get_short_info('futurecolors', 'moscowdjango')
+        github.GithubWrapper().get_short_info('futurecolors', 'moscowdjango')
         {'updated_at': datetime.datetime(2013, 9, 15, 6, 30, 37),
          'url': 'https://api.github.com/repos/futurecolors/moscowdjango'}
     """

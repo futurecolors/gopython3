@@ -1,5 +1,6 @@
 # coding: utf-8
 from itertools import chain
+from urllib.parse import urlparse
 import logging
 import requests
 from django.conf import settings
@@ -23,6 +24,25 @@ class Github(HammockAPI):
         return {
             'Accept': 'application/vnd.github.preview'
         }
+
+    @classmethod
+    def parse_url(cls, url):
+        """ Returns owner/repo part for github repo url.
+            None if not a github url
+
+        >>> Github.parse_url('https://github.com/futurecolors/djangodash2013')
+        'futurecolors/djangodash2013'
+        >>> Github.parse_url('https://github.com/futurecolors/django-geoip/')
+        'futurecolors/django-geoip'
+
+        """
+        parsed_url = urlparse(url)
+        host, path = parsed_url.hostname, parsed_url.path
+        if host == 'github.com':
+            path = path.strip('/')
+            if path.count('/') == 1:
+                return path
+        return None
 
     def get_most_popular_repo(self, package_name, language='python'):
         """ Most popular owner/repo fullname for given package name

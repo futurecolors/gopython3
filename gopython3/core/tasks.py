@@ -1,4 +1,5 @@
 from celery.task import task
+from api2.github import Github
 from api2.pypi import PyPI
 
 
@@ -47,4 +48,24 @@ def query_pypi(spec_pk):
     spec.save(update_fields=['release_date', 'python_versions'])
 
     return pkg_data
+
+
+@task(rate_limit='20/m')
+def search_github(package_name, url=False):
+    """ Where are my sources, bro?
+
+        Sometimes, package name is not the same as github repo name,
+        but that should not be a problem, since Github search API
+        is smart enough.
+
+        Task is intentionally rate limited to avoid RateLimitExceeded with search beta API.
+    """
+    if url:
+        full_name = Github().parse_url(url)
+        if full_name:
+            # query directly to github account, skipping search
+            return full_name
+
+    full_name = Github().get_most_popular_repo(package_name)
+    return full_name
 

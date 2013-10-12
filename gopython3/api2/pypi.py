@@ -25,8 +25,7 @@ class PyPI(HammockAPI):
         """ Resolve requirement
 
             Receives a named tuple of parsed requirement:
-            >>> req.name, req.specs, req.extras
-            ('Django', [('>=', '1.5'), ('<', '1.6')], [])
+            Requirement(name='Django', specs=[('>=', '1.5'), ('<', '1.6')], extras=[])
         """
         distlib_line = requirement.name
         if requirement.specs:

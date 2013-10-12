@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from core.serializers import JobSerializer, PackageSerializer
 
 from .models import Job, Spec
-from .tasks import process_job
 
 
 class JobViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
@@ -22,7 +21,6 @@ class JobViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
             return Response({'requirements': 'Bad requirements. %s' % e},
                             status=status.HTTP_400_BAD_REQUEST)
         else:
-            process_job.delay(job.pk)
             return Response(serializer.data, status=status.HTTP_201_CREATED,
                             headers=headers)
 

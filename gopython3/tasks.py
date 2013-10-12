@@ -4,7 +4,8 @@ from invoke import task, run
 
 @task
 def test():
-    run('python manage.py test --with-specplugin --nocapture --nologcapture -a"!functional', pty=True)
+    run('python manage.py test --with-doctest -a"!functional"'
+        ' --with-specplugin --nocapture --nologcapture', pty=True)
 
 
 @task
