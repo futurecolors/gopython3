@@ -160,9 +160,9 @@ class Spec(TimeFrameStampedModel):
     def pypi_url(self):
         return "https://pypi.python.org/pypi/%s" % self.code
 
-    @property
-    def latest_pypi_url(self):
-        return "https://pypi.python.org/pypi/%s/" % self.package.slug
+    def get_latest_version(self):
+        # TODO: handle blank release dates
+        return Spec.objects.filter(package=self.package).latest('release_date')
 
     def __repr__(self):
         return '<Spec: %s==%s>' % (self.name, self.version)

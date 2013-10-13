@@ -37,6 +37,7 @@ class JobDetailSerialzier(JobSerializer):
 class PyPIField(serializers.WritableField):
 
     def to_native(self, obj):
+        latest_obj = obj.get_latest_version()
         return {
             "current": {
                 "url": obj.pypi_url,
@@ -45,10 +46,10 @@ class PyPIField(serializers.WritableField):
                 "release_date": obj.release_date
             },
             "latest": {
-                "url": obj.latest_pypi_url,
-                #"version": obj.latest_version,
-                #"python3": obj.latest_python_versions,
-                #"release_date": obj.latest_release_date
+                "url": latest_obj.pypi_url,
+                "version": latest_obj.version,
+                "python3": latest_obj.python_versions,
+                "release_date": latest_obj.release_date
             }
         }
 
@@ -83,18 +84,21 @@ class PullRequestField(serializers.WritableField):
 class ForkField(serializers.WritableField):
 
     def to_native(self, obj):
-        return [{
-            "url": obj.fork_url,
-        }]
+        if not obj.fork_url:
+            return []
+        else:
+            return [{
+                "url": obj.fork_url,
+            }]
 
 
 class CIField(serializers.WritableField):
 
     def to_native(self, obj):
-        return [{
+        return {
             "url": obj.ci_url,
             "status": obj.ci_status
-        }]
+        }
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -109,6 +113,6 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spec
-        fields = ('id', 'name', 'version', 'package', 'status',
+        fields = ('id', 'name', 'version', 'status',
                   'created_at', 'updated_at', 'pypi', 'repo',
                   'issues', 'forks', 'ci')

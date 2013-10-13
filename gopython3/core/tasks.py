@@ -30,11 +30,12 @@ def process_requirement(req, job_id):
     pypi = query_pypi.s(spec.pk)
     if req.specs:
         # If version is not fixed, we already got latest package
+        # TODO: make sure, we save all data at once, to avoid inconsistency
         process_latest_spec.s(req.name, package.pk) | query_pypi.s()
 
     # TODO: if package was parsed not long ago, maybe we can serve cache
 
-    notify = notify_completed_spec.si(job_spec.pk)
+    notify = notify_completed_spec.si(spec.pk)
 
     return (pypi | github_travis.s(package.pk) | notify).delay()
 
