@@ -4,6 +4,6 @@ python:
 install:
   pip install -r gopython3/requirements-dev.txt
 script:
-  cd gopython3 && coverage run manage.py test -a"!functional" && coverage report -m
+  cd gopython3 && invoke cover
 after_success:
   coveralls --verbose
