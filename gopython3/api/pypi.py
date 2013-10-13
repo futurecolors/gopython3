@@ -34,13 +34,16 @@ class PyPI(HammockAPI):
     def get_distribution(cls, requirement):
         """ Resolve requirement
 
-            Receives a named tuple of parsed requirement:
+            Receives string or a named tuple of parsed requirement:
             Requirement(name='Django', specs=[('>=', '1.5'), ('<', '1.6')], extras=[])
         """
-        distlib_line = requirement.name
-        if requirement.specs:
-            # E.g.: Django (>= 1.0, < 2.0, != 1.3)
-            distlib_line += ' (%s)' % (', '.join('%s %s' % cond for cond in requirement.specs))
+        if isinstance(requirement, str):
+            distlib_line = requirement
+        else:
+            distlib_line = requirement.name
+            if requirement.specs:
+                # E.g.: Django (>= 1.0, < 2.0, != 1.3)
+                distlib_line += ' (%s)' % (', '.join('%s %s' % cond for cond in requirement.specs))
 
         # Returned object has canonical name (flask -> Flask)
         return locate(distlib_line)

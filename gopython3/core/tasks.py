@@ -30,13 +30,13 @@ def process_requirement(req, job_id):
     pypi = query_pypi.s(spec.pk)
     if req.specs:
         # If version is not fixed, we already got latest package
-        # TODO: make sure, we save all data at once, to avoid inconsistency
-        process_latest_spec.s(req.name, package.pk) | query_pypi.s()
+        # Otherwise, fetch latest package to see if it is py3 compatible
+        # Celery can not chain 2 groups, so it's a callback chain for now
+        pypi = pypi | process_latest_spec.si(req.name, package.pk) | query_pypi.s()
 
     # TODO: if package was parsed not long ago, maybe we can serve cache
 
     notify = notify_completed_spec.si(spec.pk)
-
     return (pypi | github_travis.s(package.pk) | notify).delay()
 
 
@@ -47,16 +47,22 @@ def process_latest_spec(package_name, package_id):
         Obtaining only metadata from PyPI, because other tasks will query latest repo version anyway.
     """
     from .models import Spec
+    logger.debug('Creating latest spec')
 
     distribution = PyPI.get_distribution(package_name)
-    latest_spec, _ = Spec.objects.get_or_create(package_id=package_id, version=distribution.version)
-    return latest_spec.pk
-
+    latest_spec, created = Spec.objects.get_or_create(package_id=package_id, version=distribution.version)
+    if created:
+        # do not return spec, because it's already queued
+        return latest_spec.pk
 
 @task
 def query_pypi(spec_pk):
     """ Query one spec of package on PyPI"""
     from .models import Spec
+
+    # Short-circuit, if we have no spec to query
+    if not spec_pk:
+        return
 
     spec = Spec.objects.get(pk=spec_pk)
     logger.debug('[PYPI] Fetching data for %s' % spec)
