@@ -110,7 +110,8 @@ class TestApi(APITestCase):
              "ci": {
                  "url": "https://travis-ci.org/jezdez/django_compressor",
                  "status": "passing"
-             }
+             },
+             'url': 'http://testserver/api/v1/packages/django_compressor/1.3/'
         })
 
 

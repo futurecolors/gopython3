@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import viewsets, routers, status, mixins
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from core.serializers import JobSerializer, PackageSerializer, JobDetailSerialzier
@@ -27,6 +27,11 @@ class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOn
                             headers=headers)
 
 
+class PackageListView(ListAPIView):
+    model = Spec
+    serializer_class = PackageSerializer
+
+
 class PackageView(RetrieveAPIView):
     model = Spec
     serializer_class = PackageSerializer
@@ -34,4 +39,5 @@ class PackageView(RetrieveAPIView):
 
 
 router = routers.DefaultRouter()
+router.include_format_suffixes = False
 router.register(r'jobs', JobViewSet)

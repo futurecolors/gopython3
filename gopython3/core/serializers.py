@@ -101,7 +101,7 @@ class CIField(serializers.WritableField):
         }
 
 
-class PackageSerializer(serializers.ModelSerializer):
+class PackageSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.Field(source='code')
     name = serializers.Field(source='package.name')
     pypi = PyPIField(source='*')
@@ -110,9 +110,10 @@ class PackageSerializer(serializers.ModelSerializer):
     forks = ForkField(source='package')
     ci = CIField(source='package')
     pr = PullRequestField(source='package')
+    url = serializers.HyperlinkedIdentityField(view_name='spec-detail', lookup_field='code')
 
     class Meta:
         model = Spec
         fields = ('id', 'name', 'version', 'status',
                   'created_at', 'updated_at', 'pypi', 'repo',
-                  'issues', 'forks', 'ci')
+                  'issues', 'forks', 'ci', 'url')
