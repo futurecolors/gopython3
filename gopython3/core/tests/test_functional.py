@@ -1,5 +1,6 @@
 # coding: utf-8
 import logging
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.utils import override_settings
 from nose.plugins.attrib import attr
@@ -26,3 +27,15 @@ class TestRequirement(TestCase):
             coveralls==0.3
         """
         Job.objects.create_from_requirements(requirements)
+
+
+class TestHttp(TestCase):
+
+    @attr('functional')
+    def test_index(self):
+        """ Need imporvement, does not catch anything yet
+            FIXME: gopython3-6, need admin tests too
+        """
+        response = self.client.get('/')
+        self.assertTrue('Go Python 3!' in str(response.content))
+        self.assertEqual(response.status_code, 200)

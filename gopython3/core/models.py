@@ -71,7 +71,7 @@ class Job(TimeFrameStampedModel):
 
     def get_status(self):
         if (self.status == 'completed' and
-            self.job_specs.filter(status__in=['pending', 'running']).count()):
+            self.specs.filter(status__in=['pending', 'running']).count()):
             return 'running'
         return self.status
 

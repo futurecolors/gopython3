@@ -8,6 +8,6 @@ class FrontendRedirectView(RedirectView):
 
 
 urlpatterns = patterns('',
-    url(r'^$', TemplateView.as_view(template_name='frontend/index.html')),
+    url(r'^$', TemplateView.as_view(template_name='frontend/index.html'), name='index'),
     url(r'$', FrontendRedirectView.as_view()),
 )

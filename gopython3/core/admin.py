@@ -4,7 +4,7 @@ from . import models
 
 class SpeckInline(admin.TabularInline):
     model = models.JobSpec
-    readonly_fields = ['spec', 'start', 'finish', 'status']
+    readonly_fields = ['spec']
     extra = 0
 
 
