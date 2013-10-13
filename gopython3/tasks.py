@@ -14,7 +14,8 @@ def functional(arg=''):
 
 
 @task
-def cover(package=''):
+def cover(package='', only_unit=False):
     """ Django-nose does not report properly"""
-    run('coverage run --source=%s manage.py test --with-doctest -a"!functional"' % package, pty=True)
+    arg = '-a"!functional"' if only_unit else ''
+    run('coverage run --source=%s manage.py test --with-doctest %s' % (package, arg), pty=True)
     run('coverage report -m', pty=True)

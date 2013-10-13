@@ -1,6 +1,10 @@
 language: python
 python:
   3.3
+env:
+  global:
+  - secure: iFrFcisr0pHbABFIoqC9vLCj6DRYbhIeBMzolTHmLTSqnslWMoqeKkWxt3Ay2QmF0NND0yvgKSH4X67WVgLZoKsDE3qv/HWI3Ne/O0LUkWOdRPaaeRI/j0APUej1dvXFMpZZX4eM42TyGarJJWG7yNTIoieuwIvDaQ/GmCY5304=
+  - secure: cZc3sVAqTvij+rWQn9TKtRUN3YPTm/DF4nRa+/NWW9+YE1vAcNgCw6yfFizNSTbn79rRk7ofU7WRbVp2ry3B34Jbi+f3Tx4ZsP6HtYJvnNcmtsRLNDAPtG1+FPhjsBH+8NekHUy+I7uzNC5MJG/rK6pVIMzRfHem9hgDb60hdN8=
 install:
   pip install -r gopython3/requirements-dev.txt
 script:
