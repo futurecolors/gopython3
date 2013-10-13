@@ -6,17 +6,13 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.Field(source='spec.get_identifier')
     version = serializers.Field(source='spec.version')
     name = serializers.Field(source='spec.name')
-    status = serializers.Field(source='status')
     created_at = serializers.DateTimeField(source='created')
     updated_at = serializers.DateTimeField(source='modified')
-    started_at = serializers.DateTimeField(source='start')
-    finished_at = serializers.DateTimeField(source='finish')
 
     class Meta:
         model = JobSpec
         lookup_field = 'code'
-        fields = ('id', 'url', 'name', 'version', 'status',
-                  'created_at', 'updated_at', 'started_at', 'finished_at',)
+        fields = ('id', 'url', 'name', 'version', 'created_at', 'updated_at',)
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):

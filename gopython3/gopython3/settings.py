@@ -162,6 +162,14 @@ class Common(Configuration):
         }
     }
 
+    REST_FRAMEWORK = {
+        'PAGINATE_BY': 10,
+        # Disabling html renderer
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+        )
+    }
+
 
 class Dev(Common):
     """
