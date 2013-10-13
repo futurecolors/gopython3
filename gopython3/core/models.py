@@ -135,7 +135,7 @@ class Package(TimeStampedModel):
 
 class Spec(TimeFrameStampedModel):
     """ A python package with pinned version.
-        Contains all metadata, relevant to python 3 current or future support.
+        Contains all metadata, relevant to python 3 current support.
     """
     STATUS = TASK_STATUS
 

@@ -10,7 +10,7 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Spec
         lookup_field = 'code'
-        fields = ('id', 'name', 'version')
+        fields = ('id', 'url', 'name', 'version')
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
