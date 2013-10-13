@@ -17,12 +17,16 @@ class PyPI(HammockAPI):
         """
         path = '%s/%s' % (name, version) if version else name
         package = self.api(path).json.GET().json()
-        # FIXME: no upload time?
-        # FIXME: no classifiers?
+
+        # Packages that are not uploaded to PyPI have no upload time
+        upload_time = package['urls'][0].get('upload_time') if package['urls'] else None
+        # If package has no homepage, json reports it as 'UNKNOWN', let's play along
+        home_page = package['info'].get('home_page', 'UNKNOWN')
+
         return {
-            'last_release_date': make_aware(parse_datetime(package['urls'][0]['upload_time']), pytz.utc),
+            'last_release_date': make_aware(parse_datetime(upload_time), pytz.utc) if upload_time else None,
             'py3_versions': self.get_py3_versions(package['info']['classifiers']),
-            'url': package['info'].get('home_page', ''),
+            'url': home_page if home_page != 'UNKNOWN' else None,
             'name': package['info']['name']
         }
 
@@ -35,7 +39,7 @@ class PyPI(HammockAPI):
         """
         distlib_line = requirement.name
         if requirement.specs:
-            # E.g.: Django (>= 1.0, < 2.0, != 1.3
+            # E.g.: Django (>= 1.0, < 2.0, != 1.3)
             distlib_line += ' (%s)' % (', '.join('%s %s' % cond for cond in requirement.specs))
 
         # Returned object has canonical name (flask -> Flask)

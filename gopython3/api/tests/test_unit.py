@@ -151,3 +151,20 @@ class TestPypiApi(APITestCase):
             'name': 'Django',
             'url': 'http://www.djangoproject.com/'
         })
+
+    def test_incomplete_info(self):
+        json_string = """{"info":{
+        "name": "printtree",
+        "home_page": "UNKNOWN",
+        "classifiers": []
+        }, "urls": []}"""
+        HTTPretty.register_uri(HTTPretty.GET,
+            "http://pypi.python.org/pypi/printtree/1.0.10/json", json_string
+        )
+
+        self.assertEqual(PyPI().get_info(name='printtree', version='1.0.10'), {
+            'py3_versions': [],
+            'last_release_date': None,
+            'name': 'printtree',
+            'url': None
+        })

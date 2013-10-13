@@ -21,6 +21,7 @@ def process_requirement(req, job_id):
 
     # Freezing the requirement
     distribution = PyPI.get_distribution(req)
+    # FIXME: if no distribution is found, fail gracefully
     job_spec = JobSpec.objects.create_from_distribution(distribution, job_id)
     spec = job_spec.spec
     package = spec.package
