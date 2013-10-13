@@ -164,6 +164,7 @@ class Common(Configuration):
 
     REST_FRAMEWORK = {
         'PAGINATE_BY': 10,
+        'TEST_REQUEST_DEFAULT_FORMAT': 'json',
         # Disabling html renderer
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',

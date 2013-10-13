@@ -21,6 +21,19 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
     updated_at = serializers.DateTimeField(source='modified')
     started_at = serializers.DateTimeField(source='start')
     finished_at = serializers.DateTimeField(source='finish')
+    status = serializers.Field(source='get_status')
+
+    class Meta:
+        model = Job
+        fields = ('id', 'url', 'status',
+                  'created_at', 'updated_at', 'started_at', 'finished_at', )
+
+
+class JobDetailSerialzier(JobSerializer):
+    created_at = serializers.DateTimeField(source='created')
+    updated_at = serializers.DateTimeField(source='modified')
+    started_at = serializers.DateTimeField(source='start')
+    finished_at = serializers.DateTimeField(source='finish')
     packages = SpecSetSerializer(source='jobspec_set', many=True)
     status = serializers.Field(source='get_status')
 
@@ -28,6 +41,7 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
         model = Job
         fields = ('id', 'url', 'packages', 'status',
                   'created_at', 'updated_at', 'started_at', 'finished_at', )
+
 
 
 class PyPIField(serializers.WritableField):

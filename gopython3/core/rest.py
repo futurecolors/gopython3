@@ -2,14 +2,16 @@ from django.db import transaction
 from rest_framework import viewsets, routers, status, mixins
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
-from core.serializers import JobSerializer, PackageSerializer
+from rest_framework_extensions.mixins import DetailSerializerMixin
+from core.serializers import JobSerializer, PackageSerializer, JobDetailSerialzier
 
 from .models import Job, Spec
 
 
-class JobViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     model = Job
     serializer_class = JobSerializer
+    serializer_detail_class = JobDetailSerialzier
 
     def create(self, request, *args, **kwargs):
         try:
