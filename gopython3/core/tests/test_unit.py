@@ -7,7 +7,7 @@ from collections import namedtuple
 from django.test import TestCase
 
 from ..factories import SpecFactory, JobFactory
-from ..models import Job, Package, Spec, JobSpec
+from ..models import Job, Package, Spec
 from ..tasks import query_pypi
 
 
@@ -54,21 +54,22 @@ class JobSepcTest(TestCase):
 
     def test_process_requirement(self):
         job = JobFactory()
-        JobSpec.objects.create_from_distribution(*fake_distributions('Django==1.5.4'), job_id=job.pk)
+        spec, package = job.add_distribution(*fake_distributions('Django==1.5.4'))
 
         self.assertQuerysetEqual(Package.objects.all(), ['Django (django)'], transform=str, ordered=False)
-        self.assertQuerysetEqual(Spec.objects.all(), ['Django==1.5.4'], transform=str, ordered=False)
-        self.assertQuerysetEqual(JobSpec.objects.all(), ['Job 1 [pending] Django==1.5.4'], transform=str, ordered=False)
+        self.assertQuerysetEqual(job.specs.all(), ['Django==1.5.4'], transform=str, ordered=False)
 
     def test_does_not_create_duplicate_specs(self):
         spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
         job = JobFactory()
-        JobSpec.objects.create_from_distribution(*fake_distributions('lettuce==0.2.19'), job_id=job.pk)
+        same_spec, same_package = job.add_distribution(*fake_distributions('lettuce==0.2.19'))
 
         assert Spec.objects.count() == 1
         assert Package.objects.count() == 1
         assert job.specs.all().first().version == spec.version
         assert job.specs.all().first().package.name == spec.package.name
+        assert spec.pk == same_spec.pk
+        assert same_package.pk == same_spec.package.pk
 
 
 class PypiTaskTest(TestCase):

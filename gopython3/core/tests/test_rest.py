@@ -16,8 +16,8 @@ class TestApi(APITestCase):
                 'id': 1,
                 'url': 'http://testserver/api/v1/jobs/1/',
                 'status': 'pending',
-                'created_at': job.created,
-                'updated_at': job.modified,
+                'created_at': job.created_at,
+                'updated_at': job.updated_at,
                 'started_at': None,
                 'finished_at': None
             }]

@@ -3,8 +3,7 @@ from django.db import models
 from django.utils.timezone import now
 from jsonfield import JSONField
 from model_utils import Choices
-from model_utils.fields import StatusField
-from model_utils.models import TimeStampedModel
+from model_utils.fields import StatusField, AutoCreatedField, AutoLastModifiedField
 import requirements
 
 from .tasks import process_requirement
@@ -21,20 +20,28 @@ if settings.DEBUG:
             RuntimeWarning, r'django\.db\.models\.fields')
 
 
+class TimeStampedModel(models.Model):
+    created_at = AutoCreatedField('created')
+    updated_at = AutoLastModifiedField('modified')
+
+    class Meta:
+        abstract = True
+
+
 class TimeFrameStampedModel(TimeStampedModel):
     STATUS = TASK_STATUS
-    start = models.DateTimeField(null=True, blank=True)
-    finish = models.DateTimeField(null=True, blank=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
 
     def do_start(self):
         self.status = self.STATUS.running
-        self.start = now()
-        self.save(update_fields=['status', 'start'])
+        self.started_at = now()
+        self.save(update_fields=['status', 'started_at'])
 
     def do_finish(self):
         self.status = self.STATUS.completed
-        self.finish = now()
-        self.save(update_fields=['status', 'finish'])
+        self.finished_at = now()
+        self.save(update_fields=['status', 'finished_at'])
 
     class Meta:
         abstract = True
@@ -65,7 +72,7 @@ class Job(TimeFrameStampedModel):
     """
     requirements = models.TextField()
     status = StatusField()
-    specs = models.ManyToManyField('Spec', through='JobSpec', blank=True, null=True)
+    specs = models.ManyToManyField('Spec', blank=True, null=True)
 
     objects = JobManager()
 
@@ -74,6 +81,13 @@ class Job(TimeFrameStampedModel):
             self.specs.filter(status__in=['pending', 'running']).count()):
             return 'running'
         return self.status
+
+    def add_distribution(self, distribution):
+        """ Add distribution to job """
+        package, _ = Package.objects.get_or_create(name=distribution.name)
+        spec, _ = Spec.objects.get_or_create(package=package, version=distribution.version)
+        self.specs.add(spec)
+        return spec, package
 
     def __str__(self):
         return 'Job %s [%s]' % (self.pk, self.status)
@@ -160,25 +174,3 @@ class Spec(TimeFrameStampedModel):
     class Meta:
         unique_together = (('package', 'version'),)
         index_together = unique_together
-
-
-class JobSpecManager(models.Manager):
-
-    def create_from_distribution(self, distribution, job_id):
-        package, _ = Package.objects.get_or_create(name=distribution.name)
-        spec, _ = Spec.objects.get_or_create(package=package, version=distribution.version)
-        return JobSpec.objects.create(job_id=job_id, spec=spec)
-
-
-class JobSpec(TimeStampedModel):
-    """ A spec in a job """
-    job = models.ForeignKey(Job)
-    spec = models.ForeignKey(Spec, related_name='job_specs')
-    objects = JobSpecManager()
-
-    def __str__(self):
-        return '%s %s' % (self.job, self.spec)
-
-    @property
-    def code(self):
-        return self.spec.code

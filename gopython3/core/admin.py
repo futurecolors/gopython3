@@ -3,26 +3,25 @@ from . import models
 
 
 class SpeckInline(admin.TabularInline):
-    model = models.JobSpec
-    readonly_fields = ['spec']
+    model = models.Job.specs.through
     extra = 0
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'created', 'modified', 'status']
-    readonly_fields = ['start', 'finish', 'status']
+    list_display = ['__str__', 'created_at', 'updated_at', 'status']
+    readonly_fields = ['started_at', 'finished_at', 'status']
     list_filter = ['status']
     inlines = [SpeckInline]
 
 
 class SpeckAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'release_date', 'python_versions',
-                    'created', 'modified', 'status']
+                    'created_at', 'updated_at', 'status']
     list_filter = ['status']
 
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'repo_url', 'issue_url', 'created', 'modified']
+    list_display = ['name', 'slug', 'repo_url', 'issue_url', 'created_at', 'updated_at']
 
 
 admin.site.register(models.Job, JobAdmin)

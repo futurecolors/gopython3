@@ -16,16 +16,15 @@ def process_requirement(req, job_id):
             * GitHub
             * Travis
     """
-    from .models import JobSpec
+    from .models import Job
     logger.info('Starting to process %s...' % req.name)
 
     # Freezing the requirement
-    distribution = PyPI.get_distribution(req)
     # FIXME: if no distribution is found, fail gracefully
-    job_spec = JobSpec.objects.create_from_distribution(distribution, job_id)
-    spec = job_spec.spec
-    package = spec.package
+    distribution = PyPI.get_distribution(req)
 
+    job = Job.objects.get(pk=job_id)
+    spec, package = job.add_distribution(distribution)
     # TODO: if spec is already parsed, maybe we can serve cache
 
     pypi = query_pypi.s(spec.pk)

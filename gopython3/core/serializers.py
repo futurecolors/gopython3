@@ -1,26 +1,20 @@
 from rest_framework import serializers
-from core.models import JobSpec, Job, Spec
+from core.models import Job, Spec
 
 
 class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.Field(source='spec.get_identifier')
-    version = serializers.Field(source='spec.version')
-    name = serializers.Field(source='spec.name')
-    created_at = serializers.DateTimeField(source='created')
-    updated_at = serializers.DateTimeField(source='modified')
+    id = serializers.Field(source='get_identifier')
+    version = serializers.Field(source='version')
+    name = serializers.Field(source='name')
 
     class Meta:
-        model = JobSpec
+        model = Spec
         lookup_field = 'code'
-        fields = ('id', 'url', 'name', 'version', 'created_at', 'updated_at',)
+        fields = ('id', 'name', 'version')
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
     """ Custom job serializer to rename some fields"""
-    created_at = serializers.DateTimeField(source='created')
-    updated_at = serializers.DateTimeField(source='modified')
-    started_at = serializers.DateTimeField(source='start')
-    finished_at = serializers.DateTimeField(source='finish')
     status = serializers.Field(source='get_status')
 
     class Meta:
@@ -30,16 +24,12 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class JobDetailSerialzier(JobSerializer):
-    created_at = serializers.DateTimeField(source='created')
-    updated_at = serializers.DateTimeField(source='modified')
-    started_at = serializers.DateTimeField(source='start')
-    finished_at = serializers.DateTimeField(source='finish')
-    packages = SpecSetSerializer(source='jobspec_set', many=True)
+    packages = SpecSetSerializer(source='specs', many=True)
     status = serializers.Field(source='get_status')
 
     class Meta:
         model = Job
-        fields = ('id', 'url', 'packages', 'status',
+        fields = ('id', 'url', 'status', 'packages',
                   'created_at', 'updated_at', 'started_at', 'finished_at', )
 
 
@@ -110,8 +100,6 @@ class CIField(serializers.WritableField):
 class PackageSerializer(serializers.ModelSerializer):
     id = serializers.Field(source='code')
     name = serializers.Field(source='package.name')
-    created_at = serializers.DateTimeField(source='created')
-    updated_at = serializers.DateTimeField(source='modified')
     pypi = PyPIField(source='*')
     repo = RepoField(source='package')
     issues = IssueField(source='package')
