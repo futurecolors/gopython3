@@ -14,6 +14,11 @@ class TestApi(APITestCase):
                                      SpecFactory(package__name='jsonfield', version='0.9.19')],
                               status='running')
 
+    def test_post_job(self):
+        response = self.client.post('/api/v1/jobs/', {'requirements': 'foo\nbar>1.2'})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Location'], 'http://testserver/api/v1/jobs/2/')
+
     def test_jobs_list(self):
         response = self.client.get('/api/v1/jobs/', format='json')
         self.assertDictEqual(response.data, {
