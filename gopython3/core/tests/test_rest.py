@@ -14,6 +14,11 @@ class TestApi(APITestCase):
                                      SpecFactory(package__name='jsonfield', version='0.9.19')],
                               status='running')
 
+    def test_api_root(self):
+        response = self.client.get('/api/v1/')
+        assert 'jobs' in response.data
+        assert 'packages' in response.data
+
     def test_post_job(self):
         response = self.client.post('/api/v1/jobs/', {'requirements': 'foo\nbar>1.2'})
         self.assertEqual(response.status_code, 201)
