@@ -10,7 +10,8 @@ from core.models import Job
 logger = logging.getLogger('core')
 
 
-@override_settings(CELERY_ALWAYS_EAGER=True)
+@override_settings(CELERY_ALWAYS_EAGER=True,
+                   CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 class TestRequirement(TestCase):
 
     def setUp(self):
@@ -29,12 +30,12 @@ class TestRequirement(TestCase):
         Job.objects.create_from_requirements(requirements)
 
 
-class TestHttp(TestCase):
-
-    @attr('functional')
-    def test_index(self):
-        # Needs imporvement, does not catch anything yet
-        # FIXME: gopython3-6, need admin tests too
-        response = self.client.get('/')
-        self.assertTrue('Go Python 3!' in str(response.content))
-        self.assertEqual(response.status_code, 200)
+#class TestHttp(TestCase):
+#
+#    @attr('functional')
+#    def test_index(self):
+#        # Needs imporvement, does not catch anything yet
+#        # FIXME: gopython3-6, need admin tests too
+#        response = self.client.get('/')
+#        self.assertTrue('Go Python 3!' in str(response.content))
+#        self.assertEqual(response.status_code, 200)

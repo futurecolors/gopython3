@@ -1,5 +1,5 @@
 import logging
-from celery import group
+from celery import group, chord
 from celery.task import task
 from api import Github, PyPI, TravisCI
 
@@ -34,8 +34,8 @@ def process_requirement(req, job_id):
     if req.specs:
         # If version is not fixed, we already got latest package
         # Otherwise, fetch latest package to see if it is py3 compatible
-        # Celery can not chain 2 groups, so it's a callback chain for now
-        pypi = pypi | process_latest_spec.si(req.name, package.pk) | query_pypi.s()
+        # FIXME: Using a chord is not effective, but works, consider futures
+        pypi = group(pypi, process_latest_spec.s(req.name, package.pk)) | get_first.s()
 
     notify = notify_completed_spec.si(spec.pk)
 
@@ -44,6 +44,11 @@ def process_requirement(req, job_id):
         return (pypi | notify).delay()
 
     return (pypi | github_travis.s(package.pk) | notify).delay()
+
+
+@task
+def get_first(*results):
+    return results[0][0]
 
 
 @task
@@ -59,16 +64,12 @@ def process_latest_spec(package_name, package_id):
     latest_spec, created = Spec.objects.get_or_create(package_id=package_id, version=distribution.version)
     if created:
         # do not return spec, because it's already queued
-        return latest_spec.pk
+        return query_pypi.delay(latest_spec.pk)
 
 @task
 def query_pypi(spec_pk):
     """ Query one spec of package on PyPI"""
     from .models import Spec
-
-    # Short-circuit, if we have no spec to query
-    if not spec_pk:
-        return
 
     spec = Spec.objects.get(pk=spec_pk)
     logger.debug('[PYPI] Fetching data for %s' % spec)
@@ -90,6 +91,7 @@ def github_travis(pypi_results, package_id):
         Forks search is disabled, because ineffective yet
         But they need pypi info (to avoid GH search if possible)
     """
+    # TODO: We problably don't need to query Github if package states py3 support on PyPI
     logger.debug('[GITHUB] Starting %s' % pypi_results['name'])
     gh_queries = group(get_repo_info.s(package_id),
                        get_issues.s(package_id) | get_pulls.s(package_id),
@@ -170,9 +172,10 @@ def get_issues(full_name, package_id):
 
 
 @task
-def get_pulls(issues, full_name, package_id):
+def get_pulls(issues_result, package_id):
     from .models import Package
     # Do not ask for pull-requests, if we got issues
+    issues, full_name = issues_result
     if issues:
         return issues
     logger.debug('[GITHUB] Querying pull requests of %s ...' % full_name)
