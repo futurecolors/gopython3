@@ -24,8 +24,11 @@ def process_requirement(req, job_id):
     distribution = PyPI.get_distribution(req)
 
     job = Job.objects.get(pk=job_id)
-    spec, package = job.add_distribution(distribution)
-    # TODO: if spec is already parsed, maybe we can serve cache
+    package, package_created, spec, spec_created = job.add_distribution(distribution)
+
+    # if spec is already parsed before, no need to do anything
+    if not spec_created:
+        return
 
     pypi = query_pypi.s(spec.pk)
     if req.specs:
@@ -34,9 +37,12 @@ def process_requirement(req, job_id):
         # Celery can not chain 2 groups, so it's a callback chain for now
         pypi = pypi | process_latest_spec.si(req.name, package.pk) | query_pypi.s()
 
-    # TODO: if package was parsed not long ago, maybe we can serve cache
-
     notify = notify_completed_spec.si(spec.pk)
+
+    # if package was parsed before, no need to query github or travis again
+    if not package_created:
+        return (pypi | notify).delay()
+
     return (pypi | github_travis.s(package.pk) | notify).delay()
 
 

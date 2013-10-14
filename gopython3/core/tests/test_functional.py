@@ -33,9 +33,8 @@ class TestHttp(TestCase):
 
     @attr('functional')
     def test_index(self):
-        """ Need imporvement, does not catch anything yet
-            FIXME: gopython3-6, need admin tests too
-        """
+        # Needs imporvement, does not catch anything yet
+        # FIXME: gopython3-6, need admin tests too
         response = self.client.get('/')
         self.assertTrue('Go Python 3!' in str(response.content))
         self.assertEqual(response.status_code, 200)

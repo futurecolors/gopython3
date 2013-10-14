@@ -83,11 +83,14 @@ class Job(TimeFrameStampedModel):
         return self.status
 
     def add_distribution(self, distribution):
-        """ Add distribution to job """
-        package, _ = Package.objects.get_or_create(name=distribution.name)
-        spec, _ = Spec.objects.get_or_create(package=package, version=distribution.version)
+        """ Add distribution to job
+
+            Returns tuple (package, spec)
+        """
+        package, package_created = Package.objects.get_or_create(name=distribution.name)
+        spec, spec_created = Spec.objects.get_or_create(package=package, version=distribution.version)
         self.specs.add(spec)
-        return spec, package
+        return package, package_created, spec, spec_created
 
     def __str__(self):
         return 'Job %s [%s]' % (self.pk, self.status)
