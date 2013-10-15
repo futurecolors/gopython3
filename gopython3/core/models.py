@@ -56,13 +56,15 @@ class JobManager(models.Manager):
         reqs_list = requirements.parse(job.requirements)
 
         for req in reqs_list:
-            process_requirement.delay(req, job.pk)
+            line = Line.objects.create(job=job, spec=None, text=req.line)  # spec is calculated later
+            # TODO: we can parse line again and reduce number of task args
+            process_requirement.delay(req, line.pk)  # TODO: decouple
 
         return job
 
 
 class Job(TimeFrameStampedModel):
-    """ A worker process to check python 3 support of a list of requirements
+    """ List of requirements task to check python 3 support of
 
         Job is defined by its spec set, which is, essentially,
         a list of requirements (ideally, frozen), much like a requirements.txt
@@ -72,7 +74,7 @@ class Job(TimeFrameStampedModel):
     """
     requirements = models.TextField()
     status = StatusField()
-    specs = models.ManyToManyField('Spec', blank=True, null=True)
+    specs = models.ManyToManyField('Spec', through='Line', blank=True, null=True)
 
     objects = JobManager()
 
@@ -82,18 +84,30 @@ class Job(TimeFrameStampedModel):
             return 'running'
         return self.status
 
-    def add_distribution(self, distribution):
-        """ Add distribution to job
+    def __str__(self):
+        return 'Job %s [%s]' % (self.pk, self.status)
 
-            Returns tuple (package, spec)
+
+class Line(models.Model):
+    """ A line of requirements.txt
+        This model serves one purpose: to maintain order of specs in job
+        We can not use default intermediate m2m model, because one FKs needs to be nullable
+        (so that we can defer spec calculation)
+    """
+    job = models.ForeignKey(Job, related_name='lines')
+    spec = models.ForeignKey('Spec', null=True, related_name='lines')
+    text = models.CharField(max_length=100)
+
+    def set_distribution(self, distribution):
+        """ Set to job line
+
+            Returns tuple (package, package_created, spec, spec_created)
         """
         package, package_created = Package.objects.get_or_create(name=distribution.name)
         spec, spec_created = Spec.objects.get_or_create(package=package, version=distribution.version)
-        self.specs.add(spec)
+        self.spec = spec
+        self.save()
         return package, package_created, spec, spec_created
-
-    def __str__(self):
-        return 'Job %s [%s]' % (self.pk, self.status)
 
 
 class Package(TimeStampedModel):
@@ -145,7 +159,7 @@ class Spec(TimeFrameStampedModel):
     code = models.CharField(max_length=100, unique=True)
     status = StatusField()
     package = models.ForeignKey('Package')
-    version = models.CharField(max_length=20, blank=True)
+    version = models.CharField(max_length=20)
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
 

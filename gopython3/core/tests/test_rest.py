@@ -9,9 +9,7 @@ class TestApi(APITestCase):
     maxDiff = None
 
     def setUp(self):
-        # TODO: SpecFactory(line='django_model_utils==1.5.0')
-        self.job = JobFactory(specs=[SpecFactory(package__name='django-model-utils', version='1.5.0'),
-                                     SpecFactory(package__name='jsonfield', version='0.9.19')],
+        self.job = JobFactory(specs=['django-model-utils==1.5.0', 'jsonfield==0.9.19'],
                               status='running')
 
     def test_api_root(self):

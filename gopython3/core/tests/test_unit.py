@@ -53,8 +53,8 @@ class JobTest(TestCase):
 class JobSepcTest(TestCase):
 
     def test_process_requirement(self):
-        job = JobFactory()
-        package, package_created, spec, spec_created = job.add_distribution(*fake_distributions('Django==1.5.4'))
+        job = JobFactory(lines=['Django==1.5.4'])
+        package, package_created, spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('Django==1.5.4'))
 
         self.assertQuerysetEqual(Package.objects.all(), ['Django (django)'], transform=str, ordered=False)
         self.assertQuerysetEqual(job.specs.all(), ['Django==1.5.4'], transform=str, ordered=False)
@@ -63,8 +63,8 @@ class JobSepcTest(TestCase):
 
     def test_does_not_create_duplicate_specs(self):
         spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
-        job = JobFactory()
-        same_package, package_created, same_spec, spec_created = job.add_distribution(*fake_distributions('lettuce==0.2.19'))
+        job = JobFactory(lines=['lettuce==0.2.19'])
+        same_package, package_created, same_spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('lettuce==0.2.19'))
 
         self.assertFalse(package_created)
         self.assertFalse(spec_created)

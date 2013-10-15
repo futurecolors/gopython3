@@ -178,6 +178,7 @@ class Dev(Common):
     """
     #CELERY_ALWAYS_EAGER = True
     #COMPRESS_OFFLINE = True
+    SOUTH_TESTS_MIGRATE = False
 
 
 class Debug(Dev):

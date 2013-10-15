@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 @task
-def process_requirement(req, job_id):
+def process_requirement(req, line_id):
     """ Process requirement
 
         For each package spec we query following services:
@@ -16,15 +16,15 @@ def process_requirement(req, job_id):
             * GitHub
             * Travis
     """
-    from .models import Job
+    from .models import Line
     logger.info('Starting to process %s...' % req.name)
 
     # Freezing the requirement
     # FIXME: if no distribution is found, fail gracefully
     distribution = PyPI.get_distribution(req)
 
-    job = Job.objects.get(pk=job_id)
-    package, package_created, spec, spec_created = job.add_distribution(distribution)
+    line = Line.objects.get(pk=line_id)
+    package, package_created, spec, spec_created = line.set_distribution(distribution)
 
     # if spec is already parsed before, no need to do anything
     if not spec_created:
