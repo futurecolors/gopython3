@@ -26,7 +26,7 @@ class GithubRealTest(TestCase):
             # Get 100 most popular repos
             repos = self.gh.api.search.repositories.GET(params={
                 'q': 'language:python',
-                'per_page': 10,
+                'per_page': 5,
                 'sort': 'stars',
             }).json()
             cache.set('top_popular_repos', repos)

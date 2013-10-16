@@ -5,8 +5,8 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework_extensions.mixins import DetailSerializerMixin
-from core.serializers import JobSerializer, PackageSerializer, JobDetailSerialzier
 
+from .serializers import JobSerializer, PackageSerializer, JobDetailSerialzier
 from .models import Job, Spec
 
 
@@ -19,6 +19,7 @@ class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOn
         try:
             with transaction.atomic():
                 job = Job.objects.create_from_requirements(request.DATA['requirements'])
+                job.start()
                 serializer = self.get_serializer(job)
                 headers = self.get_success_headers(serializer.data)
         except Exception as e:

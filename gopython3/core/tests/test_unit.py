@@ -38,8 +38,7 @@ class JobTest(TestCase):
             # TODO: VCS
         """
 
-    @patch('core.models.process_requirement.delay')
-    def test_can_be_created_from_requirements_txt(self, req_task):
+    def test_can_be_created_from_requirements_txt(self):
         with warnings.catch_warnings():
             # We're ignoring -r not being parsed
             # "Recursive requirements not supported. Skipping."
@@ -47,7 +46,9 @@ class JobTest(TestCase):
             job = Job.objects.create_from_requirements(self.reqs_txt)
 
         self.assertEqual(job.requirements, self.reqs_txt)
-        self.assertEqual(req_task.call_count, 4)
+        self.assertQuerysetEqual(job.lines.all().order_by('pk'),
+                                 ['django>=1.4,<1.5', 'Django-Geoip==0.3', 'coverage', 'coveralls>0.2'],
+                                 transform=str)
 
 
 class JobSepcTest(TestCase):

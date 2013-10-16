@@ -6,8 +6,6 @@ from model_utils import Choices
 from model_utils.fields import StatusField, AutoCreatedField, AutoLastModifiedField
 import requirements
 
-from .tasks import process_requirement
-
 
 TASK_STATUS = Choices('pending', 'running', 'completed')
 
@@ -57,8 +55,6 @@ class JobManager(models.Manager):
 
         for req in reqs_list:
             line = Line.objects.create(job=job, spec=None, text=req.line)  # spec is calculated later
-            # TODO: we can parse line again and reduce number of task args
-            process_requirement.delay(req, line.pk)  # TODO: decouple
 
         return job
 
@@ -84,6 +80,10 @@ class Job(TimeFrameStampedModel):
             return 'running'
         return self.status
 
+    def start(self):
+        from .tasks import process_requirement
+        return [process_requirement.delay(line.pk) for line in self.lines.all()]
+
     def __str__(self):
         return 'Job %s [%s]' % (self.pk, self.status)
 
@@ -97,6 +97,9 @@ class Line(models.Model):
     job = models.ForeignKey(Job, related_name='lines')
     spec = models.ForeignKey('Spec', null=True, related_name='lines')
     text = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.text
 
     def set_distribution(self, distribution):
         """ Set to job line

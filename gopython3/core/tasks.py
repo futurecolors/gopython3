@@ -1,14 +1,16 @@
 import logging
-from celery import group, chord
+from celery import group
 from celery.task import task
+from requirements.requirement import Requirement
 from api import Github, PyPI, TravisCI
+from core.models import Package, Spec, Line
 
 
 logger = logging.getLogger(__name__)
 
 
 @task
-def process_requirement(req, line_id):
+def process_requirement(line_id):
     """ Process requirement
 
         For each package spec we query following services:
@@ -16,14 +18,16 @@ def process_requirement(req, line_id):
             * GitHub
             * Travis
     """
-    from .models import Line
+    line = Line.objects.get(pk=line_id)
+    # we parse line again to reduce number of task args and stored metadata
+    req = Requirement.parse(line.text)
+
     logger.info('Starting to process %s...' % req.name)
 
     # Freezing the requirement
     # FIXME: if no distribution is found, fail gracefully
     distribution = PyPI.get_distribution(req)
 
-    line = Line.objects.get(pk=line_id)
     package, package_created, spec, spec_created = line.set_distribution(distribution)
 
     # if spec is already parsed before, no need to do anything
@@ -57,7 +61,6 @@ def process_latest_spec(package_name, package_id):
 
         Obtaining only metadata from PyPI, because other tasks will query latest repo version anyway.
     """
-    from .models import Spec
     logger.debug('Creating latest spec')
 
     distribution = PyPI.get_distribution(package_name)
@@ -69,8 +72,6 @@ def process_latest_spec(package_name, package_id):
 @task
 def query_pypi(spec_pk):
     """ Query one spec of package on PyPI"""
-    from .models import Spec
-
     spec = Spec.objects.get(pk=spec_pk)
     logger.debug('[PYPI] Fetching data for %s' % spec)
     pkg_data = PyPI().get_info(spec.name, spec.version)
@@ -127,8 +128,6 @@ def search_github(package_name):
 
 @task
 def get_repo_info(full_name, package_id):
-    from .models import Package
-
     logger.debug('[GITHUB] Querying repo %s ...' % full_name)
     repo_info = Github().get_repo(full_name)
 
@@ -142,7 +141,6 @@ def get_repo_info(full_name, package_id):
 
 @task
 def get_forks(full_name, package_id):
-    from .models import Package
     logger.debug('[GITHUB] Searching for forks of %s ...' % full_name)
     fork_info = Github().get_py3_forks(full_name)
 
@@ -157,7 +155,6 @@ def get_forks(full_name, package_id):
 
 @task
 def get_issues(full_name, package_id):
-    from .models import Package
     logger.debug('[GITHUB] Querying issues of %s ...' % full_name)
     issues_info = Github().get_py3_issues(full_name)
 
@@ -173,7 +170,6 @@ def get_issues(full_name, package_id):
 
 @task
 def get_pulls(issues_result, package_id):
-    from .models import Package
     # Do not ask for pull-requests, if we got issues
     issues, full_name = issues_result
     if issues:
@@ -192,7 +188,6 @@ def get_pulls(issues_result, package_id):
 
 @task
 def get_build_status(full_name, package_id):
-    from .models import Package
     logger.debug('[TRAVIS] Querying test build status of %s ...' % full_name)
     build_info = TravisCI().get_build_status(full_name)
     ci_url = build_info.get('html_url', '') if build_info else ''
@@ -210,7 +205,6 @@ def get_build_status(full_name, package_id):
 def notify_completed_spec(spec_id):
     """ Spec processing has finished, now we need to record the result
     """
-    from .models import Spec
     spec = Spec.objects.get(pk=spec_id)
     spec.do_finish()
     logger.info('✓ %s finished' % spec)

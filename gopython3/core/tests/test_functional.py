@@ -27,14 +27,14 @@ class TestRequirement(TestCase):
             django>1.4,<1.5
             coveralls==0.3
         """
-        Job.objects.create_from_requirements(requirements)
+        Job.objects.create_from_requirements(requirements).start()
 
 
 #class TestHttp(TestCase):
 #
 #    @attr('functional')
 #    def test_index(self):
-#        # Needs imporvement, does not catch anything yet
+#        # Needs improvement, does not catch anything yet
 #        # FIXME: gopython3-6, need admin tests too
 #        response = self.client.get('/')
 #        self.assertTrue('Go Python 3!' in str(response.content))
