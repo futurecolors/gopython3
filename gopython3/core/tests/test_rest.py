@@ -9,8 +9,7 @@ class TestApi(APITestCase):
     maxDiff = None
 
     def setUp(self):
-        self.job = JobFactory(specs=['django-model-utils==1.5.0', 'jsonfield==0.9.19'],
-                              status='running')
+        self.job = JobFactory(specs=['django-model-utils==1.5.0', 'jsonfield==0.9.19'])
 
     def test_api_root(self):
         response = self.client.get('/api/v1/')
@@ -31,7 +30,7 @@ class TestApi(APITestCase):
             'results': [{
                             'id': 1,
                             'url': 'http://testserver/api/v1/jobs/1/',
-                            'status': 'running',
+                            'status': 'pending',
                             'created_at': self.job.created_at,
                             'updated_at': self.job.updated_at,
                             'started_at': None,
@@ -44,7 +43,7 @@ class TestApi(APITestCase):
         self.assertDictEqual(response.data, {
             "id": 1,
             "url": "http://testserver/api/v1/jobs/1/",
-            "status": "running",
+            "status": "pending",
             "packages": [{
                              "id": "django_model_utils/1.5.0",
                              "url": "http://testserver/api/v1/packages/django_model_utils/1.5.0/",

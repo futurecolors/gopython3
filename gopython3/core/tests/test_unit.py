@@ -50,6 +50,23 @@ class JobTest(TestCase):
                                  ['django>=1.4,<1.5', 'Django-Geoip==0.3', 'coverage', 'coveralls>0.2'],
                                  transform=str)
 
+    def test_status_is_calculated_based_upon_spec(self):
+        job = JobFactory()
+        assert job.status == 'pending', 'No specs yet'
+
+        job = JobFactory(specs=['foo=1,bar==2'])
+        assert job.status == 'pending', 'It has 2 unfinished specs'
+
+        spec = job.specs.first()
+        spec.status = 'running'
+        spec.save()
+        job = Job.objects.get(pk=job.pk)
+        assert job.status == 'running', 'Job has started, but has not finished yet'
+
+        job.specs.all().update(status='completed')
+        job = Job.objects.get(pk=job.pk)
+        assert job.status == 'completed', 'All specs have finished'
+
 
 class JobSepcTest(TestCase):
 

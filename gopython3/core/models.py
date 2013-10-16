@@ -69,16 +69,18 @@ class Job(TimeFrameStampedModel):
             * VCS dependencies are ignored
     """
     requirements = models.TextField()
-    status = StatusField()
     specs = models.ManyToManyField('Spec', through='Line', blank=True, null=True)
 
     objects = JobManager()
 
-    def get_status(self):
-        if (self.status == 'completed' and
-            self.specs.filter(status__in=['pending', 'running']).count()):
-            return 'running'
-        return self.status
+    @property
+    def status(self):
+        statuses = set(self.specs.values_list('status', flat=True))
+        if TASK_STATUS.running in statuses:
+            return TASK_STATUS.running
+        if not statuses or TASK_STATUS.pending in statuses:
+            return TASK_STATUS.pending
+        return TASK_STATUS.completed
 
     def start(self):
         from .tasks import process_requirement

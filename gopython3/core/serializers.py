@@ -15,7 +15,7 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
     """ Custom job serializer to rename some fields"""
-    status = serializers.Field(source='get_status')
+    status = serializers.Field(source='status')
 
     class Meta:
         model = Job
@@ -25,7 +25,7 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
 
 class JobDetailSerialzier(JobSerializer):
     packages = SpecSetSerializer(source='specs', many=True)
-    status = serializers.Field(source='get_status')
+    status = serializers.Field(source='status')
 
     class Meta:
         model = Job
