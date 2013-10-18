@@ -1,0 +1,26 @@
+django-configurations==0.6
+dj-database-url==0.2.2
+South==0.8.2
+
+hammock==0.2.4
+requests==2.0.0
+httpretty==0.5.9
+# Python 3 support
+-e git+https://github.com/jezdez/django_compressor.git@c961dadf6eaba93a9cdadc569c697828e9afe345#egg=django-compressor
+
+django-model-utils==1.5.0
+jsonfield==0.9.19
+djangorestframework==2.3.8
+drf-extensions==0.2
+django-celery==3.0.23
+django-nose==1.2
+factory_boy==2.2.1
+colorlog==2.0.0
+requirements-parser==0.0.6
+django-autoslug==1.7.1
+# Latest version has multiple fixes
+-e hg+https://bitbucket.org/vinay.sajip/distlib#egg=distlib
+
+# Django 1.6b4
+# Should be last, just in case
+-e git+https://github.com/django/django.git@1.6b4#egg=Django
