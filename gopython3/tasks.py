@@ -19,3 +19,8 @@ def cover(package='', only_unit=False):
     arg = '-a"!functional"' if only_unit else ''
     run('coverage run --source=%s manage.py test --with-doctest %s' % (package, arg), pty=True)
     run('coverage report -m', pty=True)
+
+
+@task
+def clean_pyc():
+    run('find . -name \*.pyc -delete')
