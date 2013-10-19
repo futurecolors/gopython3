@@ -1,6 +1,6 @@
 -e git+https://github.com/django/django.git@623c4916df545f985c66a269a712e95f2724f6d0#egg=Django
 -e git+https://github.com/jezdez/django_compressor.git@c961dadf6eaba93a9cdadc569c697828e9afe345#egg=django-compressor
--e hg+https://bitbucket.org/vinay.sajip/distlib@663#egg=distlib
+-e hg+https://bitbucket.org/vinay.sajip/distlib@669#egg=distlib
 South==0.8.2
 amqp==1.0.13
 anyjson==0.3.3
@@ -14,7 +14,6 @@ django-celery==3.0.23
 django-configurations==0.6
 django-model-utils==1.5.0
 django-nose==1.2
-django==1.5.4
 djangorestframework==2.3.8
 drf-extensions==0.2
 factory-boy==2.2.1
