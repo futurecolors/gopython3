@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from core.models import Job, Spec
+from core.models import Job, Spec, Line
 
 
-class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
+class SpecSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.Field(source='get_identifier')
     version = serializers.Field(source='version')
     name = serializers.Field(source='name')
@@ -11,6 +11,15 @@ class SpecSetSerializer(serializers.HyperlinkedModelSerializer):
         model = Spec
         lookup_field = 'code'
         fields = ('id', 'url', 'name', 'version')
+
+
+class LineSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.Field(source='text')
+    package = SpecSerializer(source='spec')
+
+    class Meta:
+        model = Line
+        fields = ('id', 'package')
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,14 +33,13 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class JobDetailSerialzier(JobSerializer):
-    packages = SpecSetSerializer(source='specs', many=True)
+    lines = LineSerializer(source='lines', many=True)
     status = serializers.Field(source='status')
 
     class Meta:
         model = Job
-        fields = ('id', 'url', 'status', 'packages',
+        fields = ('id', 'url', 'status', 'lines',
                   'created_at', 'updated_at', 'started_at', 'finished_at', )
-
 
 
 class PyPIField(serializers.WritableField):

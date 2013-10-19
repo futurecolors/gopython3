@@ -44,19 +44,41 @@ class TestApi(APITestCase):
             "id": 1,
             "url": "http://testserver/api/v1/jobs/1/",
             "status": "pending",
-            "packages": [{
-                             "id": "django_model_utils/1.5.0",
-                             "url": "http://testserver/api/v1/packages/django_model_utils/1.5.0/",
-                             "name": "django-model-utils",
-                             "version": "1.5.0"
-                         }, {
-                             "id": "jsonfield/0.9.19",
-                             "url": "http://testserver/api/v1/packages/jsonfield/0.9.19/",
-                             "name": "jsonfield",
-                             "version": "0.9.19"
-                         }],
+            "lines": [{"id": "django-model-utils==1.5.0",
+                       "package": {
+                           "id": "django_model_utils/1.5.0",
+                           "url": "http://testserver/api/v1/packages/django_model_utils/1.5.0/",
+                           "name": "django-model-utils",
+                           "version": "1.5.0",
+                       }}, {
+                       "id": "jsonfield==0.9.19",
+                       "package": {
+                            "id": "jsonfield/0.9.19",
+                            "url": "http://testserver/api/v1/packages/jsonfield/0.9.19/",
+                            "name": "jsonfield",
+                            "version": "0.9.19",
+                       }}],
             "created_at": self.job.created_at,
             "updated_at": self.job.updated_at,
+            "started_at": None,
+            "finished_at": None
+        })
+
+    def test_job_detail_empty(self):
+        job = JobFactory(lines=['Fabric>=1.4', 'nose'])
+        response = self.client.get('/api/v1/jobs/2/', format='json')
+        self.assertDictEqual(response.data, {
+            "id": 2,
+            "url": "http://testserver/api/v1/jobs/2/",
+            "status": "pending",
+            "lines": [{
+                "id": "Fabric>=1.4",
+                "package": None},
+                {"id": "nose",
+                 "package": None}
+            ],
+            "created_at": job.created_at,
+            "updated_at": job.updated_at,
             "started_at": None,
             "finished_at": None
         })
