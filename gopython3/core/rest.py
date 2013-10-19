@@ -1,13 +1,13 @@
 from django.db import transaction
 from rest_framework import viewsets, routers, status, mixins
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from .serializers import JobSerializer, PackageSerializer, JobDetailSerialzier
-from .models import Job, Spec
+from .models import Job, Spec, TASK_STATUS
 
 
 class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
@@ -28,6 +28,16 @@ class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOn
         else:
             return Response(serializer.data, status=status.HTTP_201_CREATED,
                             headers=headers)
+
+    @action()
+    def restart(self, request, pk=None):
+        """ Restart existing job """
+        job = self.get_object()
+        if job.status == TASK_STATUS.completed:
+            job.start()
+            return Response({'message': 'Job #%s has been restarted' % pk}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'message': 'Job #%s was not restarted. It is %s.' % (pk, job.status)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PackageListView(ListAPIView):

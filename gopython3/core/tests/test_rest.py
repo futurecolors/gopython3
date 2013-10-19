@@ -138,4 +138,14 @@ class TestApi(APITestCase):
              'url': 'http://testserver/api/v1/packages/django_compressor/1.3/'
         })
 
+    def test_job_restart(self):
+        job = JobFactory(specs=['foo==1'])
+        job.specs.all().update(status='completed')
 
+        response = self.client.post('/api/v1/jobs/1/restart/', format='json')
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post('/api/v1/jobs/2/restart/', format='json')
+        self.assertEqual(response.status_code, 202)
+
+    # TODO: test other non-working methods for extra security
