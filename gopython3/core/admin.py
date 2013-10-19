@@ -2,16 +2,15 @@ from django.contrib import admin
 from . import models
 
 
-class SpeckInline(admin.TabularInline):
+class LineInline(admin.TabularInline):
     model = models.Job.specs.through
     extra = 0
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'created_at', 'updated_at', 'status']
-    readonly_fields = ['started_at', 'finished_at', 'status']
-    list_filter = ['status']
-    inlines = [SpeckInline]
+    list_display = ['__str__', 'created_at', 'updated_at']
+    readonly_fields = ['started_at', 'finished_at']
+    inlines = [LineInline]
 
 
 class SpeckAdmin(admin.ModelAdmin):
