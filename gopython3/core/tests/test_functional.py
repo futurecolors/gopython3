@@ -30,12 +30,9 @@ class TestRequirement(TestCase):
         Job.objects.create_from_requirements(requirements).start()
 
 
-#class TestHttp(TestCase):
-#
-#    @attr('functional')
-#    def test_index(self):
-#        # Needs improvement, does not catch anything yet
-#        # FIXME: gopython3-6, need admin tests too
-#        response = self.client.get('/')
-#        self.assertTrue('Go Python 3!' in str(response.content))
-#        self.assertEqual(response.status_code, 200)
+class TestHttp(TestCase):
+
+    @attr('functional')
+    def test_index(self):
+        response = self.client.get('/404/')
+        self.assertEqual(response.status_code, 404)

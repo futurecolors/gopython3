@@ -9,8 +9,8 @@ def test():
 
 
 @task
-def functional(arg=''):
-    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture %s' % arg, pty=True)
+def functional(package=''):
+    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture %s' % package, pty=True)
 
 
 @task
