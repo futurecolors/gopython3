@@ -39,7 +39,7 @@ def process_requirement(line_id):
         # If version is not fixed, we already got latest package
         # Otherwise, fetch latest package to see if it is py3 compatible
         # FIXME: Using a chord is not effective, but works, consider futures
-        pypi = group(pypi, process_latest_spec.s(req.name, package.pk)) | get_first.s()
+        pypi = group(pypi, process_latest_spec.s(req.name, package.pk)) | aggregate_pypi_info.s()
 
     notify = notify_completed_spec.si(spec.pk)
 
@@ -51,8 +51,12 @@ def process_requirement(line_id):
 
 
 @task
-def get_first(*results):
-    return results[0][0]
+def aggregate_pypi_info(*results):
+    current = results[0][0]
+    latest = results[0][1]
+    if latest:  # can be None
+        current.update(latest)
+    return current
 
 
 @task
@@ -67,7 +71,7 @@ def process_latest_spec(package_name, package_id):
     latest_spec, created = Spec.objects.get_or_create(package_id=package_id, version=distribution.version)
     if created:
         # do not return spec, because it's already queued
-        return query_pypi.delay(latest_spec.pk)
+        return query_pypi(latest_spec.pk)
 
 @task
 def query_pypi(spec_pk):
@@ -85,14 +89,24 @@ def query_pypi(spec_pk):
 
 
 @task
-def github_travis(pypi_results, package_id):
+def github_travis(pypi_results, package_id, shortcut=True):
     """ Get all relevant info form Github
 
         Github and Travis tasks can be processed in parallel
         Forks search is disabled, because ineffective yet
         But they need pypi info (to avoid GH search if possible)
+
+        Pypi results example:
+        {...
+            'py3_versions': ['3', '3.2', '3.3'],
+            'url': 'http://www.djangoproject.com/'
+         ...}
     """
-    # TODO: We problably don't need to query Github if package states py3 support on PyPI
+    # We don't need to query Github if package states py3 support on PyPI
+    if pypi_results.get('py3_versions') and shortcut:
+        logger.debug('[GITHUB] Skipping %s, PyPI says py3 is supported' % pypi_results['name'])
+        return
+
     logger.debug('[GITHUB] Starting %s' % pypi_results['name'])
     gh_queries = group(get_repo_info.s(package_id),
                        get_issues.s(package_id) | get_pulls.s(package_id),

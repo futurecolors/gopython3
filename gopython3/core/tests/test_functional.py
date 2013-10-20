@@ -25,7 +25,7 @@ class TestRequirement(TestCase):
 
         requirements = """
             django>1.4,<1.5
-            coveralls==0.3
+            django-compressor==1.3
         """
         Job.objects.create_from_requirements(requirements).start()
 
