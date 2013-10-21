@@ -7,7 +7,7 @@ define('app/models/JobModel', [
         defaults: {
             url: '',
             status: '',
-            packages: [],
+            lines: [],
             requirements: ''
         },
 
@@ -15,7 +15,7 @@ define('app/models/JobModel', [
 
         initialize: function(){
             this.on('change:url', this.setId, this);
-            this.on('change:packages', this.resetCollection, this)
+            this.on('change:lines', this.resetCollection, this)
         },
 
         url: function(){
@@ -41,7 +41,7 @@ define('app/models/JobModel', [
         },
 
         resetCollection: function(){
-            this.collection.reset(this.get('packages'));
+            this.collection.reset(this.get('lines'));
         },
 
         watch: function(){
@@ -59,12 +59,8 @@ define('app/models/JobModel', [
         },
 
         onSave: function(){
-            if (this.get('status') != 'completed' && this.get('packages').length > 0) {
+            if (this.get('status') != 'completed' && this.get('lines').length > 0) {
                 this.tryToSave()
-            } else {
-                this.collection.each(function(package){
-                    package.set('status', 'completed');
-                });
             }
         }
     });

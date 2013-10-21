@@ -2,7 +2,7 @@ define('app/controllers/JobController', [
     'backbone',
     'marionette',
     'app/layouts/JobLayout',
-    'app/collections/PackageCollection',
+    'app/collections/LineCollection',
     'app/views/JobFormView',
     'app/views/JobStatusView',
     'app/views/PackageListView',
@@ -11,7 +11,7 @@ define('app/controllers/JobController', [
     Backbone,
     Marionette,
     JobLayout,
-    PackageCollection,
+    LineCollection,
     JobFormView,
     JobStatusView,
     PackageListView,
@@ -32,7 +32,7 @@ define('app/controllers/JobController', [
 
             createDataStorages: function(createNew){
                 if (!this.model || !this.collection || createNew) {
-                    this.collection = new PackageCollection();
+                    this.collection = new LineCollection();
                     this.model = new JobModel();
                     this.model.collection = this.collection;
                 }

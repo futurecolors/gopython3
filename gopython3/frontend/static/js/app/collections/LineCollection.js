@@ -1,29 +1,31 @@
-define('app/collections/PackageCollection', [
+define('app/collections/LineCollection', [
     'app/collections/Collection',
-    'app/models/PackageModel'
+    'app/models/LineModel'
 ], function(
     Collection,
-    PackageModel
+    LineModel
 ){
     return Collection.extend({
-        model: PackageModel,
+        model: LineModel,
 
         getProgress: function(){
-            return this.where({status: 'completed'}).length / this.length;
+            return this.filter(function(line){
+                return line.get('is_failed') || (line.package && line.package.get('status') == 'completed');
+            }).length / this.length;
         },
 
         getSupportStatus: function(){
-            var supportStatuses,
-                result = {};
+            var result = {
+                    SUPPORTED: 0,
+                    SUPPORTED_IN_NEXT: 0,
+                    SUPPORTED_PROBABLY: 0,
+                    UNKNOWN: 0
+                };
 
-            supportStatuses = _.map(
-                this.where({status: 'completed'}),
-                function(package){
-                    return package.getPython3Support()
+            this.each(function(line){
+                if (line.package) {
+                    result[line.package.getPython3Support()]++;
                 }
-            );
-            _.each(['SUPPORTED', 'SUPPORTED_IN_NEXT', 'SUPPORTED_PROBABLY', 'UNKNOWN'], function(key){
-                result[key] = _.filter(supportStatuses, function(value){return value == key}).length;
             });
 
             return result;

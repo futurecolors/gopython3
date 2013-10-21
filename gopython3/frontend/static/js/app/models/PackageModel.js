@@ -51,10 +51,10 @@ define('app/models/PackageModel', [
             }
 
             info = this.toJSON();
-            if (info.pypi && info.pypi.current && info.pypi.current.python3) {
+            if (info.pypi && info.pypi.current && info.pypi.current.python3.length) {
                 return 'SUPPORTED';
             }
-            if (info.pypi && info.pypi.latest && info.pypi.latest.python3) {
+            if (info.pypi && info.pypi.latest && info.pypi.latest.python3.length) {
                 return 'SUPPORTED_IN_NEXT';
             }
             if (!_.isEmpty(info.forks)) {
