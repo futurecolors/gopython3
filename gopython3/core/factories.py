@@ -25,7 +25,7 @@ class JobFactory(factory.DjangoModelFactory):
             for line in extracted:
                 name, version = line.split('==')
                 spec = SpecFactory(version=version, package__name=name)
-                LineFactory(job=self, spec=spec, text=line)
+                LineFactory(job=self, spec=spec, text=line, status='parsed')
 
 
 class PackageFactory(factory.DjangoModelFactory):

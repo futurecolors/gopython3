@@ -25,13 +25,18 @@ def process_requirement(line_id):
     logger.info('Starting to process %s...' % req.name)
 
     # Freezing the requirement
-    # FIXME: if no distribution is found, fail gracefully
     distribution = PyPI.get_distribution(req)
+    # if no distribution is found, fail gracefully
+    if not distribution:
+        logger.warn('No distribution found for %s' % line.text)
+        line.mark_as_failed()
+        return
 
     package, package_created, spec, spec_created = line.set_distribution(distribution)
 
     # if spec is already parsed before, no need to do anything
     if not spec_created:
+        logger.debug('Spec is already parsed before')
         return
 
     pypi = query_pypi.s(spec.pk)
@@ -121,7 +126,6 @@ def github_travis(pypi_results, package_id, shortcut=True):
     else:
         logger.debug('Initiating long way, url "%s" is not github' % meta_url)
         return (search_github.s(pypi_results['name']) | gh_queries).delay()
-
 
 
 @task(rate_limit='20/m')
@@ -217,8 +221,7 @@ def get_build_status(full_name, package_id):
 
 @task
 def notify_completed_spec(spec_id):
-    """ Spec processing has finished, now we need to record the result
-    """
+    """ Spec processing has finished, now we need to record the result """
     spec = Spec.objects.get(pk=spec_id)
     spec.do_finish()
     logger.info('✓ %s finished' % spec)

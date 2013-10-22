@@ -1,5 +1,6 @@
 from autoslug import AutoSlugField
 from django.db import models
+from django.db.models import Count
 from django.utils.timezone import now
 from jsonfield import JSONField
 from model_utils import Choices
@@ -75,11 +76,32 @@ class Job(TimeFrameStampedModel):
 
     @property
     def status(self):
-        statuses = set(self.specs.values_list('status', flat=True))
-        if TASK_STATUS.running in statuses:
+        """ Job has 3 states: pending, running and completed
+
+            * pending (no specs parsed yet, default for new jobs)
+            * running (specs are being parsed)
+            * completed (all done)
+        """
+        spec_stats = {i['status']: i['count']
+                      for i in self.specs.values('status').annotate(count=Count('status'))}
+        lines_stats = {i['status']: i['count']
+                       for i in self.lines.values('status').annotate(count=Count('status'))}
+        num_lines = self.lines.count()
+
+        if spec_stats.get('running'):
             return TASK_STATUS.running
-        if not statuses or TASK_STATUS.pending in statuses:
+        if spec_stats.get('pending'):
             return TASK_STATUS.pending
+        # All specs are either completed or not parsed yet
+
+        if lines_stats.get('unknown'):
+            # Pending, if no lines were parsed yet
+            if lines_stats['unknown'] == num_lines:
+                return TASK_STATUS.pending
+            else:
+                # Running if not all lines finished, with errors or not
+                return TASK_STATUS.running
+
         return TASK_STATUS.completed
 
     def start(self):
@@ -96,9 +118,12 @@ class Line(models.Model):
         We can not use default intermediate m2m model, because one FKs needs to be nullable
         (so that we can defer spec calculation)
     """
+    STATUS = Choices('unknown', 'error', 'parsed')
+
     job = models.ForeignKey(Job, related_name='lines')
     spec = models.ForeignKey('Spec', null=True, related_name='lines')
     text = models.CharField(max_length=100)
+    status = StatusField()
 
     def __str__(self):
         return self.text
@@ -110,9 +135,15 @@ class Line(models.Model):
         """
         package, package_created = Package.objects.get_or_create(name=distribution.name)
         spec, spec_created = Spec.objects.get_or_create(package=package, version=distribution.version)
+        # FIXME: spec running?
         self.spec = spec
+        self.status = self.STATUS.parsed
         self.save()
         return package, package_created, spec, spec_created
+
+    def mark_as_failed(self):
+        self.status = self.STATUS.error
+        self.save()
 
 
 class Package(TimeStampedModel):

@@ -24,6 +24,7 @@ class TestRequirement(TestCase):
     def test_can_be_processed(self):
 
         requirements = """
+            not_on_pypi
             django>1.4,<1.5
             django-compressor==1.3
         """

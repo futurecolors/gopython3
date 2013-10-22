@@ -50,9 +50,12 @@ class JobTest(TestCase):
                                  ['django>=1.4,<1.5', 'Django-Geoip==0.3', 'coverage', 'coveralls>0.2'],
                                  transform=str)
 
-    def test_status_is_calculated_based_upon_spec(self):
+    def test_status_is_calculated_based_upon_lines_and_spec(self):
         job = JobFactory()
-        assert job.status == 'pending', 'No specs yet'
+        assert job.status == 'completed', 'No specs, no lines'
+
+        job = JobFactory(lines=['spanish=42,inquisition==7'])
+        assert job.status == 'pending', 'It has 2 unparsed lines'
 
         job = JobFactory(specs=['foo=1,bar==2'])
         assert job.status == 'pending', 'It has 2 unfinished specs'
@@ -66,6 +69,12 @@ class JobTest(TestCase):
         job.specs.all().update(status='completed')
         job = Job.objects.get(pk=job.pk)
         assert job.status == 'completed', 'All specs have finished'
+
+        job = JobFactory(specs=['python==1'], lines=['monty==2'])
+        spec = job.specs.first()
+        spec.status = 'running'
+        spec.save()
+        assert job.status == 'running', 'One spec has finished, but 1 line is not parsed yet'
 
 
 class JobSepcTest(TestCase):
