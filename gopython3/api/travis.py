@@ -16,7 +16,10 @@ class TravisCI(HammockAPI):
             JSON: https://api.travis-ci.org/docs/#/repos/:owner_name/:name
         """
         repo = self.api.repos(full_name).GET().json().get('repo', {})
-        return {
-            'html_url': 'https://travis-ci.org/%s' % repo['slug'],
-            'last_build_state': repo['last_build_state'],
-        }
+        try:
+            return {
+                'html_url': 'https://travis-ci.org/%s' % repo['slug'],
+                'last_build_state': repo['last_build_state'],
+            }
+        except KeyError:
+            return {}
