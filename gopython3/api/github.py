@@ -42,7 +42,6 @@ class Github(HammockAPI):
             path = path.strip('/')
             if path.count('/') == 1:
                 return path
-        return None
 
     def get_most_popular_repo(self, package_name, language='python'):
         """ Most popular owner/repo fullname for given package name

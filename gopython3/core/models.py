@@ -32,15 +32,24 @@ class TimeFrameStampedModel(TimeStampedModel):
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
 
-    def do_start(self):
-        self.status = self.STATUS.running
+    def start(self):
+        update_fields = ['status', 'started_at', 'updated_at']
+        try:
+            self.status = self.STATUS.running
+        except AttributeError:
+            update_fields.remove('status')  # jobs don't allow that
         self.started_at = now()
-        self.save(update_fields=['status', 'started_at'])
+        self.save(update_fields=update_fields)
 
-    def do_finish(self):
-        self.status = self.STATUS.completed
+    def finish(self):
+        # TODO: populate finished_at
+        update_fields = ['status', 'finished_at', 'updated_at']
+        try:
+            self.status = self.STATUS.completed
+        except AttributeError:
+            update_fields.remove('status')  # jobs don't allow that
         self.finished_at = now()
-        self.save(update_fields=['status', 'finished_at'])
+        self.save(update_fields=update_fields)
 
     class Meta:
         abstract = True
@@ -106,6 +115,7 @@ class Job(TimeFrameStampedModel):
 
     def start(self):
         from .tasks import process_requirement
+        super().start()
         return [process_requirement.delay(line.pk) for line in self.lines.all()]
 
     def __str__(self):
@@ -154,6 +164,7 @@ class Package(TimeStampedModel):
             * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100, unique=True)
+    # FIXME: remove slug, it's redundant
     slug = AutoSlugField(populate_from='name', unique=True, slugify=lambda name: name.lower().replace('-', '_'),
                          help_text='Underscore, lowercased')
 
@@ -198,6 +209,7 @@ class Spec(TimeFrameStampedModel):
     version = models.CharField(max_length=20)
     release_date = models.DateTimeField(blank=True, null=True)
     python_versions = JSONField(blank=True, null=True)
+    # TODO: track all python versions, might be useful
 
     def __str__(self):
         return '%s==%s' % (self.package.name, self.version)

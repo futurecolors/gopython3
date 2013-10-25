@@ -223,5 +223,5 @@ def get_build_status(full_name, package_id):
 def notify_completed_spec(spec_id):
     """ Spec processing has finished, now we need to record the result """
     spec = Spec.objects.get(pk=spec_id)
-    spec.do_finish()
+    spec.finish()
     logger.info('✓ %s finished' % spec)

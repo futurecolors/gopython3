@@ -1,6 +1,5 @@
 # coding: utf-8
 import logging
-from django.core.cache import cache
 from django.test import TestCase
 from nose.plugins.attrib import attr
 from api.github import Github
@@ -21,15 +20,12 @@ class GithubRealTest(TestCase):
 
     @attr('functional')
     def test_github_api_with_real_repos(self):
-        repos = cache.get('top_popular_repos')
-        if not repos:
-            # Get 100 most popular repos
-            repos = self.gh.api.search.repositories.GET(params={
-                'q': 'language:python',
-                'per_page': 5,
-                'sort': 'stars',
-            }).json()
-            cache.set('top_popular_repos', repos)
+        # Get 5 most popular repos
+        repos = self.gh.api.search.repositories.GET(params={
+            'q': 'language:python',
+            'per_page': 5,
+            'sort': 'stars',
+        }).json()
 
         for i, repo in enumerate(repos['items']):
             full_name = repo['full_name']
