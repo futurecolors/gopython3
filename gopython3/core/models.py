@@ -98,9 +98,6 @@ class Job(TimeFrameStampedModel):
 
         if spec_stats.get('running'):
             return TASK_STATUS.running
-        if spec_stats.get('pending'):
-            return TASK_STATUS.pending
-        # All specs are either completed or not parsed yet
 
         if lines_stats.get('unknown'):
             # Pending, if no lines were parsed yet
@@ -109,6 +106,10 @@ class Job(TimeFrameStampedModel):
             else:
                 # Running if not all lines finished, with errors or not
                 return TASK_STATUS.running
+
+        # All specs parsed, not all have finished
+        if spec_stats.get('pending'):
+            return TASK_STATUS.running
 
         return TASK_STATUS.completed
 

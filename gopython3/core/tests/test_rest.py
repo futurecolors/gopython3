@@ -30,7 +30,7 @@ class TestApi(APITestCase):
             'results': [{
                             'id': 1,
                             'url': 'http://testserver/api/v1/jobs/1/',
-                            'status': 'pending',
+                            'status': 'running',
                             'created_at': self.job.created_at,
                             'updated_at': self.job.updated_at,
                             'started_at': None,
@@ -43,7 +43,7 @@ class TestApi(APITestCase):
         self.assertDictEqual(response.data, {
             "id": 1,
             "url": "http://testserver/api/v1/jobs/1/",
-            "status": "pending",
+            "status": "running",
             "lines": [{"id": "django-model-utils==1.5.0",
                        "package": {
                            "id": "django-model-utils/1.5.0",

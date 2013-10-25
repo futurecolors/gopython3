@@ -50,31 +50,47 @@ class JobTest(TestCase):
                                  ['django>=1.4,<1.5', 'Django-Geoip==0.3', 'coverage', 'coveralls>0.2'],
                                  transform=str)
 
-    def test_status_is_calculated_based_upon_lines_and_spec(self):
+
+class JobStatusTest(TestCase):
+
+    def test_completed_if_no_specs_no_lines(self):
         job = JobFactory()
         assert job.status == 'completed', 'No specs, no lines'
 
+    def test_pending_if_unparsed_lines(self):
         job = JobFactory(lines=['spanish=42,inquisition==7'])
         assert job.status == 'pending', 'It has 2 unparsed lines'
 
+    def test_pending_if_pending_specs(self):
         job = JobFactory(specs=['foo=1,bar==2'])
-        assert job.status == 'pending', 'It has 2 unfinished specs'
+        assert job.status == 'running', 'It has 2 unfinished specs, but lines are parsed'
 
+    def test_running_if_running_and_finished_specs(self):
+        job = JobFactory(specs=['foo=1,bar==2'])
         spec = job.specs.first()
         spec.status = 'running'
         spec.save()
         job = Job.objects.get(pk=job.pk)
         assert job.status == 'running', 'Job has started, but has not finished yet'
 
+    def test_running_if_one_spec_pending(self):
+        job = JobFactory(specs=['foo=1,bar==2'])
+        job.specs.all().update(status='completed')
+        job = Job.objects.get(pk=job.pk)
+        assert job.status == 'completed', 'One spec pending'
+
+    def test_running_if_finished_and_pending_specs(self):
+        job = JobFactory(specs=['steve==1', 'jobs==2'])
+        spec = job.specs.first()
+        spec.status = 'finished'
+        spec.save()
+        assert job.status == 'running', 'One spec has finished, but 1 line is not parsed yet'
+
+    def test_completed_if_specs_completed(self):
+        job = JobFactory(specs=['foo=1,bar==2'])
         job.specs.all().update(status='completed')
         job = Job.objects.get(pk=job.pk)
         assert job.status == 'completed', 'All specs have finished'
-
-        job = JobFactory(specs=['python==1'], lines=['monty==2'])
-        spec = job.specs.first()
-        spec.status = 'running'
-        spec.save()
-        assert job.status == 'running', 'One spec has finished, but 1 line is not parsed yet'
 
 
 class JobSepcTest(TestCase):
