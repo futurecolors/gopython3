@@ -1,9 +1,13 @@
 # coding: utf-8
+import logging
+import pytz
 from distlib.locators import locate
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
-import pytz
 from .base import HammockAPI
+
+
+logger = logging.getLogger(__name__)
 
 
 class PyPI(HammockAPI):
@@ -16,7 +20,13 @@ class PyPI(HammockAPI):
                   https://pypi.python.org/pypi/requests/2.0.0/json
         """
         path = '%s/%s' % (name, version) if version else name
-        package = self.api(path).json.GET().json()
+        try:
+            package = self.api(path).json.GET().json()
+        except ValueError:
+            # Package is not available on PyPI for some reason
+            # TODO: separate temp and permanent errors
+            logger.error('Error parsing PyPI for package "%s"' % path)
+            return None
 
         # Packages that are not uploaded to PyPI have no upload time
         upload_time = package['urls'][0].get('upload_time') if package['urls'] else None

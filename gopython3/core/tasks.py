@@ -85,11 +85,14 @@ def query_pypi(spec_pk):
     logger.debug('[PYPI] Fetching data for %s' % spec)
     pkg_data = PyPI().get_info(spec.name, spec.version)
 
+    if not pkg_data:
+        logger.debug('[PYPI] Errored %s ' % spec)
+        return {}
+
     spec.release_date = pkg_data['last_release_date']
     spec.python_versions = pkg_data['py3_versions']
     spec.save(update_fields=['release_date', 'python_versions'])
     logger.debug('[PYPI] Finished %s ' % spec)
-
     return pkg_data
 
 
@@ -108,8 +111,11 @@ def github_travis(pypi_results, package_id, shortcut=True):
          ...}
     """
     # We don't need to query Github if package states py3 support on PyPI
-    if pypi_results.get('py3_versions') and shortcut:
+    if pypi_results.get('py3_versions', None) and shortcut:
         logger.debug('[GITHUB] Skipping %s, PyPI says py3 is supported' % pypi_results['name'])
+        return
+    if not pypi_results:
+        logger.debug('[GITHUB] Skipping, no package data from PyPI')
         return
 
     logger.debug('[GITHUB] Starting %s' % pypi_results['name'])
