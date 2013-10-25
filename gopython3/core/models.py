@@ -1,4 +1,3 @@
-from autoslug import AutoSlugField
 from django.db import models
 from django.db.models import Count
 from django.utils.timezone import now
@@ -164,9 +163,6 @@ class Package(TimeStampedModel):
             * Non-PyPI info is pulled for latest repo version
     """
     name = models.CharField(max_length=100, unique=True)
-    # FIXME: remove slug, it's redundant
-    slug = AutoSlugField(populate_from='name', unique=True, slugify=lambda name: name.lower().replace('-', '_'),
-                         help_text='Underscore, lowercased')
 
     # Repo data
     repo_url = models.URLField(blank=True)
@@ -194,7 +190,7 @@ class Package(TimeStampedModel):
     comment_most_voted = models.TextField(blank=True)
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.slug)
+        return self.name
 
 
 class Spec(TimeFrameStampedModel):
@@ -219,7 +215,7 @@ class Spec(TimeFrameStampedModel):
         return self.package.name
 
     def get_identifier(self):
-        return '%s/%s' % (self.package.slug, self.version)
+        return '%s/%s' % (self.package.name, self.version)
 
     @property
     def pypi_url(self):

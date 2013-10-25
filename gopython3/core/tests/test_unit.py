@@ -83,13 +83,13 @@ class JobSepcTest(TestCase):
         job = JobFactory(lines=['Django==1.5.4'])
         package, package_created, spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('Django==1.5.4'))
 
-        self.assertQuerysetEqual(Package.objects.all(), ['Django (django)'], transform=str, ordered=False)
+        self.assertQuerysetEqual(Package.objects.all(), ['Django'], transform=str, ordered=False)
         self.assertQuerysetEqual(job.specs.all(), ['Django==1.5.4'], transform=str, ordered=False)
         self.assertTrue(package_created)
         self.assertTrue(spec_created)
 
     def test_does_not_create_duplicate_specs(self):
-        spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
+        spec = SpecFactory(version='0.2.19', package__name='lettuce')
         job = JobFactory(lines=['lettuce==0.2.19'])
         same_package, package_created, same_spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('lettuce==0.2.19'))
 
@@ -114,7 +114,7 @@ class PypiTaskTest(TestCase):
             'py3_versions': py3_versions,
         }
 
-        spec = SpecFactory(version='0.2.19', package__name='lettuce', package__slug='lettuce')
+        spec = SpecFactory(version='0.2.19', package__name='lettuce')
         self.assertEqual(query_pypi(spec.pk), get_info_mock.return_value)
         spec = Spec.objects.get(pk=spec.pk)
         assert spec.release_date == last_release_date

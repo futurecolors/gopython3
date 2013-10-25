@@ -46,8 +46,8 @@ class TestApi(APITestCase):
             "status": "pending",
             "lines": [{"id": "django-model-utils==1.5.0",
                        "package": {
-                           "id": "django_model_utils/1.5.0",
-                           "url": "http://testserver/api/v1/packages/django_model_utils/1.5.0/",
+                           "id": "django-model-utils/1.5.0",
+                           "url": "http://testserver/api/v1/packages/django-model-utils/1.5.0/",
                            "name": "django-model-utils",
                            "version": "1.5.0",
                        }}, {
@@ -84,7 +84,7 @@ class TestApi(APITestCase):
         })
 
     def test_spec_detail(self):
-        spec =  SpecFactory(package__name='django-compressor',
+        spec =  SpecFactory(package__name='django_compressor',
                             version='1.3',
                             status='completed',
                             package__repo_url='https://github.com/jezdez/django_compressor',
@@ -103,7 +103,7 @@ class TestApi(APITestCase):
         response = self.client.get('/api/v1/packages/django_compressor/1.3/', format='json')
         self.assertDictEqual(response.data, {
              "id": "django_compressor/1.3",
-             "name": "django-compressor",
+             "name": "django_compressor",
              "version": "1.3",
              "status": "completed",
              "created_at": spec.created_at,

@@ -9,7 +9,6 @@ celery==3.0.24
 colorlog==2.0.0
 dj-database-url==0.2.2
 django-appconf==0.6
-django-autoslug==1.7.1
 django-celery==3.0.23
 django-configurations==0.6
 django-model-utils==1.5.0

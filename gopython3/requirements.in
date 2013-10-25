@@ -17,7 +17,6 @@ django-nose==1.2
 factory_boy==2.2.1
 colorlog==2.0.0
 requirements-parser==0.0.6
-django-autoslug==1.7.1
 # Latest version has multiple fixes
 -e hg+https://bitbucket.org/vinay.sajip/distlib#egg=distlib
 

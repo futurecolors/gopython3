@@ -20,7 +20,7 @@ class SpeckAdmin(admin.ModelAdmin):
 
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'repo_url', 'issue_url', 'created_at', 'updated_at']
+    list_display = ['name', 'repo_url', 'issue_url', 'created_at', 'updated_at']
 
 
 admin.site.register(models.Job, JobAdmin)
