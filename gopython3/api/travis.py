@@ -19,7 +19,7 @@ class TravisCI(HammockAPI):
         try:
             return {
                 'html_url': 'https://travis-ci.org/%s' % repo['slug'],
-                'last_build_state': repo['last_build_state'],
+                'last_build_state': repo['last_build_state'] or 'unknown',
             }
         except KeyError:
             return {}

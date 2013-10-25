@@ -103,6 +103,16 @@ class TestTravisApi(APITestCase):
             'last_build_state': 'passed',
         })
 
+    def test_get_build_status_partial(self):
+        HTTPretty.register_uri(HTTPretty.GET,
+            'https://api.travis-ci.org/repos/coxmediagroup/django-admin-tools',
+            '{"repo":{"slug": "coxmediagroup/django-admin-tools", "last_build_state": ""}}'
+        )
+        self.assertEqual(TravisCI().get_build_status('coxmediagroup/django-admin-tools'), {
+            'html_url': 'https://travis-ci.org/coxmediagroup/django-admin-tools',
+            'last_build_state': 'unknown',
+        })
+
 
 class TestPypiApi(APITestCase):
 
