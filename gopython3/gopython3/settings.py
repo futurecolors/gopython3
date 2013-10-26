@@ -17,7 +17,7 @@ from configurations import Configuration, values
 
 class Common(Configuration):
 
-    # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+    # Build paths inside the project like this: os.path.join(PARENT_DIR, ...)
     PARENT_DIR = os.path.dirname(os.path.dirname(__file__))
     BASE_DIR = values.PathValue(PARENT_DIR)
 
@@ -31,6 +31,7 @@ class Common(Configuration):
     DEBUG = True
 
     TEMPLATE_DEBUG = True
+    TEMPLATE_DIRS = (os.path.join(PARENT_DIR, 'gopython3', 'templates'),)
 
     ALLOWED_HOSTS = []
 
@@ -53,7 +54,6 @@ class Common(Configuration):
         # go python 3!
         'core',
         'api',
-        'frontend'        
     )
 
     MIDDLEWARE_CLASSES = (

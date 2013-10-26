@@ -41,7 +41,7 @@
     });
 
     var initBootstrap = function(){
-        require(['../bootstrap/js/bootstrap']);
+        require(['../vendor/bootstrap/js/bootstrap']);
     };
 
     var initTemplates = function(_, Marionette, jade){
