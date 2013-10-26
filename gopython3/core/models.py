@@ -7,7 +7,7 @@ from model_utils.fields import StatusField, AutoCreatedField, AutoLastModifiedFi
 import requirements
 
 
-TASK_STATUS = Choices('pending', 'running', 'completed')
+TASK_STATUS = Choices('pending', 'running', 'success', 'error')
 
 from django.conf import settings
 
@@ -40,11 +40,11 @@ class TimeFrameStampedModel(TimeStampedModel):
         self.started_at = now()
         self.save(update_fields=update_fields)
 
-    def finish(self):
+    def finish(self, ok=True):
         # TODO: populate finished_at
         update_fields = ['status', 'finished_at', 'updated_at']
         try:
-            self.status = self.STATUS.completed
+            self.status = self.STATUS.success if ok else self.STATUS.error
         except AttributeError:
             update_fields.remove('status')  # jobs don't allow that
         self.finished_at = now()
@@ -84,11 +84,11 @@ class Job(TimeFrameStampedModel):
 
     @property
     def status(self):
-        """ Job has 3 states: pending, running and completed
+        """ Job has 4 states: pending, running and success/error
 
             * pending (no specs parsed yet, default for new jobs)
             * running (specs are being parsed)
-            * completed (all done)
+            * success/error (all done)
         """
         spec_stats = {i['status']: i['count']
                       for i in self.specs.values('status').annotate(count=Count('status'))}
@@ -111,7 +111,8 @@ class Job(TimeFrameStampedModel):
         if spec_stats.get('pending'):
             return TASK_STATUS.running
 
-        return TASK_STATUS.completed
+        # TODO: handle error state
+        return TASK_STATUS.success
 
     def start(self):
         from .tasks import process_requirement

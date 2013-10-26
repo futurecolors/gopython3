@@ -86,7 +86,7 @@ class TestApi(APITestCase):
     def test_spec_detail(self):
         spec =  SpecFactory(package__name='django_compressor',
                             version='1.3',
-                            status='completed',
+                            status='success',
                             package__repo_url='https://github.com/jezdez/django_compressor',
                             package__repo_last_commit_date=datetime.datetime(2013, 9, 22, 1, 56, 12, tzinfo=pytz.utc),
                             package__issue_url='https://github.com/jezdez/django_compressor/issues/360',
@@ -105,7 +105,7 @@ class TestApi(APITestCase):
              "id": "django_compressor/1.3",
              "name": "django_compressor",
              "version": "1.3",
-             "status": "completed",
+             "status": "success",
              "created_at": spec.created_at,
              "updated_at": spec.updated_at,
              "pypi": {
@@ -140,7 +140,7 @@ class TestApi(APITestCase):
 
     def test_job_restart(self):
         job = JobFactory(specs=['foo==1'])
-        job.specs.all().update(status='completed')
+        job.specs.all().update(status='success')
 
         response = self.client.post('/api/v1/jobs/1/restart/', format='json')
         self.assertEqual(response.status_code, 400)

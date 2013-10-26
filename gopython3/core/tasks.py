@@ -87,11 +87,13 @@ def query_pypi(spec_pk):
 
     if not pkg_data:
         logger.debug('[PYPI] Errored %s ' % spec)
+        spec.status = 'error'
+        spec.save(update_fields=['status', 'updated_at'])
         return {}
 
     spec.release_date = pkg_data['last_release_date']
     spec.python_versions = pkg_data['py3_versions']
-    spec.save(update_fields=['release_date', 'python_versions'])
+    spec.save(update_fields=['release_date', 'python_versions', 'updated_at'])
     logger.debug('[PYPI] Finished %s ' % spec)
     return pkg_data
 

@@ -55,7 +55,7 @@ class JobStatusTest(TestCase):
 
     def test_completed_if_no_specs_no_lines(self):
         job = JobFactory()
-        assert job.status == 'completed', 'No specs, no lines'
+        assert job.status == 'success', 'No specs, no lines'
 
     def test_pending_if_unparsed_lines(self):
         job = JobFactory(lines=['spanish=42,inquisition==7'])
@@ -75,9 +75,9 @@ class JobStatusTest(TestCase):
 
     def test_running_if_one_spec_pending(self):
         job = JobFactory(specs=['foo=1,bar==2'])
-        job.specs.all().update(status='completed')
+        job.specs.all().update(status='success')
         job = Job.objects.get(pk=job.pk)
-        assert job.status == 'completed', 'One spec pending'
+        assert job.status == 'success', 'One spec pending'
 
     def test_running_if_finished_and_pending_specs(self):
         job = JobFactory(specs=['steve==1', 'jobs==2'])
@@ -88,9 +88,9 @@ class JobStatusTest(TestCase):
 
     def test_completed_if_specs_completed(self):
         job = JobFactory(specs=['foo=1,bar==2'])
-        job.specs.all().update(status='completed')
+        job.specs.all().update(status='success')
         job = Job.objects.get(pk=job.pk)
-        assert job.status == 'completed', 'All specs have finished'
+        assert job.status == 'success', 'All specs have finished'
 
 
 class JobSepcTest(TestCase):

@@ -33,7 +33,7 @@ class JobViewSet(DetailSerializerMixin, mixins.CreateModelMixin, viewsets.ReadOn
     def restart(self, request, pk=None):
         """ Restart existing job """
         job = self.get_object()
-        if job.status == TASK_STATUS.completed:
+        if job.status in (TASK_STATUS.error, TASK_STATUS.success):
             job.start()
             return Response({'message': 'Job #%s has been restarted' % pk}, status=status.HTTP_202_ACCEPTED)
         else:
