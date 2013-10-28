@@ -50,6 +50,7 @@ class TestApi(APITestCase):
                            "url": "http://testserver/api/v1/packages/django-model-utils/1.5.0/",
                            "name": "django-model-utils",
                            "version": "1.5.0",
+                           'status': 'pending',
                        }}, {
                        "id": "jsonfield==0.9.19",
                        "package": {
@@ -57,6 +58,7 @@ class TestApi(APITestCase):
                             "url": "http://testserver/api/v1/packages/jsonfield/0.9.19/",
                             "name": "jsonfield",
                             "version": "0.9.19",
+                            'status': 'pending',
                        }}],
             "created_at": self.job.created_at,
             "updated_at": self.job.updated_at,
