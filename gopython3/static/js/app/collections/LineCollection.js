@@ -23,9 +23,7 @@ define('app/collections/LineCollection', [
                 };
 
             this.each(function(line){
-                if (line.package) {
-                    result[line.package.getPython3Support()]++;
-                }
+                result[line.package.getPython3Support()]++;
             });
 
             return result;

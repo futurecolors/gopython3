@@ -10,6 +10,9 @@ define('app/models/LineModel', [
         initialize: function(){
             this.setPackage();
             this.on('change:package', this.setPackage, this);
+            this.package.on('change', function(){
+                this.trigger('change');
+            }, this);
         },
 
         setPackage: function(){

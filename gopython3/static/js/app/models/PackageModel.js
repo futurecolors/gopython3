@@ -38,13 +38,8 @@ define('app/models/PackageModel', [
         },
 
         fetchIfCompleted: function(){
-            console.log(this.isCompleted());
             if (this.isCompleted()) {
-                this.fetch({
-                    success: function(){
-                        console.info('success', arguments);
-                    }
-                });
+                this.fetch();
             }
         },
 
