@@ -5,7 +5,7 @@ define('app/controllers/JobController', [
     'app/collections/LineCollection',
     'app/views/JobFormView',
     'app/views/JobStatusView',
-    'app/views/PackageListView',
+    'app/views/LineListView',
     'app/models/JobModel'
 ], function (
     Backbone,
@@ -14,7 +14,7 @@ define('app/controllers/JobController', [
     LineCollection,
     JobFormView,
     JobStatusView,
-    PackageListView,
+    LineListView,
     JobModel
 ) {
     return Marionette.Controller.extend(_.extend(
@@ -77,7 +77,7 @@ define('app/controllers/JobController', [
                     this.status.show(new JobStatusView({
                         collection: that.collection
                     }));
-                    this.packages.show(new PackageListView({
+                    this.packages.show(new LineListView({
                         collection: that.collection
                     }));
                 });

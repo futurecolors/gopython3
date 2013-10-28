@@ -33,5 +33,5 @@ article.package(class= isSupported ? 'package_status_supported' : '')
         else
             span.package__loader
     h2.package__name
-        = packageInfo.name
+        = packageInfo.name || lineInfo.id
         span.package__version= packageInfo.version

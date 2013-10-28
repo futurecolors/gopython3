@@ -34,12 +34,17 @@ define('app/models/PackageModel', [
         },
 
         isCompleted: function(){
-            return this.get('status') == 'completed';
+            return this.get('status') == 'success';
         },
 
         fetchIfCompleted: function(){
+            console.log(this.isCompleted());
             if (this.isCompleted()) {
-                this.fetch();
+                this.fetch({
+                    success: function(){
+                        console.info('success', arguments);
+                    }
+                });
             }
         },
 
