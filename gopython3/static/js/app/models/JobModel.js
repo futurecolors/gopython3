@@ -59,7 +59,7 @@ define('app/models/JobModel', [
         },
 
         onSave: function(){
-            if (this.get('status') != 'completed' && this.get('lines').length > 0) {
+            if (this.get('status') != 'success' && this.get('lines').length > 0) {
                 this.tryToSave()
             }
         }

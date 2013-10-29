@@ -1,4 +1,4 @@
-define('app/views/PackageView', [
+define('app/views/LineView', [
     'marionette',
     'moment'
 ], function(
@@ -6,20 +6,22 @@ define('app/views/PackageView', [
     moment
 ){
     return Marionette.ItemView.extend({
-        template: 'app/templates/package.jade',
+        template: 'app/templates/line.jade',
 
         initialize: function(){
             this.model.on('change', this.render, this)
+            this.model.package.on('change', this.render, this)
         },
 
         serializeData: function(){
             var python3Support;
 
-            python3Support = this.model.getPython3Support();
-            
+            python3Support = this.model.package.getPython3Support();
+
             return {
-                packageInfo: this.model.toJSON(),
-                isCompleted: this.model.isCompleted(),
+                lineInfo: this.model.toJSON(),
+                packageInfo: this.model.package.toJSON(),
+                isCompleted: this.model.package.isCompleted(),
                 python3Support: python3Support,
                 moment: moment,
                 isSupported: python3Support == 'SUPPORTED' || python3Support == 'SUPPORTED_IN_NEXT'

@@ -4,12 +4,15 @@ define('app/models/LineModel', [
 ], function(Backbone, PackageModel){
     return Backbone.Model.extend({
         defaults: {
-            package: null,
             is_failed: false
         },
 
         initialize: function(){
+            this.setPackage();
             this.on('change:package', this.setPackage, this);
+            this.package.on('change', function(){
+                this.trigger('change');
+            }, this);
         },
 
         setPackage: function(){

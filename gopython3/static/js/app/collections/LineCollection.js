@@ -10,7 +10,7 @@ define('app/collections/LineCollection', [
 
         getProgress: function(){
             return this.filter(function(line){
-                return line.get('is_failed') || (line.package && line.package.get('status') == 'completed');
+                return line.get('is_failed') || (line.package && line.package.get('status') == 'success');
             }).length / this.length;
         },
 
@@ -23,9 +23,7 @@ define('app/collections/LineCollection', [
                 };
 
             this.each(function(line){
-                if (line.package) {
-                    result[line.package.getPython3Support()]++;
-                }
+                result[line.package.getPython3Support()]++;
             });
 
             return result;

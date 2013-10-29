@@ -10,16 +10,7 @@ class SpecSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Spec
         lookup_field = 'code'
-        fields = ('id', 'url', 'name', 'version')
-
-
-class LineSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.Field(source='text')
-    package = SpecSerializer(source='spec')
-
-    class Meta:
-        model = Line
-        fields = ('id', 'package')
+        fields = ('id', 'url', 'name', 'version', 'status')
 
 
 class JobSerializer(serializers.HyperlinkedModelSerializer):
@@ -29,16 +20,6 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Job
         fields = ('id', 'url', 'status',
-                  'created_at', 'updated_at', 'started_at', 'finished_at', )
-
-
-class JobDetailSerialzier(JobSerializer):
-    lines = LineSerializer(source='lines', many=True)
-    status = serializers.Field(source='status')
-
-    class Meta:
-        model = Job
-        fields = ('id', 'url', 'status', 'lines',
                   'created_at', 'updated_at', 'started_at', 'finished_at', )
 
 
@@ -125,3 +106,22 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'name', 'version', 'status',
                   'created_at', 'updated_at', 'pypi', 'repo',
                   'issues', 'forks', 'ci', 'url')
+
+
+class LineSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.Field(source='text')
+    package = SpecSerializer(source='spec')
+
+    class Meta:
+        model = Line
+        fields = ('id', 'package')
+
+
+class JobDetailSerialzier(JobSerializer):
+    lines = LineSerializer(source='lines', many=True)
+    status = serializers.Field(source='status')
+
+    class Meta:
+        model = Job
+        fields = ('id', 'url', 'status', 'lines',
+                  'created_at', 'updated_at', 'started_at', 'finished_at', )
