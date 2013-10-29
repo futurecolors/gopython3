@@ -110,7 +110,7 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
 
 class LineSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.Field(source='text')
-    package = SpecSerializer(source='spec')
+    package = PackageSerializer(source='spec')
 
     class Meta:
         model = Line
