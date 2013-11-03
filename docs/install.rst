@@ -22,3 +22,9 @@ For production environments following variables are required::
     export DJANGO_SECRET_KEY = baz
     export DJANGO_GITHUB_CLIENT_ID = xxx
     export DJANGO_GITHUB_CLIENT_SECRET = yyy
+
+Developing
+----------
+
+    # Enable Debug Toolbar, disable minification
+    DJANGO_CONFIGURATION=Debug python manage.py runserver

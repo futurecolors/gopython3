@@ -20,7 +20,7 @@ For each spec we are pulling these actions:
     * guess where the repo is, first, from PyPI metadata.
     * if we don't know where the repo is, search github for this package.
     * query for open issues or pull requests
-    * query for forks (currently, `ineffective`)
+    * query for forks (currently, ``ineffective``)
     * query Travis for tests (or, maybe, python versions under test)
 
 Tests
