@@ -1,4 +1,4 @@
--e git+https://github.com/django/django.git@623c4916df545f985c66a269a712e95f2724f6d0#egg=Django
+-e git+https://github.com/django/django.git@1.6c1#egg=Django
 -e git+https://github.com/jezdez/django_compressor.git@c961dadf6eaba93a9cdadc569c697828e9afe345#egg=django-compressor
 -e hg+https://bitbucket.org/vinay.sajip/distlib@669#egg=distlib
 South==0.8.2

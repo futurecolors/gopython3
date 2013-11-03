@@ -22,4 +22,4 @@ requirements-parser==0.0.6
 
 # Django 1.6b4
 # Should be last, just in case
--e git+https://github.com/django/django.git@1.6b4#egg=Django
+-e git+https://github.com/django/django.git@1.6c1#egg=Django
