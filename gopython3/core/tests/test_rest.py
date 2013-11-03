@@ -41,30 +41,69 @@ class TestApi(APITestCase):
     def test_job_detail(self):
         response = self.client.get('/api/v1/jobs/1/', format='json')
         self.assertDictEqual(response.data, {
-            "id": 1,
-            "url": "http://testserver/api/v1/jobs/1/",
-            "status": "running",
-            "lines": [{"id": "django-model-utils==1.5.0",
-                       "package": {
-                           "id": "django-model-utils/1.5.0",
-                           "url": "http://testserver/api/v1/packages/django-model-utils/1.5.0/",
-                           "name": "django-model-utils",
-                           "version": "1.5.0",
+            'id': 1,
+            'url': 'http://testserver/api/v1/jobs/1/',
+            'status': 'running',
+            'lines': [{'id': 'django-model-utils==1.5.0',
+                      'package': {'id': 'django-model-utils/1.5.0',
+                                  'name': 'django-model-utils', 'version': '1.5.0',
+                                  'status': 'pending',
+                                  'created_at': self.job.specs.all()[0].created_at,
+                                  'updated_at': self.job.specs.all()[0].updated_at,
+                      'pypi': {
+                          'current': {
+                              'version': '1.5.0',
+                              'release_date': None,
+                              'url': 'https://pypi.python.org/pypi/django-model-utils/1.5.0',
+                              'python3': None},
+                          'latest': {
+                              'version': '1.5.0',
+                              'release_date': None,
+                              'url': 'https://pypi.python.org/pypi/django-model-utils/1.5.0',
+                              'python3': None}
+                      },
+                      'repo': {
+                          'url': '',
+                          'last_commit_date': None},
+                      'issues': [{'url': '', 'status': 'unknown'}],
+                      'forks': [],
+                      'ci': {
+                          'url': '',
+                          'status': 'unknown'},
+                      'url': 'http://testserver/api/v1/packages/django-model-utils/1.5.0/'}},
+                      {'id': 'jsonfield==0.9.19',
+                       'package': {
+                           'id': 'jsonfield/0.9.19',
+                           'name': 'jsonfield',
+                           'version': '0.9.19',
                            'status': 'pending',
-                       }}, {
-                       "id": "jsonfield==0.9.19",
-                       "package": {
-                            "id": "jsonfield/0.9.19",
-                            "url": "http://testserver/api/v1/packages/jsonfield/0.9.19/",
-                            "name": "jsonfield",
-                            "version": "0.9.19",
-                            'status': 'pending',
-                       }}],
-            "created_at": self.job.created_at,
-            "updated_at": self.job.updated_at,
-            "started_at": None,
-            "finished_at": None
-        })
+                           'created_at': self.job.specs.all()[1].created_at,
+                           'updated_at': self.job.specs.all()[1].updated_at,
+                       'pypi': {
+                            'current': {
+                                'version': '0.9.19',
+                                'release_date': None,
+                                'url': 'https://pypi.python.org/pypi/jsonfield/0.9.19',
+                                'python3': None},
+                            'latest': {
+                                'version': '0.9.19',
+                                'release_date': None,
+                                'url': 'https://pypi.python.org/pypi/jsonfield/0.9.19',
+                                'python3': None}},
+                       'repo': {
+                           'url': '',
+                           'last_commit_date': None},
+                       'issues': [{
+                            'url': '',
+                            'status': 'unknown'}], 'forks': [],
+                       'ci': {
+                              'url': '',
+                              'status': 'unknown'},
+                       'url': 'http://testserver/api/v1/packages/jsonfield/0.9.19/'}}],
+                       'created_at': self.job.created_at,
+                       'updated_at': self.job.updated_at,
+                       'started_at': None,
+                       'finished_at': None})
 
     def test_job_detail_empty(self):
         job = JobFactory(lines=['Fabric>=1.4', 'nose'])
