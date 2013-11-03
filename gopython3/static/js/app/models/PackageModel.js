@@ -43,6 +43,7 @@ define('app/models/PackageModel', [
             }
         },
 
+        // FIXME: move logic to backend!
         getPython3Support: function(){
             var info;
 
