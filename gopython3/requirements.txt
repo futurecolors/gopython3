@@ -1,7 +1,7 @@
 -e git+https://github.com/django/django.git@1.6c1#egg=Django
 -e git+https://github.com/jezdez/django_compressor.git@c961dadf6eaba93a9cdadc569c697828e9afe345#egg=django-compressor
 -e hg+https://bitbucket.org/vinay.sajip/distlib@669#egg=distlib
-South==0.8.2
+South==dev
 amqp==1.0.13
 anyjson==0.3.3
 billiard==2.7.3.34

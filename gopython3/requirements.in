@@ -1,6 +1,6 @@
 django-configurations==0.6
 dj-database-url==0.2.2
-South==0.8.2
+South==dev
 
 hammock==0.2.4
 requests==2.0.0
