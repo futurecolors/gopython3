@@ -21,6 +21,8 @@ apt-get install -y build-essential python3.3 python python-dev
 apt-get install -y imagemagick libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev
 # Git (that's how we deploy)
 apt-get install -y git
+# Nginx
+apt-get install nginx-all
 # Nodejs
 apt-get install -y nodejs
 
@@ -41,6 +43,11 @@ if ! command -v psql; then
     cp /vagrant/etc/install/pg_hba.conf /etc/postgresql/$PGSQL_VERSION/main/
     /etc/init.d/postgresql reload
 fi
+
+# Nginx
+rm -f /etc/nginx/sites-enabled/default
+cp /vagrant/etc/install/nginx.config /etc/nginx/sites-available/$PROJECT_NAME
+invoke-rc.d nginx start
 
 # Less
 npm config set loglevel error
