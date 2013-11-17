@@ -1,9 +1,8 @@
 # coding: utf-8
 import logging
-from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.utils import override_settings
-from nose.plugins.attrib import attr
+import pytest
 from core.models import Job
 
 
@@ -20,7 +19,7 @@ class TestRequirement(TestCase):
     def tearDown(self):
         logger.setLevel(logging.ERROR)
 
-    @attr('functional')
+    @pytest.mark.functional
     def test_can_be_processed(self):
 
         requirements = """
@@ -31,9 +30,9 @@ class TestRequirement(TestCase):
         Job.objects.create_from_requirements(requirements).start()
 
 
+@pytest.mark.functional
 class TestHttp(TestCase):
 
-    @attr('functional')
     def test_index(self):
         response = self.client.get('/404/')
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404

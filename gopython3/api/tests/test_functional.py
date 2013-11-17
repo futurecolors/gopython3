@@ -1,14 +1,14 @@
 # coding: utf-8
 import logging
 from django.test import TestCase
-from nose.plugins.attrib import attr
+import pytest
 from api.github import Github
 
 
 logger = logging.getLogger('api')
 
 
-@attr('functional')
+@pytest.mark.functional
 class GithubRealTest(TestCase):
 
     def setUp(self):
@@ -18,7 +18,6 @@ class GithubRealTest(TestCase):
     def tearDown(self):
         logger.setLevel(logging.ERROR)
 
-    @attr('functional')
     def test_github_api_with_real_repos(self):
         # Get 5 most popular repos
         repos = self.gh.api.search.repositories.GET(params={

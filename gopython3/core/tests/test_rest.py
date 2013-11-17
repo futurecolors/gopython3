@@ -1,6 +1,6 @@
 # coding: utf-8
 import datetime
-from django.utils.timezone import now, pytz
+from django.utils.timezone import pytz
 from rest_framework.test import APITestCase
 from core.factories import JobFactory, SpecFactory
 
@@ -9,7 +9,8 @@ class TestApi(APITestCase):
     maxDiff = None
 
     def setUp(self):
-        self.job = JobFactory(specs=['django-model-utils==1.5.0', 'jsonfield==0.9.19'])
+        self.job = JobFactory(specs=['django-model-utils==1.5.0',
+                                     'jsonfield==0.9.19'])
 
     def test_api_root(self):
         response = self.client.get('/api/v1/')
@@ -18,12 +19,12 @@ class TestApi(APITestCase):
 
     def test_post_job(self):
         response = self.client.post('/api/v1/jobs/', {'requirements': 'foo\nbar>1.2'})
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response['Location'], 'http://testserver/api/v1/jobs/2/')
+        assert response.status_code == 201
+        assert response['Location'] == 'http://testserver/api/v1/jobs/2/'
 
     def test_jobs_list(self):
         response = self.client.get('/api/v1/jobs/', format='json')
-        self.assertDictEqual(response.data, {
+        assert response.data == {
             'count': 1,
             'next': None,
             'previous': None,
@@ -36,11 +37,11 @@ class TestApi(APITestCase):
                             'started_at': None,
                             'finished_at': None
                         }]
-        })
+        }
 
     def test_job_detail(self):
         response = self.client.get('/api/v1/jobs/1/', format='json')
-        self.assertDictEqual(response.data, {
+        assert response.data == {
             'id': 1,
             'url': 'http://testserver/api/v1/jobs/1/',
             'status': 'running',
@@ -103,12 +104,12 @@ class TestApi(APITestCase):
                        'created_at': self.job.created_at,
                        'updated_at': self.job.updated_at,
                        'started_at': None,
-                       'finished_at': None})
+                       'finished_at': None}
 
     def test_job_detail_empty(self):
         job = JobFactory(lines=['Fabric>=1.4', 'nose'])
         response = self.client.get('/api/v1/jobs/2/', format='json')
-        self.assertDictEqual(response.data, {
+        assert response.data == {
             "id": 2,
             "url": "http://testserver/api/v1/jobs/2/",
             "status": "pending",
@@ -122,7 +123,7 @@ class TestApi(APITestCase):
             "updated_at": job.updated_at,
             "started_at": None,
             "finished_at": None
-        })
+        }
 
     def test_spec_detail(self):
         spec =  SpecFactory(package__name='django_compressor',
@@ -142,7 +143,7 @@ class TestApi(APITestCase):
         package = spec.package
 
         response = self.client.get('/api/v1/packages/django_compressor/1.3/', format='json')
-        self.assertDictEqual(response.data, {
+        assert response.data == {
              "id": "django_compressor/1.3",
              "name": "django_compressor",
              "version": "1.3",
@@ -177,16 +178,16 @@ class TestApi(APITestCase):
                  "status": "passing"
              },
              'url': 'http://testserver/api/v1/packages/django_compressor/1.3/'
-        })
+        }
 
     def test_job_restart(self):
         job = JobFactory(specs=['foo==1'])
         job.specs.all().update(status='success')
 
         response = self.client.post('/api/v1/jobs/1/restart/', format='json')
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         response = self.client.post('/api/v1/jobs/2/restart/', format='json')
-        self.assertEqual(response.status_code, 202)
+        assert response.status_code == 202
 
     # TODO: test other non-working methods for extra security

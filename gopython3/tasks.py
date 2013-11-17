@@ -1,24 +1,23 @@
 # coding: utf-8
 from invoke import task, run
 
+#traceback print mode (long/short/line/native/no)
+test_command = 'PYTHONPATH=`pwd` NO_PROXY=1 py.test'
 
 @task
 def test():
-    run('python manage.py test -d --with-doctest -a"!functional"'
-        ' --with-specplugin --nologcapture', pty=True)
+    run(test_command + ' -m \'not functional\'', pty=True)
 
 
 @task
 def functional(package=''):
-    run('python manage.py test --with-specplugin -afunctional --nocapture --nologcapture %s' % package, pty=True)
+    run(test_command + ' -m \'functional\' %s' % package, pty=True)
 
 
 @task
-def cover(package='', only_unit=False):
-    """ Django-nose does not report properly"""
-    arg = '-a"!functional"' if only_unit else ''
-    run('coverage run --source=%s manage.py test --with-doctest %s' % (package, arg), pty=True)
-    run('coverage report -m', pty=True)
+def cover(package='.', only_unit=False):
+    testing_type = ' -m \'not functional\'' if only_unit else ''
+    run(test_command + ' --cov %s' % package + testing_type)
 
 
 @task

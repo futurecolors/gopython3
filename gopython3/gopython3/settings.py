@@ -49,7 +49,6 @@ class Common(Configuration):
         'kombu.transport.django',
         'compressor',
         'south',
-        'django_nose',
 
         # go python 3!
         'core',
@@ -114,8 +113,6 @@ class Common(Configuration):
     COMPRESS_CSS_HASHING_METHOD = 'content'
 
     BROKER_URL = values.Value('django://')
-
-    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
     # API
     GITHUB_CLIENT_ID = values.Value('dummy')

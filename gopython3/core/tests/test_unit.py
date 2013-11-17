@@ -45,10 +45,12 @@ class JobTest(TestCase):
             warnings.simplefilter("ignore", category=UserWarning)
             job = Job.objects.create_from_requirements(self.reqs_txt)
 
-        self.assertEqual(job.requirements, self.reqs_txt)
-        self.assertQuerysetEqual(job.lines.all().order_by('pk'),
-                                 ['django>=1.4,<1.5', 'Django-Geoip==0.3', 'coverage', 'coveralls>0.2'],
-                                 transform=str)
+        assert job.requirements == self.reqs_txt
+        assert list(map(str, job.lines.all().order_by('pk'))) == [
+            'django>=1.4,<1.5',
+            'Django-Geoip==0.3',
+            'coverage',
+            'coveralls>0.2']
 
 
 class JobStatusTest(TestCase):
@@ -93,24 +95,24 @@ class JobStatusTest(TestCase):
         assert job.status == 'success', 'All specs have finished'
 
 
-class JobSepcTest(TestCase):
+class JobSpecTest(TestCase):
 
     def test_process_requirement(self):
         job = JobFactory(lines=['Django==1.5.4'])
         package, package_created, spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('Django==1.5.4'))
 
-        self.assertQuerysetEqual(Package.objects.all(), ['Django'], transform=str, ordered=False)
-        self.assertQuerysetEqual(job.specs.all(), ['Django==1.5.4'], transform=str, ordered=False)
-        self.assertTrue(package_created)
-        self.assertTrue(spec_created)
+        assert list(map(str, Package.objects.all())) == ['Django']
+        assert list(map(str, job.specs.all())) == ['Django==1.5.4']
+        assert package_created
+        assert spec_created
 
     def test_does_not_create_duplicate_specs(self):
         spec = SpecFactory(version='0.2.19', package__name='lettuce')
         job = JobFactory(lines=['lettuce==0.2.19'])
         same_package, package_created, same_spec, spec_created = job.lines.all()[0].set_distribution(*fake_distributions('lettuce==0.2.19'))
 
-        self.assertFalse(package_created)
-        self.assertFalse(spec_created)
+        assert not package_created
+        assert not spec_created
         assert Spec.objects.count() == 1
         assert Package.objects.count() == 1
         assert job.specs.all().first().version == spec.version
@@ -131,7 +133,7 @@ class PypiTaskTest(TestCase):
         }
 
         spec = SpecFactory(version='0.2.19', package__name='lettuce')
-        self.assertEqual(query_pypi(spec.pk), get_info_mock.return_value)
+        assert query_pypi(spec.pk) == get_info_mock.return_value
         spec = Spec.objects.get(pk=spec.pk)
         assert spec.release_date == last_release_date
         assert spec.python_versions == py3_versions
