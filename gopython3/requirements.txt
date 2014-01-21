@@ -18,7 +18,6 @@ drf-extensions==0.2
 factory_boy==2.3.0
 hammock==0.2.4
 httpretty==0.5.9
-invoke==0.6.1
 jsonfield==0.9.19
 kombu==2.5.15
 nose==1.3.0

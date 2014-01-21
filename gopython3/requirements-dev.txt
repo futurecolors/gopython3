@@ -1,9 +1,8 @@
 -r requirements.txt
 django-debug-toolbar==0.11.0
-coveralls==0.3
-envdir==0.5
-spec==0.11.1
-invoke==0.5.1
+coveralls
+envdir==0.6.1
+invoke==0.6.1
 Sphinx==1.2b3
 Jinja2==2.7.1
 docutils==0.11
