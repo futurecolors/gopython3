@@ -1,10 +1,10 @@
 -r requirements.txt
-django-debug-toolbar==0.11.0
+django-debug-toolbar==1.2
 coveralls
 envdir==0.6.1
-invoke==0.6.1
-Sphinx==1.2b3
-Jinja2==2.7.1
+invoke==0.7.0
+Sphinx==1.2.2
+Jinja2==2.7.2
 docutils==0.11
-MarkupSafe==0.18
+MarkupSafe==0.23
 pytest-cov==1.6
